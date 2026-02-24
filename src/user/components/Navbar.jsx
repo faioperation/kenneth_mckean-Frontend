@@ -1,25 +1,62 @@
+import { Link, useLocation } from "react-router";
 import logo from "../../assets/images/logo.png";
+import { useState } from "react";
+import video from "../../assets/videos/video.mp4";
 
 const Navbar = () => {
+  const [showVideo, setShowVideo] = useState(false);
+
+  const loaction = useLocation();
+
   return (
     <nav className="flex justify-between items-center shadow pt-8 pb-6 px-20 font-inter ">
       {/* Logo & Name */}
-      <div className="flex items-center justify-between gap-2">
+      <div
+        onClick={() => setShowVideo(true)}
+        className="flex items-center justify-between gap-2 cursor-pointer"
+      >
         <img src={logo} alt="logo" className="w-8 h-8 object-contain" />
         <span className="text-[32px] font-semibold">Algorithms AI</span>
       </div>
 
+      {/* Play Video part */}
+      {/* {showVideo && (
+        <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50 cursor-pointer">
+          <div className="relative bg-black p-2 rounded-lg">
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-2 right-4 text-white text-xl font-bold"
+            >
+              ✕
+            </button>
+
+            <video width="600" controls autoPlay>
+              <source src={video} type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      )} */}
+
       {/* Navigation Links */}
       <div className="flex items-center gap-8 text-gray text-base font-normal">
-        <a href="/features" className="hover:text-black transition">
+        <Link
+          to="/features"
+          className={location.pathname === "/features" ? "text-black" : ""}
+        >
           Features
-        </a>
-        <a href="/pricing" className="hover:text-black transition">
+        </Link>
+        <Link
+          to="/pricing"
+          className={location.pathname === "/pricing" ? "text-black" : ""}
+        >
           Pricing
-        </a>
-        <a href="/about" className="hover:text-black transition">
+        </Link>
+        <Link
+          to="/about"
+          className={location.pathname === "/about" ? "text-black" : ""}
+        >
           About Us
-        </a>
+        </Link>
       </div>
 
       {/* Buttons */}
@@ -32,7 +69,6 @@ const Navbar = () => {
         </button>
       </div>
     </nav>
- 
   );
 };
 

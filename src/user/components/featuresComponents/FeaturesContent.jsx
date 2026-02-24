@@ -44,7 +44,7 @@ const FeaturesContent = () => {
             section.reverse ? "flex-row-reverse" : ""
           }`}
         >
-          <div className="max-w-[625px] rounded-3xl overflow-hidden">
+          <div className="lg:w-[850px] w-[625px] rounded-3xl overflow-hidden">
             <img
               src={section.image}
               alt="featuresImage"
