@@ -1,11 +1,16 @@
 import FeaturesContent from "../components/featuresComponents/FeaturesContent";
-import HeroSection from "../components/featuresComponents/HeroSection";
+import HeroSection from "../components/HeroSection";
 
-const FeaturesPage = () => {
+const FeaturesPage = ({title,para}) => {
   return (
     <div>
-      <HeroSection />
-      <FeaturesContent/>
+      <HeroSection
+        title={" Powerful AI-Driven Digital Solutions"}
+        para={
+          "Build apps, websites, and designs with intelligent automation and scalable workflows."
+        }
+      />
+      <FeaturesContent />
     </div>
   );
 };

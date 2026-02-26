@@ -9,7 +9,7 @@ const Navbar = () => {
   const loaction = useLocation();
 
   return (
-    <nav className="flex justify-between items-center shadow pt-8 pb-6 px-20 font-inter ">
+    <nav className="flex justify-between items-center shadow pt-8 pb-6 px-20 font-inter mb-15 ">
       {/* Logo & Name */}
       <div
         onClick={() => setShowVideo(true)}
