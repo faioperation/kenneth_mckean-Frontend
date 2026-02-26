@@ -1,0 +1,5 @@
+[
+    { "id": 1, "label": "Total Active Users", "value": "2,847", "change": "+12.3%", "trend": "up" ,  "icon": "https://i.ibb.co.com/HLsqZHSy/Icon.png" },
+    { "id": 2, "label": "API Usage", "value": "1.2M", "change": "+24.5%", "trend": "up", "icon": "https://i.ibb.co.com/9mdqDGsm/Icon-1.png" },
+    { "id": 3, "label": "Cost Today", "value": "$1,284", "change": "+9.3%", "trend": "up", "icon": "https://i.ibb.co.com/PGBNK7xh/Icon-2.png" }
+  ]

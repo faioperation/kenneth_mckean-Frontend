@@ -1,0 +1,37 @@
+[
+    {
+      "id": 1,
+      "user": "admin@demo.com",
+      "action": "Completed workflow execution",
+      "timestamp": "2 sec ago",
+      "status": "success"
+    },
+    {
+      "id": 2,
+      "user": "admin@test.com",
+      "action": "Started new task batch",
+      "timestamp": "15 sec ago",
+      "status": "warning"
+    },
+    {
+      "id": 3,
+      "user": "admin@dashboard.local",
+      "action": "Failed authentication check",
+      "timestamp": "1 min ago",
+      "status": "error"
+    },
+    {
+      "id": 4,
+      "user": "admin@demo.com",
+      "action": "Processing predictions",
+      "timestamp": "2 min ago",
+      "status": "warning"
+    },
+    {
+      "id": 5,
+      "user": "admin@demo.com",
+      "action": "Completed data validation",
+      "timestamp": "3 min ago",
+      "status": "success"
+    }
+  ]
