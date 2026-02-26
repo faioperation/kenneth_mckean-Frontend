@@ -3,10 +3,13 @@ import { Icon } from "@iconify/react";
 import { RiBookLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
+
 
 export default function Sidebar({ isOpen, onClose }) {
   const navLinks = [
     { name: "Overview", path: "overview", icon: "material-symbols:dashboard-outline" },
+    { name: "User", path: "user", icon: FaUsers },
     { name: "Usage & Billing", path: "usage", icon: RiBookLine },
     { name: "API Configuration", path: "configuration", icon: IoSettingsOutline },
   ];

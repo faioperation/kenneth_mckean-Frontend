@@ -7,6 +7,7 @@ import Usage from "../Admin/Pages/Usage&Billing/Usage";
 import Security from "../Admin/Pages/Security&Access/Security";
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import Data from "../Admin/Pages/Data&Files/Data";
+import User from "../Admin/Pages/User/User";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path : "overview",
         element: <Overview></Overview>,
+      },
+      {
+        path : "user",
+        element: <User></User>,
       },
       // {
       //   path:"workflow",
