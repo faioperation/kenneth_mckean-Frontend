@@ -3,8 +3,8 @@ import { FiKey } from 'react-icons/fi';
 
 export default function Api() {
   return (
-    <div className="bg-[#0b0e14] p-4 md:p-6 min-h-[300px] flex items-start justify-center">
-      <div className="w-full max-w-2xl bg-[#11141b] border border-[#1e232b] rounded-2xl p-6 md:p-8">
+    <div className="bg-[#0b0e14] p-4 md:p-6 max-w-6xl rounded-xl md:mx-6 lg:mx-8 min-h-[300px] flex items-start justify-center">
+      <div className="w-full max-w-5xl bg-[#11141b] border border-[#1e232b] rounded-2xl p-6 md:p-8">
         
         {/* Header Section */}
         <div className="flex items-center gap-2 mb-8">

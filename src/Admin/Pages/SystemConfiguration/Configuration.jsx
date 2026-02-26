@@ -1,8 +1,9 @@
 import React from 'react'
 import PageHeading from '../../Componants/PageHeading'
 import Button from '../../Componants/Button'
-import Nav from './Nav'
-import Api from './Api'
+import Nav from './Componants/Nav'
+import Api from './Componants/Api'
+import { Outlet } from 'react-router'
 
 export default function Configuration() {
   return (
@@ -19,8 +20,9 @@ export default function Configuration() {
               <Nav></Nav>
           </div>
           <div>
-            <Api></Api>
+           <Outlet></Outlet>
           </div>
+
      
     </div>
   )

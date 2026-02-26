@@ -3,9 +3,10 @@ import { NavLink } from "react-router-dom";
 
 export default function Nav({ onClose }) {
   return (
+    <div className="lg:flex md:flex   items-center justify-between ">
     <div className="bg-[#11141b] border border-[#1e232b] p-1 rounded-4xl flex max-w-2xl mx-8 text-center justify-between">
       <NavLink
-        to="."
+        to="../Configuration"
         end
         className={({ isActive }) =>
           `flex items-center gap-3 rounded-4xl px-6 lg:px-23 py-3 text-sm font-medium transition-colors ${
@@ -20,7 +21,7 @@ export default function Nav({ onClose }) {
       </NavLink>
 
       <NavLink
-        to="key"
+        to="./Key"
         className={({ isActive }) =>
           `flex items-center gap-3 rounded-4xl px-8 lg:px-28 py-3 text-sm font-medium transition-colors  ${
             isActive
@@ -32,6 +33,9 @@ export default function Nav({ onClose }) {
       >
         API Key Management
       </NavLink>
+    </div>
+
+    <button className='text-white mx-auto lg:text-sm text-xs my-2 lg:gap-2  cursor-pointer bg-[#155DFC] text-center flex items-center lg:ml-0 lg:mr-9 rounded-xl py-2 px-2  lg:px-3'>+ Add API Key</button>
     </div>
   );
 }
