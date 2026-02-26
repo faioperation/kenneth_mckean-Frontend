@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Data({header, description}) {
+export default function Data() {
   return (
     <div>Data</div>
   )

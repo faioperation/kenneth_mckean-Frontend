@@ -4,15 +4,7 @@
     { "id": 2, "label": "API Usage", "value": "1.2M", "change": "+24.5%", "trend": "up" },
     { "id": 3, "label": "Cost Today", "value": "$1,284", "change": "+9.3%", "trend": "up" }
   ],
-  "taskCompletion": [
-    { "day": "Mon", "completed": 240, "failed": 20 },
-    { "day": "Tue", "completed": 290, "failed": 35 },
-    { "day": "Wed", "completed": 310, "failed": 15 },
-    { "day": "Thu", "completed": 270, "failed": 25 },
-    { "day": "Fri", "completed": 340, "failed": 30 },
-    { "day": "Sat", "completed": 300, "failed": 18 },
-    { "day": "Sun", "completed": 255, "failed": 45 }
-  ],
+  
   "agentSuccess": {
     "completed": 95,
     "failed": 5
