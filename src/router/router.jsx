@@ -9,6 +9,8 @@ import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import Data from "../Admin/Pages/Data&Files/Data";
 import User from "../Admin/Pages/User/User";
 import AdminProfile from "../Admin/Pages/AdminProfile";
+import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
+import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 
 const router = createBrowserRouter([
   {
@@ -16,11 +18,11 @@ const router = createBrowserRouter([
     element: <AdminLayout></AdminLayout>,
     children: [
       {
-        path : "overview",
+        path: "overview",
         element: <Overview></Overview>,
       },
       {
-        path : "user",
+        path: "user",
         element: <User></User>,
       },
       // {
@@ -28,25 +30,35 @@ const router = createBrowserRouter([
       //   element: <Workflow></Workflow>
       // },
       {
-        path:"usage",
-        element: <Usage></Usage>
+        path: "usage",
+        element: <Usage></Usage>,
+        children: [
+          {
+            index: true,
+            element: <APIrequests></APIrequests>,
+          },
+          {
+            path: "plans",
+            element: <Plans></Plans>,
+          },
+        ],
       },
       // {
       //   path:"security",
       //   element: <Security></Security>
       // },
       {
-        path:"configuration",
-        element: <Configuration></Configuration>
+        path: "configuration",
+        element: <Configuration></Configuration>,
       },
       {
-        path:"adminprofile",
-        element: <AdminProfile></AdminProfile>
+        path: "adminprofile",
+        element: <AdminProfile></AdminProfile>,
       },
-    //   {
-    //     path:"data",
-    //     element: <Data></Data>
-    //   }
+      //   {
+      //     path:"data",
+      //     element: <Data></Data>
+      //   }
     ],
   },
 ]);
