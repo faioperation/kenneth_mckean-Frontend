@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose }) {
       >
         <div className="flex h-full flex-col">
           {/* Logo Section */}
-          <div className="flex h-20 items-center justify-between px-6 border-b border-[#2B7FFF33]">
+          <div className="flex h-16 items-center justify-between px-6 border-b border-[#2B7FFF33]">
             <div className="flex items-center gap-3">
               <img className="h-8 w-8" src="https://i.ibb.co.com/mrpNqfkD/logo.png" alt="Logo" />
               <div>

@@ -9,3 +9,7 @@
   font-weight: 300;
   font-style: normal;
 }
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+}
