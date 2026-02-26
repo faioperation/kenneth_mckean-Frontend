@@ -13,6 +13,7 @@ import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
+import AdminAuth from "../Admin/Pages/AdminAuth";
 
 
 
@@ -21,10 +22,15 @@ const router = createBrowserRouter([
     path: "/admin",
     element: <AdminLayout></AdminLayout>,
     children: [
+     
       {
         path: "overview",
         element: <Overview></Overview>,
       },
+       {
+        path:"login",
+        element:<AdminAuth></AdminAuth>
+       },
       {
         path: "user",
         element: <User></User>,
