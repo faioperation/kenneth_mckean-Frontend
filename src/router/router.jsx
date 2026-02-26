@@ -11,8 +11,10 @@ import User from "../Admin/Pages/User/User";
 import AdminProfile from "../Admin/Pages/AdminProfile";
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
-import Api from "../Admin/Pages/SystemConfiguration/Api";
-import Key from "../Admin/Pages/SystemConfiguration/Key";
+import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
+import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
+
+
 
 const router = createBrowserRouter([
   {
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
           },
           {
             path: "key",
-            element: <Key></Key> ,
+            element: <Key></Key>
           },
         ],
       },
