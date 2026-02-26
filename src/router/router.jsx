@@ -8,6 +8,7 @@ import Security from "../Admin/Pages/Security&Access/Security";
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import Data from "../Admin/Pages/Data&Files/Data";
 import User from "../Admin/Pages/User/User";
+import AdminProfile from "../Admin/Pages/AdminProfile";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path:"configuration",
         element: <Configuration></Configuration>
+      },
+      {
+        path:"adminprofile",
+        element: <AdminProfile></AdminProfile>
       },
     //   {
     //     path:"data",

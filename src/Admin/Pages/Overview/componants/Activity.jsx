@@ -49,7 +49,7 @@ export default function Activity() {
             </div>
 
             {/* Right Side: Timestamp */}
-            <div className="text-gray-600 text-[11px] font-medium whitespace-nowrap">
+            <div className="text-gray-400 text-[11px] font-medium whitespace-nowrap">
               {activity.timestamp}
             </div>
           </div>

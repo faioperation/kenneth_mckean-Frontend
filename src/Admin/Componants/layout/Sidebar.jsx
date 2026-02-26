@@ -12,6 +12,7 @@ export default function Sidebar({ isOpen, onClose }) {
     { name: "User", path: "user", icon: FaUsers },
     { name: "Usage & Billing", path: "usage", icon: RiBookLine },
     { name: "API Configuration", path: "configuration", icon: IoSettingsOutline },
+    { name: "Admin User", path: "adminprofile", mail: "Admin@manush.ai", icon: IoSettingsOutline },
   ];
 
   return (
@@ -47,7 +48,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           {/* Navigation Links */}
           <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-6">
-            {navLinks.map((item) => (
+            {navLinks.slice(0,4).map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -82,10 +83,22 @@ export default function Sidebar({ isOpen, onClose }) {
               
                 <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#16161E]"></div>
               </div>
-              <div className="flex-1 overflow-hidden">
-                <h4 className="text-sm font-semibold truncate">Admin User</h4>
-                <p className="text-[11px] text-gray-500 truncate">admin@demo.com</p>
-              </div>
+              <NavLink 
+                key={navLinks[4].path}
+                to={navLinks[4].path}  className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]"
+                      : "text-gray-400 hover:bg-[#1f2d5c] hover:text-white"
+                  }`
+                }
+                onClick={() => window.innerWidth < 768 && onClose()}
+                >
+                  <div className="flex-1 overflow-hidden">
+                <h4 className="text-sm font-semibold truncate">{navLinks[4].name}</h4>
+                <p className="text-[11px] text-gray-500 truncate">{navLinks[4].mail}</p>
+              </div> </NavLink>
+             
             </div>
 
           </div>
