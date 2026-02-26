@@ -13,10 +13,30 @@ import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
-
-
+import CommonLayout from "../user/components/CommonLayout";
+import AboutPage from "../user/pages/AboutPage";
+import PricingPage from "../user/pages/PricingPage";
+import FeaturesPage from "../user/pages/FeaturesPage";
+import HomePage from "../user/pages/HomePage";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <CommonLayout/>,
+    children: [
+      {
+        path: "/about",
+        element: <AboutPage />,
+      }, {
+        path: "/features",
+        element: <FeaturesPage/>,
+      }, {
+        path: "/pricing",
+        element: <PricingPage />,
+      },
+      
+    ],
+  },
   {
     path: "/admin",
     element: <AdminLayout></AdminLayout>,
@@ -54,14 +74,14 @@ const router = createBrowserRouter([
       {
         path: "configuration",
         element: <Configuration></Configuration>,
-         children: [
+        children: [
           {
             index: true,
             element: <Api></Api>,
           },
           {
             path: "key",
-            element: <Key></Key>
+            element: <Key></Key>,
           },
         ],
       },
