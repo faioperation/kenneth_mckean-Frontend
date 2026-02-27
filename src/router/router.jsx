@@ -30,10 +30,15 @@ const router = createBrowserRouter([
     path: "/",
     element: <CommonLayout/>,
     children: [
+        {
+        path: "/",
+        element: <HomePage />,
+      },
       {
         path: "/about",
         element: <AboutPage />,
-      }, {
+      },
+       {
         path: "/features",
         element: <FeaturesPage/>,
       }, {

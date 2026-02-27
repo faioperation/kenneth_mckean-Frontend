@@ -1,7 +1,7 @@
-import creativeImage from "../../../assets/images/creative.png"
-import uiuxImage from "../../../assets/images/uiux.png"
-import AIImage from "../../../assets/images/AI.png"
-import graphicImage from "../../../assets/images/graphic.png"
+import creativeImage from "../../../assets/images/creative.png";
+import uiuxImage from "../../../assets/images/uiux.png";
+import AIImage from "../../../assets/images/AI.png";
+import graphicImage from "../../../assets/images/graphic.png";
 
 const FeaturesContent = () => {
   const sectionsData = [
@@ -16,14 +16,14 @@ const FeaturesContent = () => {
       title: "Strategic UI/UX Design Excellence & App Development",
       description:
         "We create visually compelling, user-centric digital experiences. Our designs enhance usability and deliver seamless interaction across all devices.",
-     image:uiuxImage,
+      image: uiuxImage,
       reverse: true,
     },
     {
       title: "Intelligent AI & Automation Systems",
       description:
         "We create smart workflows powered by AI, streamlining operations and boosting productivity with automation.",
-       image: AIImage,
+      image: AIImage,
       reverse: false,
     },
     {
@@ -36,15 +36,16 @@ const FeaturesContent = () => {
   ];
 
   return (
-    <div className="mb-30.5">
+    <div className="mb-20 md:mb-28 lg:mb-32">
       {sectionsData.map((section, index) => (
         <div
           key={index}
-          className={`flex items-center justify-between px-20 mt-20 ${
-            section.reverse ? "flex-row-reverse" : ""
+          className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-16 px-6 md:px-12 lg:px-20 mt-16 md:mt-20 ${
+            section.reverse ? "lg:flex-row-reverse" : ""
           }`}
         >
-          <div className="lg:w-[850px] w-[625px] rounded-3xl overflow-hidden">
+          {/* Image */}
+          <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden">
             <img
               src={section.image}
               alt="featuresImage"
@@ -52,11 +53,13 @@ const FeaturesContent = () => {
             />
           </div>
 
-          <div>
-            <h3 className="max-w-[506px] font-semibold text-3xl leading-[150%]">
+          {/* Text */}
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold text-black leading-snug">
               {section.title}
             </h3>
-            <p className="text-gray mt-6 text-[20px] leading-[150%] font-normal max-w-[591px]">
+
+            <p className="text-gray-500 mt-4 md:mt-6 text-sm sm:text-base md:text-lg leading-relaxed">
               {section.description}
             </p>
           </div>
