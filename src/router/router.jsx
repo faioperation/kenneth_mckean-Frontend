@@ -18,49 +18,63 @@ import Edit from "../Admin/Pages/AdminProfile/Edit";
 import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
 import Profile from "../Admin/Pages/AdminProfile/Profile";
 
-
 import CommonLayout from "../user/components/CommonLayout";
 import AboutPage from "../user/pages/AboutPage";
 import PricingPage from "../user/pages/PricingPage";
 import FeaturesPage from "../user/pages/FeaturesPage";
 import HomePage from "../user/pages/HomePage";
+import NewUser from "../user/pages/User/NewUser";
+import NewTask from "../user/pages/User/UserPages/NewTask";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <CommonLayout/>,
+    element: <CommonLayout />,
     children: [
         {
         path: "/",
         element: <HomePage />,
       },
+    
       {
         path: "/about",
         element: <AboutPage />,
       },
+      
        {
         path: "/features",
-        element: <FeaturesPage/>,
-      }, {
+        element: <FeaturesPage />,
+      },
+      {
         path: "/pricing",
         element: <PricingPage />,
       },
-      
     ],
   },
+
+  {
+    path: "/user",
+    element: <NewUser></NewUser>,
+    children:[
+      {
+        path: "newtask",
+        element: <NewTask></NewTask>
+      }
+    ]
+  },
+
   {
     path: "/admin",
     element: <AdminLayout></AdminLayout>,
     children: [
-     
       {
         path: "overview",
         element: <Overview></Overview>,
       },
-       {
-        path:"login",
-        element:<AdminAuth></AdminAuth>
-       },
+      {
+        path: "login",
+        element: <AdminAuth></AdminAuth>,
+      },
       {
         path: "user",
         element: <User></User>,
@@ -104,16 +118,16 @@ const router = createBrowserRouter([
       {
         path: "adminprofile",
         element: <AdminProfile></AdminProfile>,
-        children:[
+        children: [
           {
-            index:true,
-            element:<Profile></Profile>
+            index: true,
+            element: <Profile></Profile>,
           },
           {
-            path:"editprofile",
-            element:<Edit></Edit>
-          }
-        ]
+            path: "editprofile",
+            element: <Edit></Edit>,
+          },
+        ],
       },
       //   {
       //     path:"data",
