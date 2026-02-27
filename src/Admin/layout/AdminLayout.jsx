@@ -19,7 +19,7 @@ export default function AdminLayout() {
       <div className="flex flex-1 flex-col overflow-hidden ">
         <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-        <main className="flex-1 overflow-y-auto bg-black p-4 md:p-6 text-white relative">
+        <main className="flex-1 overflow-y-auto  p-4 md:p-6 text-white relative">
           <Outlet />
         </main>
       </div>
