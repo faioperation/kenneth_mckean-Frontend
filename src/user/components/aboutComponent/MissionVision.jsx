@@ -13,24 +13,35 @@ const MissionVision = () => {
       para: "Our vision is to lead the future of intelligent automation by creating adaptive, multi-agent systems that learn, optimize, and evolve with every interaction. We strive to redefine how humans collaborate with AI to achieve faster, smarter, and more scalable digital outcomes.",
     },
   ];
+
   return (
-    <div className="flex  gap-6 items-center font-inter px-20 mb-45">
-      <div>
-        <img src={MVImage} alt="MVImage" className="rounded-lg" />
+    <section className="font-inter px-6 md:px-12 lg:px-20 py-16 md:py-20 lg:py-24">
+      <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+        {/* Image */}
+        <div className="w-full lg:w-1/2">
+          <img
+            src={MVImage}
+            alt="Mission Vision"
+            className="w-full h-auto rounded-2xl object-cover"
+          />
+        </div>
+
+        {/* Text Content */}
+        <div className="w-full lg:w-1/2 flex flex-col gap-8 text-center lg:text-left">
+          {missionVisionData.map((data) => (
+            <div key={data.id} className="leading-relaxed">
+              <h4 className="font-semibold text-xl sm:text-2xl lg:text-3xl text-black mb-4">
+                {data.title}
+              </h4>
+
+              <p className="text-gray-500 text-sm sm:text-base md:text-lg">
+                {data.para}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="flex flex-col gap-y-8">
-        {missionVisionData.map((data, id) => (
-          <div key={id} className="leading-[150%]">
-            <h4 className="font-semibold text-2xl text-black mb-5">
-              {data.title}
-            </h4>
-            <p className="font-normal text-base text-gray w-auto">
-              {data.para}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
+    </section>
   );
 };
 
