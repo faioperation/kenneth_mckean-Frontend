@@ -8,11 +8,17 @@ import Security from "../Admin/Pages/Security&Access/Security";
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import Data from "../Admin/Pages/Data&Files/Data";
 import User from "../Admin/Pages/User/User";
-import AdminProfile from "../Admin/Pages/AdminProfile";
+
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
+import AdminAuth from "../Admin/Pages/AdminAuth";
+import Edit from "../Admin/Pages/AdminProfile/Edit";
+import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
+import Profile from "../Admin/Pages/AdminProfile/Profile";
+
+
 import CommonLayout from "../user/components/CommonLayout";
 import AboutPage from "../user/pages/AboutPage";
 import PricingPage from "../user/pages/PricingPage";
@@ -41,10 +47,15 @@ const router = createBrowserRouter([
     path: "/admin",
     element: <AdminLayout></AdminLayout>,
     children: [
+     
       {
         path: "overview",
         element: <Overview></Overview>,
       },
+       {
+        path:"login",
+        element:<AdminAuth></AdminAuth>
+       },
       {
         path: "user",
         element: <User></User>,
@@ -88,6 +99,16 @@ const router = createBrowserRouter([
       {
         path: "adminprofile",
         element: <AdminProfile></AdminProfile>,
+        children:[
+          {
+            index:true,
+            element:<Profile></Profile>
+          },
+          {
+            path:"editprofile",
+            element:<Edit></Edit>
+          }
+        ]
       },
       //   {
       //     path:"data",

@@ -1,10 +1,11 @@
 import React from 'react';
-import { LuEyeOff } from "react-icons/lu"; // Password icon-er jonno
+import { LuEyeOff } from "react-icons/lu"; 
+import { NavLink } from 'react-router';
 
-export default function AdminProfile() {
+export default function Profile() {
   return (
-    <div className="bg-[#0b0e14] min-h-screen p-4 md:p-10 text-white">
-      <div className="max-w-6xl mx-auto bg-[#0b0e14]">
+    <div className="bg-[#0b0e14] rounded-lg min-h-screen p-4 md:p-10 text-white">
+      <div className="max-w-6xl bg-[#0b0e14]">
         
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
@@ -19,9 +20,7 @@ export default function AdminProfile() {
               <p className="text-gray-500 text-sm">alexarawles@gmail.com</p>
             </div>
           </div>
-          <button className="bg-[#2B7FFF] hover:bg-blue-600 text-white px-8 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer">
-            Edit
-          </button>
+         
         </div>
 
         {/* Form Section */}
@@ -33,7 +32,7 @@ export default function AdminProfile() {
               <label className="text-sm font-medium text-gray-300">Full Name</label>
               <input 
                 type="text" 
-                placeholder="Your First Name"
+                placeholder="Alexa Rawles"
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-gray-400"
               />
             </div>
@@ -41,7 +40,7 @@ export default function AdminProfile() {
               <label className="text-sm font-medium text-gray-300">Last Name</label>
               <input 
                 type="text" 
-                placeholder="Last Name"
+                placeholder="Rawles"
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-gray-400"
               />
             </div>
@@ -67,7 +66,7 @@ export default function AdminProfile() {
             </div>
           </div>
 
-          {/* Password Section */}
+          {/* Password Section
           <div className="space-y-6 pt-4">
             <h3 className="text-md font-semibold text-gray-200">Password</h3>
             
@@ -97,14 +96,14 @@ export default function AdminProfile() {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end pt-6">
+          {/* <div className="flex justify-end pt-6">
             <button 
               type="submit" 
               className="bg-[#2B7FFF] cursor pointer hover:bg-blue-600 text-white px-10 py-3 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/20"
             >
               Save changes
             </button>
-          </div>
+          </div>  */}
         </form>
       </div>
     </div>
