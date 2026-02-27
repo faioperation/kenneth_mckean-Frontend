@@ -8,12 +8,15 @@ import Security from "../Admin/Pages/Security&Access/Security";
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import Data from "../Admin/Pages/Data&Files/Data";
 import User from "../Admin/Pages/User/User";
-import AdminProfile from "../Admin/Pages/AdminProfile";
+
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
 import AdminAuth from "../Admin/Pages/AdminAuth";
+import Edit from "../Admin/Pages/AdminProfile/Edit";
+import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
+import Profile from "../Admin/Pages/AdminProfile/Profile";
 
 
 
@@ -74,6 +77,16 @@ const router = createBrowserRouter([
       {
         path: "adminprofile",
         element: <AdminProfile></AdminProfile>,
+        children:[
+          {
+            index:true,
+            element:<Profile></Profile>
+          },
+          {
+            path:"editprofile",
+            element:<Edit></Edit>
+          }
+        ]
       },
       //   {
       //     path:"data",
