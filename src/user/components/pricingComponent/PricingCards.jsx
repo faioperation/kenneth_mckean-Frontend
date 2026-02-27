@@ -44,7 +44,7 @@ const PricingCards = () => {
   ];
 
   return (
-    <div className="min-h-screen  flex flex-col items-center py-12 px-4 font-inter ">
+    <div className="min-h-screen  flex flex-col items-center py-12 px-4 font-inter text-black">
       <h1 className="text-5xl font-bold mb-10">Our Pricing</h1>
 
       <div className="grid md:grid-cols-3 gap-6 w-full max-w-6xl">
@@ -58,7 +58,7 @@ const PricingCards = () => {
 
               <div className="mb-4">
                 <span className="text-3xl font-bold">{cards.price}</span>
-                <span className="text-gray-500 ml-1">{cards.period}</span>
+                <span className="text-gray ml-1">{cards.period}</span>
               </div>
 
               <ul className="space-y-3 ml-4 mb-20">

@@ -4,11 +4,15 @@ import { Outlet } from 'react-router'
 
 const CommonLayout = () => {
   return (
-    <>
-      <Navbar/>
-      <Outlet/>
-      <Footer/>
-    </>
+ <div className="flex flex-col min-h-screen bg-white">
+      <Navbar />
+
+      <main className="grow pt-25">
+        <Outlet />
+      </main>
+
+      <Footer />
+    </div>
   )
 }
 

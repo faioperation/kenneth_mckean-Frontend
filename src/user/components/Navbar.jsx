@@ -1,73 +1,86 @@
 import { Link, useLocation } from "react-router";
-import logo from "../../assets/images/logo.png";
 import { useState } from "react";
-import video from "../../assets/videos/video.mp4";
+import logo from "../../assets/images/logo.png";
+import { HiOutlineBars3 } from "react-icons/hi2";
 
 const Navbar = () => {
-  const [showVideo, setShowVideo] = useState(false);
-
-  const loaction = useLocation();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="flex justify-between items-center shadow pt-8 pb-6 px-20 font-inter mb-15 ">
-      {/* Logo & Name */}
-      <div
-        onClick={() => setShowVideo(true)}
-        className="flex items-center justify-between gap-2 cursor-pointer"
-      >
-        <img src={logo} alt="logo" className="w-8 h-8 object-contain" />
-        <span className="text-[32px] font-semibold">Algorithms AI</span>
+    <nav className="flex justify-between items-center shadow px-6 md:px-12 lg:px-20 py-4 font-inter fixed top-0 w-full z-50 bg-white h-25">
+      {/* Logo */}
+      <div className="flex items-center gap-2 cursor-pointer">
+        <img src={logo} alt="logo" className="w-7 h-7 md:w-8 md:h-8" />
+        <span className="text-xl md:text-2xl lg:text-[28px] font-semibold text-black">
+          Algorithms AI
+        </span>
       </div>
 
-      {/* Play Video part */}
-      {/* {showVideo && (
-        <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50 cursor-pointer">
-          <div className="relative bg-black p-2 rounded-lg">
-            <button
-              onClick={() => setShowVideo(false)}
-              className="absolute top-2 right-4 text-white text-xl font-bold"
-            >
-              ✕
-            </button>
-
-            <video width="600" controls autoPlay>
-              <source src={video} type="video/mp4" />
-            </video>
-          </div>
-        </div>
-      )} */}
-
-      {/* Navigation Links */}
-      <div className="flex items-center gap-8 text-gray text-base font-normal">
+      {/* Desktop Menu */}
+      <div className="hidden md:flex items-center gap-6 lg:gap-8 text-base">
         <Link
           to="/features"
-          className={location.pathname === "/features" ? "text-black" : ""}
+          className={
+            location.pathname === "/features" ? "text-black" : "text-gray-500"
+          }
         >
           Features
         </Link>
         <Link
           to="/pricing"
-          className={location.pathname === "/pricing" ? "text-black" : ""}
+          className={
+            location.pathname === "/pricing" ? "text-black" : "text-gray-500"
+          }
         >
           Pricing
         </Link>
         <Link
           to="/about"
-          className={location.pathname === "/about" ? "text-black" : ""}
+          className={
+            location.pathname === "/about" ? "text-black" : "text-gray-500"
+          }
         >
           About Us
         </Link>
       </div>
 
-      {/* Buttons */}
-      <div className="flex items-center gap-3">
-        <button className="px-8 py-3 bg-black rounded-full text-[#D8D8D8]  cursore-pointer ">
+      {/* Desktop Buttons */}
+      <div className="hidden md:flex items-center gap-3 cursor-pointer">
+        <button className="px-5 py-2 bg-black rounded-full text-white text-sm">
           Sign in
         </button>
-        <button className="px-8 py-3 border border-[#D8D8D8] rounded-full text-[#34322D] cursore-pointer ">
+        <button className="px-5 py-2 border rounded-full text-sm text-gray">
           Sign Up
         </button>
       </div>
+
+      {/* Mobile Menu Button */}
+      <div className="md:hidden text-gray">
+        <button onClick={() => setMenuOpen(!menuOpen)}>
+          <HiOutlineBars3 className="size-7" />
+        </button>
+      </div>
+
+      {/* Mobile Dropdown */}
+      {menuOpen && (
+        <div className="absolute top-full left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-6 md:hidden text-gray">
+          <Link onClick={() => setMenuOpen(false)} to="/features">
+            Features
+          </Link>
+          <Link onClick={() => setMenuOpen(false)} to="/pricing">
+            Pricing
+          </Link>
+          <Link onClick={() => setMenuOpen(false)} to="/about">
+            About Us
+          </Link>
+
+          <button className="px-6 py-2 bg-black text-white rounded-full">
+            Sign in
+          </button>
+          <button className="px-6 py-2 border rounded-full">Sign Up</button>
+        </div>
+      )}
     </nav>
   );
 };
