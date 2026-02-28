@@ -38,7 +38,7 @@ export default function Header({ onMenuClick }) {
         </button>
 
         
-        <Link to="/admin/adminprofile" className="hover:opacity-80 transition-opacity">
+        <Link to="/user/profile" className="hover:opacity-80 transition-opacity">
           <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2">
             <div className="relative">
               <img 
