@@ -4,25 +4,31 @@ import { RiBookLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
+import { PiBooksFill } from "react-icons/pi";
+import { LuNotebookPen } from "react-icons/lu";
+import { IoSearch } from "react-icons/io5";
+import { TbShoppingBagPlus } from "react-icons/tb";
+import { LuNotebook } from "react-icons/lu";
+import { SiLivechat } from "react-icons/si";
 
 export default function Sidebar({ isOpen, onClose }) {
   const navLinks = [
     {
       name: "New Task",
-      path: "overview",
-      icon: "material-symbols:dashboard-outline",
+      path: "newtask",
+      icon: LuNotebookPen,
     },
-    { name: "Search Chat", path: "user", icon: FaUsers },
-    { name: "Library", path: "usage", icon: RiBookLine },
+    { name: "Search Chat", path: "search", icon: IoSearch },
+    { name: "Library", path: "library", icon: PiBooksFill },
     {
       name: "New Project",
-      path: "configuration",
+      path: "project",
       icon: IoSettingsOutline,
     },
     {
       name: "Profile",
-      path: "adminprofile",
-      
+      path: "profile",
+
       icon: IoSettingsOutline,
     },
   ];
@@ -80,8 +86,8 @@ export default function Sidebar({ isOpen, onClose }) {
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
                     isActive
-                      ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]"
-                      : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                      ? "bg-[#155DFC33] text-[#53A3FF] border-l-2 border-[#51A2FF]"
+                      : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white "
                   }`
                 }
                 onClick={() => window.innerWidth < 768 && onClose()}
@@ -97,44 +103,61 @@ export default function Sidebar({ isOpen, onClose }) {
           </nav>
 
           <div className=" p-4  flex  flex-col justify-between gap-16">
-            
-        <NavLink
-              to={navLinks[3].path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
-                  isActive ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]" : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
-                }`
-              }
-              onClick={() => window.innerWidth < 768 && onClose()}
-            >
-              <IoSettingsOutline size={22} className="text-inherit" />
-              <span>{navLinks[3].name}</span>
-            </NavLink>
-
             <div>
-
+              <div className="flex items-center justify-between p-4">
+                <p className="text-gray-500">Projects </p>
+                <p className="text-2xl text-gray-500 cursor-pointer hover:bg-gray-300 rounded-full p-2">
+                  +
+                </p>
+              </div>
+              <NavLink
+                to={navLinks[3].path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
+                    isActive
+                      ? "bg-[#155DFC33] text-[#53A3FF] border-l-2 border-[#51A2FF]"
+                      : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                  }`
+                }
+                onClick={() => window.innerWidth < 768 && onClose()}
+              >
+                <TbShoppingBagPlus size={22} className="text-inherit" />
+                <span>{navLinks[3].name}</span>
+              </NavLink>
+            </div>
+            <div className="mb-18">
+              <div className="flex items-center justify-between p-4">
+                <p className="text-gray-500">All Tasks </p>
+                <p className="text-2xl text-gray-500 cursor-pointer hover:bg-gray-300 rounded-full p-2">
+                  <LuNotebook />
+                </p>
+              </div>
+              <div className="pb-12 lg:pb-24 text-gray-500 flex flex-col items-center space-y-4">
+               <div className="text-6xl">
+                <SiLivechat></SiLivechat>
+              
+               </div>
+                 <p>Create New Tasks & Get Started</p>
+              </div>
             </div>
 
-
-
-             <div className=" p-4 ">
-
+            <div className=" p-4 ">
               <NavLink
-              to={navLinks[4].path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
-                  isActive ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]" : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
-                }`
-              }
-              onClick={() => window.innerWidth < 768 && onClose()}
-            >
-              <FaRegUser size={22} className="text-inherit" />
-              <span>{navLinks[4].name}</span>
-            </NavLink>
+                to={navLinks[4].path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
+                    isActive
+                      ? "bg-[#155DFC33] text-[#53A3FF] border-l-2 border-[#51A2FF]"
+                      : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                  }`
+                }
+                onClick={() => window.innerWidth < 768 && onClose()}
+              >
+                <FaRegUser size={22} className="text-inherit" />
+                <span>{navLinks[4].name}</span>
+              </NavLink>
+            </div>
           </div>
-          </div>
-         
-         
         </div>
       </aside>
     </>

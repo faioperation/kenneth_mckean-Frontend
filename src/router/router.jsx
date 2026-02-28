@@ -25,6 +25,10 @@ import FeaturesPage from "../user/pages/FeaturesPage";
 import HomePage from "../user/pages/HomePage";
 import NewUser from "../user/pages/User/NewUser";
 import NewTask from "../user/pages/User/UserPages/NewTask";
+import SearchChat from "../user/pages/User/UserPages/SearchChat";
+import Project from "../user/pages/User/UserPages/Project";
+import Library from "../user/pages/User/UserPages/Library";
+import UserProfile from "../user/pages/User/UserPages/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -59,7 +63,24 @@ const router = createBrowserRouter([
       {
         path: "newtask",
         element: <NewTask></NewTask>
-      }
+      },
+      {
+        path: "search",
+        element: <SearchChat></SearchChat>
+      },
+        {
+        path: "library",
+        element: <Library></Library>
+      },
+      {
+        path: "project",
+        element: <Project></Project>
+      },
+      {
+        path: "profile",
+        element: <UserProfile></UserProfile>
+      },
+    
     ]
   },
 
