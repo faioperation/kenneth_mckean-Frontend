@@ -23,6 +23,13 @@ import AboutPage from "../user/pages/AboutPage";
 import PricingPage from "../user/pages/PricingPage";
 import FeaturesPage from "../user/pages/FeaturesPage";
 import HomePage from "../user/pages/HomePage";
+import Authlayout from "../user/components/Authlayout";
+import SignupPage from "../user/authPages/SignupPage";
+import ForgotPassword from "../user/authPages/ForgotPassword";
+import VerifyComponet from "../user/authPages/VerifyComponet";
+import PasswordUpdated from "../user/authPages/PasswordUpdated";
+import SignInPage from "../user/authPages/SignInPage";
+import AccountSuccessfully from "../user/authPages/AccountSuccessfully";
 import NewUser from "../user/pages/User/NewUser";
 import NewTask from "../user/pages/User/UserPages/NewTask";
 import SearchChat from "../user/pages/User/UserPages/SearchChat";
@@ -35,7 +42,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <CommonLayout />,
     children: [
-        {
+      {
         path: "/",
         element: <HomePage />,
       },
@@ -44,6 +51,7 @@ const router = createBrowserRouter([
         path: "/about",
         element: <AboutPage />,
       },
+      {
       
        {
         path: "/features",
@@ -57,6 +65,34 @@ const router = createBrowserRouter([
   },
 
   {
+    path: "/auth",
+    element: <Authlayout />,
+    children: [
+      {
+        path: "/auth/signup",
+        element: <SignupPage />,
+      },
+      {
+        path: "/auth/forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "/auth/verify",
+        element: <VerifyComponet />,
+      },
+      {
+        path: "/auth/password-updated",
+        element: <PasswordUpdated />,
+      },
+      {
+        path: "/auth/signin",
+        element: <SignInPage />,
+      },
+      {
+        path: "/auth/signIn-successful",
+        element: <AccountSuccessfully />,
+      },
+    ],
     path: "/user",
     element: <NewUser></NewUser>,
     children:[
