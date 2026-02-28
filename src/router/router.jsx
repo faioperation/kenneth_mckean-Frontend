@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         path: "/about",
         element: <AboutPage />,
       },
-      {
+      
       
        {
         path: "/features",
@@ -92,7 +92,8 @@ const router = createBrowserRouter([
         path: "/auth/signIn-successful",
         element: <AccountSuccessfully />,
       },
-    ],
+    ],},
+    {
     path: "/user",
     element: <NewUser></NewUser>,
     children:[
