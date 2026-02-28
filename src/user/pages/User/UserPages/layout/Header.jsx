@@ -1,9 +1,12 @@
 import { Icon } from "@iconify/react";
 import { FaRegUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { PiSparkleBold } from "react-icons/pi";
 
 export default function Header({ onMenuClick }) {
+  const location = useLocation();
+  const hideHeader = location.pathname==="/user/library"
+  if(hideHeader) return null ;
   return (
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between bg-[#F8F8F7] px-4 md:px-6">
       
