@@ -32,7 +32,7 @@ const features = [
 
 const TextCardLayouts = () => {
   return (
-    <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
+    <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 ">
       
       {/* Top Section */}
       <div className="shadow border border-gray-200 rounded-2xl p-4 sm:p-6 mb-8 bg-white">

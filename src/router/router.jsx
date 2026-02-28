@@ -8,11 +8,16 @@ import Security from "../Admin/Pages/Security&Access/Security";
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import Data from "../Admin/Pages/Data&Files/Data";
 import User from "../Admin/Pages/User/User";
-import AdminProfile from "../Admin/Pages/AdminProfile";
+
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
+import AdminAuth from "../Admin/Pages/AdminAuth";
+import Edit from "../Admin/Pages/AdminProfile/Edit";
+import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
+import Profile from "../Admin/Pages/AdminProfile/Profile";
+
 import CommonLayout from "../user/components/CommonLayout";
 import AboutPage from "../user/pages/AboutPage";
 import PricingPage from "../user/pages/PricingPage";
@@ -25,6 +30,12 @@ import VerifyComponet from "../user/authPages/VerifyComponet";
 import PasswordUpdated from "../user/authPages/PasswordUpdated";
 import SignInPage from "../user/authPages/SignInPage";
 import AccountSuccessfully from "../user/authPages/AccountSuccessfully";
+import NewUser from "../user/pages/User/NewUser";
+import NewTask from "../user/pages/User/UserPages/NewTask";
+import SearchChat from "../user/pages/User/UserPages/SearchChat";
+import Project from "../user/pages/User/UserPages/Project";
+import Library from "../user/pages/User/UserPages/Library";
+import UserProfile from "../user/pages/User/UserPages/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -35,11 +46,14 @@ const router = createBrowserRouter([
         path: "/",
         element: <HomePage />,
       },
+    
       {
         path: "/about",
         element: <AboutPage />,
       },
       {
+      
+       {
         path: "/features",
         element: <FeaturesPage />,
       },
@@ -79,6 +93,31 @@ const router = createBrowserRouter([
         element: <AccountSuccessfully />,
       },
     ],
+    path: "/user",
+    element: <NewUser></NewUser>,
+    children:[
+      {
+        path: "newtask",
+        element: <NewTask></NewTask>
+      },
+      {
+        path: "search",
+        element: <SearchChat></SearchChat>
+      },
+        {
+        path: "library",
+        element: <Library></Library>
+      },
+      {
+        path: "project",
+        element: <Project></Project>
+      },
+      {
+        path: "profile",
+        element: <UserProfile></UserProfile>
+      },
+    
+    ]
   },
 
   {
@@ -88,6 +127,10 @@ const router = createBrowserRouter([
       {
         path: "overview",
         element: <Overview></Overview>,
+      },
+      {
+        path: "login",
+        element: <AdminAuth></AdminAuth>,
       },
       {
         path: "user",
@@ -132,6 +175,16 @@ const router = createBrowserRouter([
       {
         path: "adminprofile",
         element: <AdminProfile></AdminProfile>,
+        children: [
+          {
+            index: true,
+            element: <Profile></Profile>,
+          },
+          {
+            path: "editprofile",
+            element: <Edit></Edit>,
+          },
+        ],
       },
       //   {
       //     path:"data",

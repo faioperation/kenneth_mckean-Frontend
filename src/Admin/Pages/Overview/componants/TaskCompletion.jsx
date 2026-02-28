@@ -54,8 +54,8 @@ export default function TaskCompletion() {
               tick={{ fill: '#6b7280', fontSize: 12 }} 
             />
             <Tooltip 
-              cursor={{ fill: '#1f2937', opacity: 0.4 }}
-              contentStyle={{ backgroundColor: '#161b22', border: '1px solid #30363d', borderRadius: '8px' }}
+              cursor={{ fill: '#485f80',  opacity: 0.4 }}
+              contentStyle={{ backgroundColor: '#222933', border: '1px solid #30363d', borderRadius: '8px' }}
               itemStyle={{ fontSize: '12px' }}
             />
             <Legend 
