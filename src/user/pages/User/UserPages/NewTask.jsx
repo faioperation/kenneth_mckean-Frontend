@@ -3,7 +3,7 @@ import TextCardLayouts from '../../../components/TextCardLayouts'
 
 export default function NewTask() {
   return (
-    <div>
+    <div className='lg:mt-40'>
        <div className="px-4 sm:px-6 lg:px-12 xl:px-20">
         <div className="text-center mt-10 sm:mt-12 lg:mt-[60px] font-inter font-semibold">
           <h2 className="text-base sm:text-lg text-gray max-w-md mx-auto">
