@@ -59,7 +59,7 @@ const SignupPage = () => {
           </Link>
         </div>
 
-        {/* Divider */}
+     
         <div className="flex items-center my-5">
           <div className="flex-1 bg-gray-300"></div>
           <span className="px-3 text-xs text-gray-400">Or</span>
