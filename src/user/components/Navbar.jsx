@@ -46,13 +46,17 @@ const Navbar = () => {
       </div>
 
       {/* Desktop Buttons */}
-      <div className="hidden md:flex items-center gap-3 cursor-pointer">
-        <button className="px-5 py-2 bg-black rounded-full text-white text-sm">
-          Sign in
-        </button>
-        <button className="px-5 py-2 border rounded-full text-sm text-gray">
-          Sign Up
-        </button>
+      <div className="hidden md:flex items-center gap-3">
+        <Link to="/auth/signin">
+          <button className="px-5 py-2 bg-black rounded-full text-white text-sm cursor-pointer">
+            Sign in
+          </button>
+        </Link>
+        <Link to="/auth/signup">
+          <button className="px-5 py-2 border rounded-full text-sm text-gray-700 cursor-pointer">
+            Sign Up
+          </button>
+        </Link>
       </div>
 
       {/* Mobile Menu Button */}
