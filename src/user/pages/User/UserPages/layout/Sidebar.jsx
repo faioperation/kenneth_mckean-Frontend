@@ -1,4 +1,4 @@
-import { Link, NavLink,} from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { RiBookLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -8,21 +8,21 @@ import { FaUsers } from "react-icons/fa";
 export default function Sidebar({ isOpen, onClose }) {
   const navLinks = [
     {
-      name: "Overview",
+      name: "New Task",
       path: "overview",
       icon: "material-symbols:dashboard-outline",
     },
-    { name: "User", path: "user", icon: FaUsers },
-    { name: "Usage & Billing", path: "usage", icon: RiBookLine },
+    { name: "Search Chat", path: "user", icon: FaUsers },
+    { name: "Library", path: "usage", icon: RiBookLine },
     {
-      name: "API Configuration",
+      name: "New Project",
       path: "configuration",
       icon: IoSettingsOutline,
     },
     {
-      name: "Admin User",
+      name: "Profile",
       path: "adminprofile",
-      mail: "Admin@manush.ai",
+      
       icon: IoSettingsOutline,
     },
   ];
@@ -61,7 +61,6 @@ export default function Sidebar({ isOpen, onClose }) {
                 <h2 className="text-2xl font-semibold text-black tracking-tight">
                   Algorithms AI
                 </h2>
-             
               </div>
             </div>
             <button
@@ -74,15 +73,15 @@ export default function Sidebar({ isOpen, onClose }) {
 
           {/* Navigation Links */}
           <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-6">
-            {navLinks.slice(0, 4).map((item) => (
+            {navLinks.slice(0, 3).map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
                     isActive
                       ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]"
-                      : "text-gray-400 hover:bg-[#1f2d5c] hover:text-white"
+                      : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
                   }`
                 }
                 onClick={() => window.innerWidth < 768 && onClose()}
@@ -97,40 +96,45 @@ export default function Sidebar({ isOpen, onClose }) {
             ))}
           </nav>
 
-          {/* Bottom Actions & User Profile */}
-          <div className="border-t border-[#2B7FFF33] p-4 bg-[#0D0D12]">
-            {/* User Info Section (New) */}
-            <div className="flex items-center gap-3 px-3 py-4 mb-2 bg-[#16161E] rounded-xl border border-[#2B7FFF1A]">
-              <div className="relative">
-                <div className="h-10 w-10 bg-[#00C950] flex items-center justify-center rounded-full border border-gray-700">
-                  <FaRegUser />
-                </div>
+          <div className=" p-4  flex  flex-col justify-between gap-16">
+            
+        <NavLink
+              to={navLinks[3].path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
+                  isActive ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]" : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                }`
+              }
+              onClick={() => window.innerWidth < 768 && onClose()}
+            >
+              <IoSettingsOutline size={22} className="text-inherit" />
+              <span>{navLinks[3].name}</span>
+            </NavLink>
 
-                <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#16161E]"></div>
-              </div>
-              <NavLink
-                key={navLinks[4].path}
-                to={navLinks[4].path}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]"
-                      : "text-gray-400 hover:bg-[#1f2d5c] hover:text-white"
-                  }`
-                }
-                onClick={() => window.innerWidth < 768 && onClose()}
-              >
-                <div className="flex-1 overflow-hidden">
-                  <h4 className="text-sm font-semibold truncate">
-                    {navLinks[4].name}
-                  </h4>
-                  <p className="text-[11px] text-gray-500 truncate">
-                    {navLinks[4].mail}
-                  </p>
-                </div>{" "}
-              </NavLink>
+            <div>
+
             </div>
+
+
+
+             <div className=" p-4 ">
+
+              <NavLink
+              to={navLinks[4].path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium transition-colors ${
+                  isActive ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]" : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                }`
+              }
+              onClick={() => window.innerWidth < 768 && onClose()}
+            >
+              <FaRegUser size={22} className="text-inherit" />
+              <span>{navLinks[4].name}</span>
+            </NavLink>
           </div>
+          </div>
+         
+         
         </div>
       </aside>
     </>
