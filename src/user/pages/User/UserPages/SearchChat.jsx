@@ -32,11 +32,23 @@ export default function SearchChat({onClose}) {
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 relative">
         
         {/* Close Button */}
+<<<<<<< HEAD
      
+=======
+<<<<<<< HEAD
+      <Link to="/user/newtask">  <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-black"
+=======
+>>>>>>> e2e03261054b4b8cc3e090ae9f1047c40a66f2c3
         <Link to="/user/newtask">
         <button
           onClick={onClose}
           className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-black"
+<<<<<<< HEAD
+=======
+>>>>>>> d12c6581e2be1f6785070e055bde8c811ae67891
+>>>>>>> e2e03261054b4b8cc3e090ae9f1047c40a66f2c3
         >
           <FiX size={20} />
         </button></Link>
@@ -81,5 +93,13 @@ export default function SearchChat({onClose}) {
       </div>
     </div>
   );
+<<<<<<< HEAD
 }
 
+=======
+<<<<<<< HEAD
+}
+=======
+} 
+>>>>>>> d12c6581e2be1f6785070e055bde8c811ae67891
+>>>>>>> e2e03261054b4b8cc3e090ae9f1047c40a66f2c3
