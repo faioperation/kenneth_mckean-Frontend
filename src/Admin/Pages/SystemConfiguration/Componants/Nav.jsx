@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Nav({ onClose }) {
   return (
@@ -35,7 +35,9 @@ export default function Nav({ onClose }) {
       </NavLink>
     </div>
 
+   <Link to="/admin/configuration/addapikey">
     <button className='text-white mx-auto lg:text-sm text-xs my-2 lg:gap-2  cursor-pointer bg-[#155DFC] text-center flex items-center lg:ml-0 lg:mr-9 rounded-xl py-2 px-2  lg:px-3'>+ Add API Key</button>
+   </Link>
     </div>
   );
 }

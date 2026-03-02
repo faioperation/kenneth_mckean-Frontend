@@ -2,11 +2,11 @@ import { createBrowserRouter } from "react-router-dom";
 
 import AdminLayout from "../Admin/layout/AdminLayout";
 import Overview from "../Admin/Pages/Overview/Overview";
-import Workflow from "../Admin/Pages/Workflow/Workflow";
+
 import Usage from "../Admin/Pages/Usage&Billing/Usage";
-import Security from "../Admin/Pages/Security&Access/Security";
+
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
-import Data from "../Admin/Pages/Data&Files/Data";
+
 import User from "../Admin/Pages/User/User";
 
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
@@ -38,6 +38,7 @@ import Library from "../user/pages/User/UserPages/Library";
 import UserProfile from "../user/pages/User/UserPages/UserProfile";
 import EditProfile from "../user/pages/User/UserPages/EditProfile";
 import Policy from "../user/pages/User/Policy";
+import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
 
 const router = createBrowserRouter([
   {
@@ -48,14 +49,13 @@ const router = createBrowserRouter([
         path: "/",
         element: <HomePage />,
       },
-    
+
       {
         path: "/about",
         element: <AboutPage />,
       },
-      
-      
-       {
+
+      {
         path: "/features",
         element: <FeaturesPage />,
       },
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/policy",
-        element: <Policy></Policy>
+        element: <Policy></Policy>,
       },
     ],
   },
@@ -98,37 +98,37 @@ const router = createBrowserRouter([
         path: "/auth/signIn-successful",
         element: <AccountSuccessfully />,
       },
-    ],},
-    {
+    ],
+  },
+  {
     path: "/user",
     element: <NewUser></NewUser>,
-    children:[
+    children: [
       {
         path: "newtask",
-        element: <NewTask></NewTask>
+        element: <NewTask></NewTask>,
       },
       {
         path: "search",
-        element: <SearchChat></SearchChat>
+        element: <SearchChat></SearchChat>,
       },
-        {
+      {
         path: "library",
-        element: <Library></Library>
+        element: <Library></Library>,
       },
       {
         path: "project",
-        element: <Project/>
+        element: <Project />,
       },
       {
         path: "profile",
-        element: <UserProfile></UserProfile>
+        element: <UserProfile></UserProfile>,
       },
       {
-        path:"editprofile",
-        element:<EditProfile></EditProfile>
-      }
-    
-    ]
+        path: "editprofile",
+        element: <EditProfile></EditProfile>,
+      },
+    ],
   },
 
   {
@@ -147,10 +147,7 @@ const router = createBrowserRouter([
         path: "user",
         element: <User></User>,
       },
-      // {
-      //   path:"workflow",
-      //   element: <Workflow></Workflow>
-      // },
+
       {
         path: "usage",
         element: <Usage></Usage>,
@@ -165,10 +162,7 @@ const router = createBrowserRouter([
           },
         ],
       },
-      // {
-      //   path:"security",
-      //   element: <Security></Security>
-      // },
+
       {
         path: "configuration",
         element: <Configuration></Configuration>,
@@ -180,6 +174,10 @@ const router = createBrowserRouter([
           {
             path: "key",
             element: <Key></Key>,
+          },
+          {
+            path: "addapikey",
+            element: <Apikey></Apikey>,
           },
         ],
       },
@@ -197,10 +195,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-      //   {
-      //     path:"data",
-      //     element: <Data></Data>
-      //   }
     ],
   },
 ]);
