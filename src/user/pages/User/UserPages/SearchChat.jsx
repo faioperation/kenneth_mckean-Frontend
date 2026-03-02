@@ -6,30 +6,20 @@ export default function SearchChat({ onClose }) {
   const [query, setQuery] = useState("");
 
   const items = [
-    {
-      title: "Create a hiring post design",
-      desc: "Create a hiring post design",
-    },
-    {
-      title: "Create a Travel Website",
-      desc: "Create a Travel Website",
-    },
-    {
-      title: "Create a Social media design",
-      desc: "Create a Social media design",
-    },
+    { title: "Create a hiring post design", desc: "Create a hiring post design" },
+    { title: "Create a Travel Website", desc: "Create a Travel Website" },
+    { title: "Create a Social media design", desc: "Create a Social media design" },
   ];
 
   const filteredItems = items.filter((item) =>
-    item.title.toLowerCase().includes(query.toLowerCase()),
+    item.title.toLowerCase().includes(query.toLowerCase())
   );
-
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-    
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 relative">
+        
+        {/* Close Button */}
         <Link to="/user/newtask">
           <button
             onClick={onClose}
@@ -69,9 +59,7 @@ export default function SearchChat({ onClose }) {
               </div>
             ))
           ) : (
-            <p className="text-sm text-gray-400 text-center">
-              No results found
-            </p>
+            <p className="text-sm text-gray-400 text-center">No results found</p>
           )}
         </div>
       </div>

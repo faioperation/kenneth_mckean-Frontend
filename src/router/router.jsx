@@ -36,6 +36,7 @@ import SearchChat from "../user/pages/User/UserPages/SearchChat";
 import Project from "../user/pages/User/UserPages/Project";
 import Library from "../user/pages/User/UserPages/Library";
 import UserProfile from "../user/pages/User/UserPages/UserProfile";
+import EditProfile from "../user/pages/User/UserPages/EditProfile";
 
 const router = createBrowserRouter([
   {
@@ -111,12 +112,16 @@ const router = createBrowserRouter([
       },
       {
         path: "project",
-        element: <Project></Project>
+        element: <Project/>
       },
       {
         path: "profile",
         element: <UserProfile></UserProfile>
       },
+      {
+        path:"editprofile",
+        element:<EditProfile></EditProfile>
+      }
     
     ]
   },
