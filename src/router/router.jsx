@@ -37,6 +37,7 @@ import Project from "../user/pages/User/UserPages/Project";
 import Library from "../user/pages/User/UserPages/Library";
 import UserProfile from "../user/pages/User/UserPages/UserProfile";
 import EditProfile from "../user/pages/User/UserPages/EditProfile";
+import Policy from "../user/pages/User/Policy";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: "/pricing",
         element: <PricingPage />,
+      },
+      {
+        path: "/policy",
+        element: <Policy></Policy>
       },
     ],
   },
