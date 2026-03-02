@@ -16,3 +16,8 @@
   --font-inter: "Inter", sans-serif;
   --color-gray: #8C8C8C
 }
+
+.h4{
+  font-size: large;
+  font:300
+}
