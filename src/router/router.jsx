@@ -111,7 +111,7 @@ const router = createBrowserRouter([
       },
       {
         path: "project",
-        element: <Project></Project>
+        element: <Project/>
       },
       {
         path: "profile",
