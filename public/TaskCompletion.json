@@ -1,0 +1,9 @@
+[
+    { "day": "Mon", "completed": 240, "failed": 20 },
+    { "day": "Tue", "completed": 290, "failed": 35 },
+    { "day": "Wed", "completed": 310, "failed": 15 },
+    { "day": "Thu", "completed": 270, "failed": 25 },
+    { "day": "Fri", "completed": 340, "failed": 30 },
+    { "day": "Sat", "completed": 300, "failed": 18 },
+    { "day": "Sun", "completed": 255, "failed": 45 }
+  ]

@@ -1,0 +1,8 @@
+[
+    { "month": "Jan", "cost": 12000 },
+    { "month": "Feb", "cost": 15500 },
+    { "month": "Mar", "cost": 18200 },
+    { "month": "Apr", "cost": 17000 },
+    { "month": "May", "cost": 22000 },
+    { "month": "Jun", "cost": 26000 }
+  ]

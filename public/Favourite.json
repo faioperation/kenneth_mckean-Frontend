@@ -1,0 +1,29 @@
+[
+    {
+      "id": "post_001",
+      "title": "Create a hiring post design",
+      "description": "Create a hiring post design",
+      "main_image": "https://i.ibb.co.com/rG64zk3s/3bb7c17decf81e6db3cb6a3bb6d3b1ec421abd75.png",
+      "author_icon": "material-symbols:palette-outline",
+      "is_favorite": false,
+      "category": "Graphic Design"
+    },
+    {
+      "id": "post_002",
+      "title": "Create a hiring post design",
+      "description": "Create a hiring post design",
+      "main_image": "https://i.ibb.co.com/nMZ3996T/22d1058038e67a9765d46be4cf753712f4af9fc8.png",
+      "author_icon": "material-symbols:palette-outline",
+      "is_favorite": true,
+      "category": "Creative Concept"
+    },
+    {
+      "id": "post_003",
+      "title": "Create a hiring post design",
+      "description": "Create a hiring post design",
+      "main_image": "https://i.ibb.co.com/KjM1B9xS/466d3d4d820b658878abeacfe8af13cde3ea6c30.png",
+      "author_icon": "material-symbols:palette-outline",
+      "is_favorite": false,
+      "category": "Marketing"
+    }
+  ]

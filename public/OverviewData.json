@@ -1,0 +1,66 @@
+{
+  "topStats": [
+    { "id": 1, "label": "Total Active Users", "value": "2,847", "change": "+12.3%", "trend": "up" },
+    { "id": 2, "label": "API Usage", "value": "1.2M", "change": "+24.5%", "trend": "up" },
+    { "id": 3, "label": "Cost Today", "value": "$1,284", "change": "+9.3%", "trend": "up" }
+  ],
+  
+  "agentSuccess": {
+    "completed": 95,
+    "failed": 5
+  },
+  "apiUsageTrend": [
+    { "time": "00:00", "usage": 1200 },
+    { "time": "04:00", "usage": 800 },
+    { "time": "08:00", "usage": 3500 },
+    { "time": "12:00", "usage": 5800 },
+    { "time": "16:00", "usage": 4200 },
+    { "time": "20:00", "usage": 2900 },
+    { "time": "23:59", "usage": 1800 }
+  ],
+  "costAnalytics": [
+    { "month": "Jan", "cost": 12000 },
+    { "month": "Feb", "cost": 15500 },
+    { "month": "Mar", "cost": 18200 },
+    { "month": "Apr", "cost": 17000 },
+    { "month": "May", "cost": 22000 },
+    { "month": "Jun", "cost": 26000 }
+  ],
+  "realTimeActivity": [
+    {
+      "id": 1,
+      "user": "admin@demo.com",
+      "action": "Completed workflow execution",
+      "timestamp": "2 sec ago",
+      "status": "success"
+    },
+    {
+      "id": 2,
+      "user": "admin@test.com",
+      "action": "Started new task batch",
+      "timestamp": "15 sec ago",
+      "status": "warning"
+    },
+    {
+      "id": 3,
+      "user": "admin@dashboard.local",
+      "action": "Failed authentication check",
+      "timestamp": "1 min ago",
+      "status": "error"
+    },
+    {
+      "id": 4,
+      "user": "admin@demo.com",
+      "action": "Processing predictions",
+      "timestamp": "2 min ago",
+      "status": "warning"
+    },
+    {
+      "id": 5,
+      "user": "admin@demo.com",
+      "action": "Completed data validation",
+      "timestamp": "3 min ago",
+      "status": "success"
+    }
+  ]
+}
