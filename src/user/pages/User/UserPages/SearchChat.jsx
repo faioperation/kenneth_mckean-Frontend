@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
 import { Link } from "react-router";
 
-export default function SearchChat({onClose}) {
+export default function SearchChat({ onClose }) {
   const [query, setQuery] = useState("");
 
   const items = [
@@ -21,7 +21,7 @@ export default function SearchChat({onClose}) {
   ];
 
   const filteredItems = items.filter((item) =>
-    item.title.toLowerCase().includes(query.toLowerCase())
+    item.title.toLowerCase().includes(query.toLowerCase()),
   );
 
 
@@ -30,28 +30,14 @@ export default function SearchChat({onClose}) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
     
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 relative">
-        
-        {/* Close Button */}
-<<<<<<< HEAD
-     
-=======
-<<<<<<< HEAD
-      <Link to="/user/newtask">  <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-black"
-=======
->>>>>>> e2e03261054b4b8cc3e090ae9f1047c40a66f2c3
         <Link to="/user/newtask">
-        <button
-          onClick={onClose}
-          className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-black"
-<<<<<<< HEAD
-=======
->>>>>>> d12c6581e2be1f6785070e055bde8c811ae67891
->>>>>>> e2e03261054b4b8cc3e090ae9f1047c40a66f2c3
-        >
-          <FiX size={20} />
-        </button></Link>
+          <button
+            onClick={onClose}
+            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-black"
+          >
+            <FiX size={20} />
+          </button>
+        </Link>
 
         {/* Search Input */}
         <div className="flex items-center border-b pb-3 mb-4">
@@ -77,9 +63,7 @@ export default function SearchChat({onClose}) {
                   🎨
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-800">
-                    {item.title}
-                  </h4>
+                  <h4 className="font-medium text-gray-800">{item.title}</h4>
                   <p className="text-sm text-gray-500">{item.desc}</p>
                 </div>
               </div>
@@ -93,13 +77,4 @@ export default function SearchChat({onClose}) {
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-
-=======
-<<<<<<< HEAD
-}
-=======
-} 
->>>>>>> d12c6581e2be1f6785070e055bde8c811ae67891
->>>>>>> e2e03261054b4b8cc3e090ae9f1047c40a66f2c3
