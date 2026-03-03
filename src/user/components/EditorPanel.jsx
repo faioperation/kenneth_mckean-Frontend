@@ -5,7 +5,7 @@ const EditorPanel = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
-    <section className="flex-[1.2] flex flex-col bg-white m-5 ml-0 rounded-2xl shadow border overflow-hidden">
+    <section className="flex-[1.2] flex flex-col bg-white m-5 ml-0 mb-0 rounded-2xl shadow border overflow-hidden">
       {/* Header */}
 
       <EveryButton />
