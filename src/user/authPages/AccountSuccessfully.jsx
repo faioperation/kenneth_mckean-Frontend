@@ -7,7 +7,7 @@ const AccountSuccessfully = () => {
       <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6 sm:p-8">
         <AuthNavbar title={"Account Create Successfully!"} />
 
-        <Link to={"/new-task"}>
+        <Link to={"/user/newtask"}>
           <button className="w-full bg-black text-white py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition cursor-pointer mt-4">
             Continue New Task
           </button>

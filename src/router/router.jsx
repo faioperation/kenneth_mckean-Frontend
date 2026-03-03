@@ -39,6 +39,7 @@ import UserProfile from "../user/pages/User/UserPages/UserProfile";
 import EditProfile from "../user/pages/User/UserPages/EditProfile";
 import Policy from "../user/pages/User/Policy";
 import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
+import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 
 const router = createBrowserRouter([
   {
@@ -100,6 +101,12 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+   path: "/user",
+   element:<UserDashboard/>
+  },
+  
   {
     path: "/user",
     element: <NewUser></NewUser>,
