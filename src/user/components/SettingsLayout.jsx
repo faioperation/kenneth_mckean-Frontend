@@ -30,32 +30,45 @@ export default function SettingsLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-white text-black">
-      
+    <div className="flex flex-col md:flex-row h-screen bg-white text-black">
       {/* LEFT SIDEBAR */}
-      <div className="w-64 bg-white border-r p-4 border-gray-200">
-  
-
-        <div className="space-y-2">
+      <div
+        className="
+        w-full md:w-64 
+        border-b md:border-b-0 md:border-r 
+        border-gray-200 
+        p-4
+        overflow-x-auto md:overflow-visible
+      "
+      >
+        {/* Mobile: Horizontal Scroll Menu */}
+        <div className="flex md:block gap-2 md:space-y-2">
           {menu.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-3 w-full p-3 rounded-lg text-left transition cursor-pointer ${
-                activeTab === item.id
-                  ? "bg-gray-200 font-medium"
-                  : "hover:bg-gray-100"
-              }`}
+              className={`
+                flex items-center gap-2
+                min-w-max md:w-full
+                p-3 rounded-lg text-left
+                transition cursor-pointer
+                text-sm md:text-base
+                ${
+                  activeTab === item.id
+                    ? "bg-gray-200 font-medium"
+                    : "hover:bg-gray-100"
+                }
+              `}
             >
               <span className="text-lg">{item.icon}</span>
-              {item.label}
+              <span className="whitespace-nowrap">{item.label}</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* RIGHT CONTENT */}
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
         {activeTab === "general" && <GeneralContent />}
         {activeTab === "domains" && <DomainsPage />}
         {activeTab === "notifications" && <Notification />}

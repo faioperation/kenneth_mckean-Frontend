@@ -13,6 +13,7 @@ import DatabaseEmptyState from "./DatabaseEmptyState";
 import FileStorageEmptyState from "./FileStorageEmptyState";
 import SettingsLayout from "./SettingsLayout";
 import Dashboard from "./Dashboard";
+import PublishPage from "./PublishPage";
 
 const EveryButton = () => {
   const [activeTab, setActiveTab] = useState("code");
@@ -77,7 +78,11 @@ const EveryButton = () => {
             <Share2 size={18} />
           </button>
 
-          <button className="bg-black text-white px-4 py-1.5 rounded-lg text-sm hover:opacity-90 transition">
+          <button
+            onClick={() => setActiveTab("publish")}
+            className={`p-2 rounded-lg bg-black text-white cursor-pointer
+            `}
+          >
             Publish
           </button>
 
@@ -87,11 +92,11 @@ const EveryButton = () => {
         </div>
       </div>
 
-
       {activeTab === "dashboard" && <Dashboard />}
       {activeTab === "database" && <DatabaseEmptyState />}
       {activeTab === "folder" && <FileStorageEmptyState />}
       {activeTab === "settings" && <SettingsLayout />}
+      {activeTab === "publish" && <PublishPage />}
     </>
   );
 };
