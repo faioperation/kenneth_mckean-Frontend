@@ -1,7 +1,16 @@
 import SparkleIcon from "../../assets/icons/SparkleIcon";
 import { FaArrowUp, FaLink } from "react-icons/fa6";
-import { Globe, ImagePlus, Code2, LayoutDashboard, Smartphone, Palette } from "lucide-react";
+import {
+  Globe,
+  ImagePlus,
+  Code2,
+  LayoutDashboard,
+  Smartphone,
+  Palette,
+} from "lucide-react";
 import { FiMic } from "react-icons/fi";
+import { useRef } from "react";
+import { useNavigate } from "react-router";
 
 const features = [
   {
@@ -31,32 +40,44 @@ const features = [
 ];
 
 const TextCardLayouts = () => {
+  const textareaRef = useRef(null);
+
+  const handleInput = () => {
+    const el = textareaRef.current;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  };
+
+    const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/user");
+  };
+
   return (
     <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 ">
-      
       {/* Top Section */}
       <div className="shadow border border-gray-200 rounded-2xl p-4 sm:p-6 mb-8 bg-white">
-        
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-3">
           <SparkleIcon />
-          <h3 className="text-base sm:text-lg font-normal text-black">
-            Create in anything....
-          </h3>
+          <textarea
+            ref={textareaRef}
+            onInput={handleInput}
+            placeholder="Create in anything...."
+            className="text-base sm:text-lg font-normal text-black w-full resize-none focus:outline-none max-h-40 overflow-y-auto scrollbar-hide"
+          />
         </div>
 
         {/* Controls */}
         <div className="mt-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 ">
-          
           {/* Left */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-            
             <div className="size-[38px] sm:size-[42px] border border-gray-400 rounded-full flex items-center justify-center">
               <FaLink className="text-black text-sm sm:text-base" />
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              
               <button className="flex items-center gap-2 px-4 sm:px-5 h-10 sm:h-11 rounded-full border border-gray-300">
                 <Globe size={16} className="text-gray-600" />
                 <span className="text-sm sm:text-[15px] text-gray-700">
@@ -70,21 +91,21 @@ const TextCardLayouts = () => {
                   Create on Image
                 </span>
               </button>
-
             </div>
           </div>
 
           {/* Right */}
           <div className="flex items-center gap-3 sm:gap-4">
-            
             <div className="size-[38px] sm:size-[42px] border border-gray-400 rounded-full flex items-center justify-center">
               <FiMic className="text-black text-sm sm:text-base" />
             </div>
 
-            <div className="size-[38px] sm:size-[42px] bg-black rounded-full flex items-center justify-center">
+            <button
+              onClick={handleClick}
+              className="size-[38px] sm:size-[42px] bg-black rounded-full flex items-center justify-center cursor-pointer"
+            >
               <FaArrowUp className="text-white text-sm sm:text-base" />
-            </div>
-
+            </button>
           </div>
         </div>
       </div>
@@ -99,7 +120,6 @@ const TextCardLayouts = () => {
               key={item.id}
               className="border border-gray-200 rounded-2xl p-4 sm:p-5 bg-white hover:shadow-lg transition duration-300"
             >
-              
               <div className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full mb-4">
                 <Icon className="text-gray-600 text-lg" />
               </div>
@@ -115,7 +135,6 @@ const TextCardLayouts = () => {
           );
         })}
       </div>
-
     </div>
   );
 };

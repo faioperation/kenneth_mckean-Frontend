@@ -38,7 +38,7 @@ const SignInPage = () => {
 
         {/* Buttons */}
         <div className="mt-5 space-y-3 ">
-          <Link to={"/new-task"} className="block">
+          <Link to={"/user/newtask"} className="block">
             <button className="w-full bg-black text-white py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition cursor-pointer">
               Continue
             </button>

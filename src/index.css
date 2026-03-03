@@ -12,12 +12,27 @@
 
 
 
+*{
+    font-family: "Inter", sans-serif;
+      font-weight: 400;
+}
+
 @theme {
-  --font-inter: "Inter", sans-serif;
   --color-gray: #8C8C8C
 }
 
 .h4{
   font-size: large;
   font:300
+}
+
+
+/* Hide scrollbar but allow scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;     
 }
