@@ -44,7 +44,7 @@ const SignInPage = () => {
             </button>
           </Link>
 
-          <Link to={"#"} className="block">
+          <Link to={"/auth/signup"} className="block">
             <button className="w-full py-2.5 rounded-md text-sm font-medium hover:bg-gray-50 transition text-black border border-black cursor-pointer">
               Create Account
             </button>
@@ -59,14 +59,18 @@ const SignInPage = () => {
         </div>
 
         {/* Google Button */}
-        <div className="flex items-center justify-center gap-2 border border-gray-200 rounded-md py-2.5 cursor-pointer hover:bg-gray-50 transition">
+
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-md py-2.5 hover:bg-gray-50 transition cursor-pointer"
+        >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="google"
+            alt="Google"
             className="w-4 h-4"
           />
           <span className="text-sm text-black">Continue with Google</span>
-        </div>
+        </button>
       </div>
     </div>
   );

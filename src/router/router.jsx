@@ -102,15 +102,19 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-   path: "/user",
-   element:<UserDashboard/>
-  },
-  
+  // {
+  //   path: "/user/userdashboar",
+  //   element: <UserDashboard />,
+  // },
+
   {
     path: "/user",
     element: <NewUser></NewUser>,
     children: [
+      {
+        path: "newtask/dashboard",
+        element: <UserDashboard />,
+      },
       {
         path: "newtask",
         element: <NewTask></NewTask>,

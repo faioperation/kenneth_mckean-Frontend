@@ -19,7 +19,7 @@ export default function NewTask() {
           </p>
         </div>
         </div>
-      <TextCardLayouts></TextCardLayouts>
+      <TextCardLayouts enableNavigation={true}></TextCardLayouts>
     </div>
   )
 }

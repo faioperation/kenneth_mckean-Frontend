@@ -39,7 +39,7 @@ const features = [
   },
 ];
 
-const TextCardLayouts = () => {
+const TextCardLayouts = ({ enableNavigation = false }) => {
   const textareaRef = useRef(null);
 
   const handleInput = () => {
@@ -48,10 +48,12 @@ const TextCardLayouts = () => {
     el.style.height = el.scrollHeight + "px";
   };
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/user");
+    if (enableNavigation) {
+      navigate("dashboard");
+    }
   };
 
   return (
