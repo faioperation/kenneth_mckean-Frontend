@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { RiBookLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -33,24 +33,22 @@ export default function Sidebar({ isOpen, onClose }) {
     },
   ];
 
-  // const location = useLocation();
-  // const hideSidebar = location.pathname === "/admin/login";
-  // if (hideSidebar) return null;
+;
 
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/50 transition-opacity md:hidden"
+          className="fixed inset-0 z-20 bg-white transition-opacity md:hidden"
           onClick={onClose}
         />
       )}
-
+      
       {/* Sidebar Container */}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-80  transform bg-[#EBEBEB] text-white transition-transform duration-300 ease-in-out md:static md:translate-x-0  ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white  transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-[#2B7FFF33] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -102,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }) {
             ))}
           </nav>
 
-          <div className=" p-4  flex  flex-col justify-between gap-16">
+          <div className=" p-4  flex flex-wrap  flex-col justify-between  md:gap-12">
             <div>
               <div className="flex items-center justify-between p-4">
                 <p className="text-gray-500">Projects </p>
