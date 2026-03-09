@@ -24,11 +24,10 @@ export default function Header({ onMenuClick }) {
         </button>
 
         <p className="text-lg md:text-xl text-black font-bold flex gap-2 md:gap-4 items-center whitespace-nowrap">
-          QUANTUM AI <span className="hidden sm:inline">2.0</span>
+          Algorithms Al <span className="hidden sm:inline"></span>
           <span className="text-gray-600 text-sm cursor-pointer">∨</span>
         </p>
       </div>
-
       {/* Right Side Actions */}
       <div className="flex items-center gap-1 md:gap-3 lg:mr-10">
         <button className="hidden sm:flex btn relative text-gray-300 text-sm md:text-md rounded-full px-4 md:px-8 hover:bg-[#1f2d5c] hover:text-white transition-all border border-gray-300">
