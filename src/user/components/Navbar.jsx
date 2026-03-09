@@ -78,11 +78,16 @@ const Navbar = () => {
           <Link onClick={() => setMenuOpen(false)} to="/about">
             About Us
           </Link>
-
-          <button className="px-6 py-2 bg-black text-white rounded-full">
-            Sign in
-          </button>
-          <button className="px-6 py-2 border rounded-full">Sign Up</button>
+          <Link onClick={() => setMenuOpen(false)} to="/auth/signin">
+            <button className="px-5 py-2 bg-black rounded-full text-white text-sm cursor-pointer">
+              Sign in
+            </button>
+          </Link>
+          <Link onClick={() => setMenuOpen(false)} to="/auth/signup">
+            <button className="px-5 py-2 border rounded-full text-sm text-gray-700 cursor-pointer">
+              Sign Up
+            </button>
+          </Link>
         </div>
       )}
     </nav>
