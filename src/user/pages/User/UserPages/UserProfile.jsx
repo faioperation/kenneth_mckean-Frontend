@@ -20,8 +20,8 @@ export default function UserProfile({ onClose }) {
         <h2 className="text-xl font-semibold text-gray-800 mb-6">Profile</h2>
 
         {/* User Info */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center gap-4">
              <img 
                 src="https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png" 
                 alt="Profile" 
@@ -34,14 +34,14 @@ export default function UserProfile({ onClose }) {
           </div>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center  gap-3">
           <Link to="/user/editprofile">
             <button className="p-2 border rounded-full text-gray-800 hover:bg-gray-100">
-              <FiEdit2 size={18} />
+              <FiEdit2 size={12} />
             </button></Link>
        <Link to="/auth/signin">
             <button className="p-2 border rounded-full text-red-500 hover:bg-gray-100">
-              <FiLogOut size={18} />
+              <FiLogOut size={12} />
             </button></Link>
           </div>
         </div>

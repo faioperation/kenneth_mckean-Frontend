@@ -1,16 +1,10 @@
 import { Icon } from "@iconify/react";
 import { FaRegUser } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { PiSparkleBold } from "react-icons/pi";
 
 export default function Header({ onMenuClick }) {
-  const location = useLocation();
-  const hideHeader = location.pathname === "/user/library";
-  if (hideHeader) return null;
 
-  if (location.pathname !== "/user/newtask") {
-    return null;
-  }
   return (
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between bg-[#F8F8F7] px-4 md:px-6">
       {/* Left: Mobile Menu & Title */}
@@ -18,7 +12,7 @@ export default function Header({ onMenuClick }) {
         {/* Mobile Menu Button - Visible only on small screens */}
         <button
           onClick={onMenuClick}
-          className="rounded-md p-1 hover:bg-gray-200 md:hidden text-black"
+          className="rounded-md p-1 hover:bg-gray-200 lg:hidden text-black"
         >
           <Icon icon="material-symbols:menu" width="24" height="24" />
         </button>

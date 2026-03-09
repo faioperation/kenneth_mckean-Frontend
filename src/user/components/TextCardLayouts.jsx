@@ -56,6 +56,8 @@ const TextCardLayouts = ({ enableNavigation = false }) => {
     }
   };
 
+
+
   return (
     <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 ">
       {/* Top Section */}
