@@ -21,7 +21,7 @@ const ChatPanel = () => {
       {location.pathname === "/user/newtask/dashboard" && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-xl sm:text-2xl font-bold text-black">
-            Quantam AI 2.0
+            Algorithms Al
           </h2>
 
           <div className="flex gap-3 sm:gap-4">
