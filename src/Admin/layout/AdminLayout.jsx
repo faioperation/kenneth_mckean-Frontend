@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet, Navigate, useLocation } from "react-router";
 import Sidebar from "../Componants/layout/Sidebar";
-import Header from "../componants/layout/Header";
+import Header from "../Componants/layout/Header";
 
 export default function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,7 +13,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-[#0a1024] text-gray-100">
+    <div className="flex h-screen w-full bg-[#020f2e] text-gray-100">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="flex flex-1 flex-col overflow-hidden ">
