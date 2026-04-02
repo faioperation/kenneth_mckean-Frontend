@@ -10,7 +10,7 @@ import {
 } from "react-icons/fi";
 import GeneralContent from "./GeneralContent";
 import DomainsPage from "./DomainsPage";
-import Notification from "../../Admin/componants/layout/Notification";
+import Notification from "../../Admin/Componants/layout/Notification";
 import PaymentPage from "./PaymentPage";
 import SEOPage from "../SEOPage";
 import SecretsPage from "./SecretsPage";
