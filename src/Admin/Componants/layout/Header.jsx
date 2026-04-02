@@ -34,6 +34,7 @@ export default function Header({ onMenuClick }) {
 
       {/* Right Side Actions */}
       <div className="flex  gap-2  items-center lg:mr-20">
+        
         <div className="dropdown dropdown-left">
           <div
             tabIndex={0}
