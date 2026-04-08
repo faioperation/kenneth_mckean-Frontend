@@ -10,6 +10,7 @@ import { IoSearch } from "react-icons/io5";
 import { TbShoppingBagPlus } from "react-icons/tb";
 import { LuNotebook } from "react-icons/lu";
 import { SiLivechat } from "react-icons/si";
+import logo from "../../../../../assets/images/logo.jpeg";
 
 export default function Sidebar({ isOpen, onClose }) {
   const navLinks = [
@@ -58,7 +59,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <div className="flex items-center gap-3">
               <img
                 className="h-8 w-8"
-                src="https://i.ibb.co.com/mrpNqfkD/logo.png"
+                src={logo}
                 alt="Logo"
               />
               <div className="">
