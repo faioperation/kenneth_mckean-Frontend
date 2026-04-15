@@ -40,6 +40,7 @@ import EditProfile from "../user/pages/User/UserPages/EditProfile";
 import Policy from "../user/pages/User/Policy";
 import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
 import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
+import OTPVerification from "../user/authPages/OTPVerification";
 import Login from "../Admin/Pages/AdminAuth/Login";
 
 import VerifyOTP from "../Admin/Pages/AdminAuth/VerifyOTP";
@@ -86,8 +87,16 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
+        path: "/auth/verify-otp",
+        element: <OTPVerification type="signup" />,
+      },
+      {
         path: "/auth/forgot-password",
         element: <ForgotPassword />,
+      },
+      {
+        path: "/auth/verify-forgot-password",
+        element: <OTPVerification type="forgot" />,
       },
       {
         path: "/auth/verify",
