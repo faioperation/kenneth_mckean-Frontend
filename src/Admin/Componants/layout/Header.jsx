@@ -7,7 +7,12 @@ import AdminProfile from "../../Pages/AdminProfile/AdminProfile";
 
 export default function Header({ onMenuClick }) {
   const location = useLocation();
-  const hideSidebar = location.pathname === "/admin/login";
+  const hideSidebar  = location.pathname === "/admin/login"  ||
+   location.pathname === "/admin/login" || 
+  location.pathname === "/admin/forgot-password" || 
+  location.pathname === "/admin/verify-otp" || 
+  location.pathname === "/admin/reset-password" || 
+  location.pathname === "/admin/password-changed";
   if (hideSidebar) return null;
   return (
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between lg:justify-center bg-black border-b border-[#2B7FFF33] px-6 text-white shadow-sm">
