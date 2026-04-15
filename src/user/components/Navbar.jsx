@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import { useState } from "react";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/logo.jpeg";
 import { HiOutlineBars3 } from "react-icons/hi2";
 
 const Navbar = () => {

@@ -3,8 +3,8 @@ import AuthHeader from "../authPages/AuthHeader";
 
 const Authlayout = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <AuthHeader/>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      {/* <AuthHeader/> */}
       <main className="grow pt-15" >
         <Outlet />
       </main>
