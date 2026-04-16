@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import AuthContainer from "./AuthContainer";
 
 export default function PasswordChanged() {
@@ -7,10 +8,11 @@ export default function PasswordChanged() {
         Password Updated Successfully!
       </h3>
 
-      {/* navigate("/auth/login") */}
+     <Link to="/admin/login">
       <button className="w-full bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition">
         Back to Login
       </button>
+      </Link>
     </AuthContainer>
   );
 }

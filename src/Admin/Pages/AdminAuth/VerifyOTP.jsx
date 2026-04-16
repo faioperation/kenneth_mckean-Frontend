@@ -36,14 +36,16 @@ export default function VerifyOTP() {
 
       const res = await apiPost("/admin/auth/verify", {
         otp: otpValue,
-        email
-        
+        email,
       });
 
       toast.success(res?.message || "OTP verified");
 
-
-      navigate("/admin/reset-password");
+      navigate("/admin/reset-password", {
+        state: {
+          token: res.data.resetToken,
+        },
+      });
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "Invalid OTP";
