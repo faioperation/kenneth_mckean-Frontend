@@ -28,7 +28,7 @@ export const apiPut = async (url, data = {}, options = {}) => {
   } catch (error) {
     throw error;
   }
-};
+};  
 
 export const apiDelete = async (url, options = {}) => {
   try {

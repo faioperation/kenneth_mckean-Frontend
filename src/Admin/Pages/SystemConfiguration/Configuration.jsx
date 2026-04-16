@@ -10,7 +10,7 @@ export default function Configuration() {
     <div>
       <div className="flex justify-between lg:pr-8">
              <PageHeading
-               heading={"Usage & Billing"}
+               heading={"System Configuration"}
                subheading={"Track token usage and manage costs"}
              ></PageHeading>
              <Button  button={"Save Changes"}></Button>

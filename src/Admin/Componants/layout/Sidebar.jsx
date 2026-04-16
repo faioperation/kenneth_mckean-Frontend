@@ -28,7 +28,12 @@ export default function Sidebar({ isOpen, onClose }) {
   ];
 
   const location = useLocation();
-  const hideSidebar = location.pathname === "/admin/login";
+  const hideSidebar = location.pathname === "/admin/login"  ||
+   location.pathname === "/admin/login" || 
+  location.pathname === "/admin/forgot-password" || 
+  location.pathname === "/admin/verify-otp" || 
+  location.pathname === "/admin/reset-password" || 
+  location.pathname === "/admin/password-changed";
   if (hideSidebar) return null;
 
   return (

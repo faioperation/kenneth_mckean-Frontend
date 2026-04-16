@@ -13,7 +13,7 @@ import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
-import AdminAuth from "../Admin/Pages/AdminAuth";
+
 import Edit from "../Admin/Pages/AdminProfile/Edit";
 import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
 import Profile from "../Admin/Pages/AdminProfile/Profile";
@@ -41,6 +41,12 @@ import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 import OTPVerification from "../user/authPages/OTPVerification";
 import EmailVerificationNotice from "../user/authPages/EmailVerificationNotice";
 import ResetPassword from "../user/authPages/ResetPassword";
+import Login from "../Admin/Pages/AdminAuth/Login";
+
+import VerifyOTP from "../Admin/Pages/AdminAuth/VerifyOTP";
+import ResetPassword from "../Admin/Pages/AdminAuth/ResetPassword";
+import PasswordChanged from "../Admin/Pages/AdminAuth/PasswordChanged";
+import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -169,8 +175,26 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <AdminAuth></AdminAuth>,
+        element: <Login />,
       },
+      {
+        path: "forgot-password",
+        element: <ForgotPass/>
+      },
+    
+      {
+        path: "verify-otp",
+        element: <VerifyOTP />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "password-changed",
+        element: <PasswordChanged />,
+      },
+
       {
         path: "user",
         element: <User></User>,
