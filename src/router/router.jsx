@@ -26,10 +26,8 @@ import HomePage from "../user/pages/HomePage";
 import Authlayout from "../user/components/Authlayout";
 import SignupPage from "../user/authPages/SignupPage";
 import ForgotPassword from "../user/authPages/ForgotPassword";
-import VerifyComponet from "../user/authPages/VerifyComponet";
 import PasswordUpdated from "../user/authPages/PasswordUpdated";
 import SignInPage from "../user/authPages/SignInPage";
-import AccountSuccessfully from "../user/authPages/AccountSuccessfully";
 import NewUser from "../user/pages/User/NewUser";
 import NewTask from "../user/pages/User/UserPages/NewTask";
 import SearchChat from "../user/pages/User/UserPages/SearchChat";
@@ -41,6 +39,8 @@ import Policy from "../user/pages/User/Policy";
 import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
 import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 import OTPVerification from "../user/authPages/OTPVerification";
+import EmailVerificationNotice from "../user/authPages/EmailVerificationNotice";
+import ResetPassword from "../user/authPages/ResetPassword";
 import Login from "../Admin/Pages/AdminAuth/Login";
 
 import VerifyOTP from "../Admin/Pages/AdminAuth/VerifyOTP";
@@ -91,6 +91,10 @@ const router = createBrowserRouter([
         element: <OTPVerification type="signup" />,
       },
       {
+        path: "/auth/verify-email-notice",
+        element: <EmailVerificationNotice />,
+      },
+      {
         path: "/auth/forgot-password",
         element: <ForgotPassword />,
       },
@@ -99,9 +103,13 @@ const router = createBrowserRouter([
         element: <OTPVerification type="forgot" />,
       },
       {
-        path: "/auth/verify",
-        element: <VerifyComponet />,
+        path: "/auth/reset-password",
+        element: <ResetPassword />,
       },
+      // {
+      //   path: "/auth/verify",
+      //   element: <VerifyComponet />,
+      // },
       {
         path: "/auth/password-updated",
         element: <PasswordUpdated />,
@@ -110,10 +118,10 @@ const router = createBrowserRouter([
         path: "/auth/signin",
         element: <SignInPage />,
       },
-      {
-        path: "/auth/signIn-successful",
-        element: <AccountSuccessfully />,
-      },
+      // {
+      //   path: "/auth/signIn-successful",
+      //   element: <AccountSuccessfully />,
+      // },
     ],
   },
 
