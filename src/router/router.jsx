@@ -40,13 +40,13 @@ import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
 import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 import OTPVerification from "../user/authPages/OTPVerification";
 import EmailVerificationNotice from "../user/authPages/EmailVerificationNotice";
-import ResetPassword from "../user/authPages/ResetPassword";
 import Login from "../Admin/Pages/AdminAuth/Login";
 
 import VerifyOTP from "../Admin/Pages/AdminAuth/VerifyOTP";
 import ResetPassword from "../Admin/Pages/AdminAuth/ResetPassword";
 import PasswordChanged from "../Admin/Pages/AdminAuth/PasswordChanged";
 import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
+import UserResetPassword from "../user/authPages/UserResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -104,7 +104,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/auth/reset-password",
-        element: <ResetPassword />,
+        element: <UserResetPassword />,
       },
       // {
       //   path: "/auth/verify",
@@ -179,9 +179,9 @@ const router = createBrowserRouter([
       },
       {
         path: "forgot-password",
-        element: <ForgotPass/>
+        element: <ForgotPass />
       },
-    
+
       {
         path: "verify-otp",
         element: <VerifyOTP />,
