@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AuthContainer from "./AuthContainer";
-import { Link, useNavigate } from "react-router";
+import { Link} from "react-router";
 import { apiPost } from "../../../lib/api";
 import toast from "react-hot-toast";
 
@@ -9,7 +9,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
  const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       alert("Email and password required");
@@ -33,7 +33,8 @@ export default function Login() {
 
       toast(res?.message || "Login successful");
 
-      navigate("/admin");
+      // navigate("/admin/overview");
+      window.location.href = "/admin/overview"
     } catch (error) {
       alert(
         error?.response?.data?.message ||
