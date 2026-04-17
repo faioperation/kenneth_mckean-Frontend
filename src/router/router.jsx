@@ -1,23 +1,16 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-
 import AdminLayout from "../Admin/layout/AdminLayout";
 import Overview from "../Admin/Pages/Overview/Overview";
-
 import Usage from "../Admin/Pages/Usage&Billing/Usage";
-
 import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
-
 import User from "../Admin/Pages/User/User";
-
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
 import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
 import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
-
 import Edit from "../Admin/Pages/AdminProfile/Edit";
 import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
 import Profile from "../Admin/Pages/AdminProfile/Profile";
-
 import CommonLayout from "../user/components/CommonLayout";
 import AboutPage from "../user/pages/AboutPage";
 import PricingPage from "../user/pages/PricingPage";
@@ -41,7 +34,6 @@ import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 import OTPVerification from "../user/authPages/OTPVerification";
 import EmailVerificationNotice from "../user/authPages/EmailVerificationNotice";
 import Login from "../Admin/Pages/AdminAuth/Login";
-
 import VerifyOTP from "../Admin/Pages/AdminAuth/VerifyOTP";
 import ResetPassword from "../Admin/Pages/AdminAuth/ResetPassword";
 import PasswordChanged from "../Admin/Pages/AdminAuth/PasswordChanged";
@@ -69,6 +61,30 @@ const PrivateRoute = ({ children }) => {
 
   return children;
 };
+
+// route for user dashboard and other user protected routes
+const UserPrivateRoute = ({ children }) => {
+  const token = tokenStorage.getAccessToken();
+  const getUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  };
+  const user = getUser();
+
+  if (!token || !user) {
+    return <Navigate to="/auth/signin" />;
+  }
+
+  if (user.role !== "USER") {
+    return <Navigate to="/auth/signin" />;
+  }
+
+  return children;
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -153,7 +169,11 @@ const router = createBrowserRouter([
 
   {
     path: "/user",
-    element: <NewUser></NewUser>,
+    element: (
+      <UserPrivateRoute>
+        <NewUser />
+      </UserPrivateRoute>
+    ),
     children: [
       {
         path: "newtask/dashboard",

@@ -108,7 +108,7 @@ const SignupPage = () => {
                   required
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="John"
+                  placeholder="first name"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-gray-50 focus:bg-white transition-all"
                 />
               </div>
@@ -122,7 +122,7 @@ const SignupPage = () => {
                   required
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Doe"
+                  placeholder="last name"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-gray-50 focus:bg-white transition-all"
                 />
               </div>
@@ -142,7 +142,7 @@ const SignupPage = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="name@example.com"
+                placeholder="Enter your email"
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-gray-50 focus:bg-white transition-all"
               />
             </div>
