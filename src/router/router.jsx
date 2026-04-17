@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import AdminLayout from "../Admin/layout/AdminLayout";
 import Overview from "../Admin/Pages/Overview/Overview";
@@ -47,7 +47,28 @@ import ResetPassword from "../Admin/Pages/AdminAuth/ResetPassword";
 import PasswordChanged from "../Admin/Pages/AdminAuth/PasswordChanged";
 import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
 import UserResetPassword from "../user/authPages/UserResetPassword";
+import { tokenStorage } from "../lib/tokenStorage";
 
+const PrivateRoute = ({ children }) => {
+  const token = tokenStorage.getAccessToken();
+  const getUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  };
+  const user = getUser();
+  if (!token || !user) {
+    return <Navigate to="/admin/login" />;
+  }
+
+  if (user.role !== "ADMIN") {
+    return <Navigate to="/admin/login" />;
+  }
+
+  return children;
+};
 const router = createBrowserRouter([
   {
     path: "/",
@@ -164,36 +185,61 @@ const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "/admin/login",
+    element: <Login />,
+  },
+  {
+    path: "/admin/forgot-password",
+    element: <ForgotPass />,
+  },
+  {
+    path: "/admin/verify-otp",
+    element: <VerifyOTP />,
+  },
+  {
+    path: "/admin/reset-password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/admin/password-changed",
+    element: <PasswordChanged />,
+  },
   {
     path: "/admin",
-    element: <AdminLayout></AdminLayout>,
+    element: (
+      <PrivateRoute>
+        {" "}
+        <AdminLayout></AdminLayout>{" "}
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "overview",
         element: <Overview></Overview>,
       },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "forgot-password",
-        element: <ForgotPass />
-      },
 
-      {
-        path: "verify-otp",
-        element: <VerifyOTP />,
-      },
-      {
-        path: "reset-password",
-        element: <ResetPassword />,
-      },
-      {
-        path: "password-changed",
-        element: <PasswordChanged />,
-      },
+      // {
+      //   path: "login",
+      //   element: <Login />,
+      // },
+      // {
+      //   path: "forgot-password",
+      //   element: <ForgotPass/>
+      // },
+
+      // {
+      //   path: "verify-otp",
+      //   element: <VerifyOTP />,
+      // },
+      // {
+      //   path: "reset-password",
+      //   element: <ResetPassword />,
+      // },
+      // {
+      //   path: "password-changed",
+      //   element: <PasswordChanged />,
+      // },
 
       {
         path: "user",
@@ -249,6 +295,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
 ]);
 
 export default router;
