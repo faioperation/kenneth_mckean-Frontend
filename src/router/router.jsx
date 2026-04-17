@@ -40,31 +40,31 @@ import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
 import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 import OTPVerification from "../user/authPages/OTPVerification";
 import EmailVerificationNotice from "../user/authPages/EmailVerificationNotice";
-import ResetPassword from "../user/authPages/ResetPassword";
 import Login from "../Admin/Pages/AdminAuth/Login";
 
 import VerifyOTP from "../Admin/Pages/AdminAuth/VerifyOTP";
 import ResetPassword from "../Admin/Pages/AdminAuth/ResetPassword";
 import PasswordChanged from "../Admin/Pages/AdminAuth/PasswordChanged";
 import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
+import UserResetPassword from "../user/authPages/UserResetPassword";
 import { tokenStorage } from "../lib/tokenStorage";
 
 const PrivateRoute = ({ children }) => {
   const token = tokenStorage.getAccessToken();
   const getUser = () => {
-  try {
-    return JSON.parse(localStorage.getItem("user"));
-  } catch {
-    return null;
-  }
-};
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  };
   const user = getUser();
- if (!token || !user) {
+  if (!token || !user) {
     return <Navigate to="/admin/login" />;
   }
 
   if (user.role !== "ADMIN") {
-    return  <Navigate to="/admin/login" />; 
+    return <Navigate to="/admin/login" />;
   }
 
   return children;
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomePage />, 
+        element: <HomePage />,
       },
 
       {
@@ -125,7 +125,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/auth/reset-password",
-        element: <ResetPassword />,
+        element: <UserResetPassword />,
       },
       // {
       //   path: "/auth/verify",
@@ -185,7 +185,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-{
+  {
     path: "/admin/login",
     element: <Login />,
   },
@@ -218,6 +218,7 @@ const router = createBrowserRouter([
         path: "overview",
         element: <Overview></Overview>,
       },
+
       // {
       //   path: "login",
       //   element: <Login />,
@@ -259,7 +260,7 @@ const router = createBrowserRouter([
           },
         ],
       },
-    
+
       {
         path: "configuration",
         element: <Configuration></Configuration>,
@@ -294,7 +295,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-    
+
 ]);
 
 export default router;
