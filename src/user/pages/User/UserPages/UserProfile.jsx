@@ -1,11 +1,20 @@
 import { FiX, FiEdit2, FiLogOut } from "react-icons/fi";
 import { Link } from "react-router";
+import { tokenStorage } from "../../../../lib/tokenStorage";
 
 export default function UserProfile({ onClose }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    tokenStorage.clear();
+    localStorage.removeItem("user");
+    navigate("/auth/signin");
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 relative">
-           {/* Close Button */}
+        {/* Close Button */}
         <Link to="/user/newtask">
           <button
             onClick={onClose}
@@ -22,11 +31,11 @@ export default function UserProfile({ onClose }) {
         {/* User Info */}
         <div className="flex flex-wrap items-center justify-between mb-6">
           <div className="flex flex-wrap items-center gap-4">
-             <img 
-                src="https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png" 
-                alt="Profile" 
-                className="h-9 w-9 md:h-10 md:h-10 rounded-full object-cover border border-gray-200"
-              />
+            <img
+              src="https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png"
+              alt="Profile"
+              className="h-9 w-9 md:h-10 md:h-10 rounded-full object-cover border border-gray-200"
+            />
             <div>
               <h3 className="font-medium text-gray-800">Akash Rohman</h3>
               <p className="text-sm text-gray-500">amlgroridim@gmail.com</p>
@@ -35,14 +44,14 @@ export default function UserProfile({ onClose }) {
 
           {/* Action Icons */}
           <div className="flex items-center  gap-3">
-          <Link to="/user/editprofile">
-            <button className="p-2 border rounded-full text-gray-800 hover:bg-gray-100">
-              <FiEdit2 size={12} />
-            </button></Link>
-       <Link to="/auth/signin">
-            <button className="p-2 border rounded-full text-red-500 hover:bg-gray-100">
+            <Link to="/user/editprofile">
+              <button className="p-2 border rounded-full text-gray-800 hover:bg-gray-100">
+                <FiEdit2 size={12} />
+              </button></Link>
+
+            <button onClick={handleLogout} className="p-2 border rounded-full text-red-500 hover:bg-gray-100">
               <FiLogOut size={12} />
-            </button></Link>
+            </button>
           </div>
         </div>
 
