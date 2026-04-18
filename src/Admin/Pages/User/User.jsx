@@ -1,15 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
-
+import { apiDelete, apiGet } from "../../../lib/api";
 export default function User() {
   const [users, setUsers] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    fetch("/User.json")
-      .then((res) => res.json())
-      .then((data) => setUsers(data));
+    const getUsers = async () => {
+      setLoading(true);
+      try {
+        const res = await apiGet("/admin/user");
+        setUsers(res.data);
+      } catch (error) {
+        console.log(error);
+        console.log(error?.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getUsers();
   }, []);
 
+  // delete function
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const handleDelete = async () => {
+    try {
+      const data = await apiDelete(`/admin/user/${selectedUserId}`);
+
+      if (data.success) {
+        setUsers((prev) => prev.filter((user) => user.id !== selectedUserId));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setShowModal(false);
+      setSelectedUserId(null);
+    }
+  };
+ 
   return (
     <div className="bg-[#0b0e14] p-4 md:p-6 min-h-screen">
       <div className="max-w-8xl mx-auto">
@@ -67,6 +95,7 @@ export default function User() {
                     </td>
                     <td className="px-6 py-2 text-center">
                       <button
+                        onClick={() =>{ setSelectedUserId(user.id); setShowModal(true);}}
                         className="p-2 text-red-500/70 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                         title="Delete User"
                       >
@@ -80,12 +109,38 @@ export default function User() {
           </div>
         </div>
 
-        {/* Empty State (Optional) */}
-        {users.length === 0 && (
+        {loading && (
           <div className="text-center py-20">
-            <p className="text-gray-500 italic">
-              No users found in the database.
-            </p>
+            <p className="text-green-500 italic">User list Loading ......</p>
+          </div>
+        )}
+        {showModal && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-[#11141b] p-6 rounded-xl w-[300px] text-center shadow-xl">
+              <h2 className="text-lg font-semibold mb-4 text-white">
+                Confirm Delete
+              </h2>
+
+              <p className="text-gray-400 text-sm mb-6">
+                Are you sure you want to delete this user?
+              </p>
+
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-700 text-sm"
+                >
+                  No
+                </button>
+
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 text-sm"
+                >
+                  Yes, Delete
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

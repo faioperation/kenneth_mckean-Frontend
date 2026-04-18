@@ -1,5 +1,6 @@
 import React from "react";
 import { LuEyeOff } from "react-icons/lu";
+import { AiOutlineLogout } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { tokenStorage } from "../../../lib/tokenStorage";
 
@@ -86,14 +87,14 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Logout Button */}
+        
           <div className="flex justify-end pt-10">
             <button
               type="button"
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl text-sm font-semibold transition"
+              className="text-red-700 hover:text-red-800 px-8 py-3 rounded-xl  font-semibold text-lg flex items-center gap-2 border border-red-800"
             >
-              Logout
+               <AiOutlineLogout /> Logout
             </button>
           </div>
 
