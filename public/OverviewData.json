@@ -1,6 +1,6 @@
 {
   "topStats": [
-    { "id": 1, "label": "Total Active Users", "value": "2,847", "change": "+12.3%", "trend": "up" },
+    { "id": 1, "label": "Total Plan Purchase", "value": "2,847", "change": "+12.3%", "trend": "up" },
     { "id": 2, "label": "API Usage", "value": "1.2M", "change": "+24.5%", "trend": "up" },
     { "id": 3, "label": "Cost Today", "value": "$1,284", "change": "+9.3%", "trend": "up" }
   ],
