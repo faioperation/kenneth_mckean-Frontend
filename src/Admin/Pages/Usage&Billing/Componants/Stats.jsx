@@ -19,11 +19,11 @@ export default function Stats() {
   });
   return (
     <div className="w-full lg:px-8 md:px-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-28  gap-4 md:gap-6 lg:my-6 my-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:gap-20  gap-4 md:gap-6 lg:my-6 my-4">
        
           <div
            
-            className="bg-[#11141b] border border-[#1e232b] p-5 lg:px-18 md:px-16 rounded-xl flex gap-8 items-center hover:border-gray-700 transition-colors"
+            className="bg-[#11141b] border border-[#263e66] p-5 lg:px-4 xl:px-18 md:px-16 rounded-xl flex gap-8 items-center hover:border-gray-700 transition-colors"
           >
             <div className="h-12 w-12 lg:h-14 lg:w-14 bg-green-900 rounded-full flex items-center justify-center text-xl lg:text-2xl text-green-400 border border-[#2d333b]">
               $
@@ -41,7 +41,7 @@ export default function Stats() {
        
           <div
            
-            className="bg-[#11141b] border border-[#1e232b] p-5 lg:px-18 md:px-16 rounded-xl flex gap-8   items-center hover:border-gray-700 transition-colors"
+            className="bg-[#11141b] border border-[#263e66] p-5 lg:px-4 xl:px-18 md:px-16 rounded-xl flex gap-8   items-center hover:border-gray-700 transition-colors"
           >
             <div className="h-12 w-12 lg:h-14 lg:w-14 bg-[#350a6d] rounded-full flex items-center  justify-center text-violet-300 text-xl lg:text-2xl border border-[#2d333b]">
               <MdElectricBolt />
@@ -59,7 +59,7 @@ export default function Stats() {
        
           <div
            
-            className="bg-[#11141b] border border-[#1e232b] p-5 lg:px-18 md:px-16 rounded-xl gap-8  flex items-center hover:border-gray-700 transition-colors"
+            className="bg-[#11141b] border border-[#263e66] p-5 lg:px-4 xl:px-18 md:px-16 rounded-xl gap-8  flex items-center hover:border-gray-700 transition-colors"
           >
             <div className="h-12 w-12 lg:h-14 lg:w-14 bg-[#504d28] rounded-full flex items-center justify-center text-xl text-yellow-400 border border-[#2d333b]">
               <GrLineChart />

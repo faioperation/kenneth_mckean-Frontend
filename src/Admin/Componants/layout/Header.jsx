@@ -15,7 +15,7 @@ export default function Header({ onMenuClick }) {
   location.pathname === "/admin/password-changed";
   if (hideSidebar) return null;
   return (
-    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between lg:justify-center bg-black border-b-2 border-[#4c9ffd33] px-6 text-white shadow-sm">
+    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between lg:justify-center bg-black border-b border-[#263e66] px-6 text-white shadow-sm">
       <div className="flex items-center gap-4">
         {/* Mobile Menu Button */}
         <button

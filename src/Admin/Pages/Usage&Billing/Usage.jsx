@@ -13,7 +13,7 @@ export default function Usage() {
           heading={"Usage & Billing"}
           subheading={"Track token usage and manage costs"}
         ></PageHeading>
-        <Button button={"Export Report"}></Button>
+        <Button button={"export"}></Button>
       </div>
 
       <div>
