@@ -3,10 +3,26 @@ import { LuEyeOff } from "react-icons/lu";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { tokenStorage } from "../../../lib/tokenStorage";
+import { apiGet } from "../../../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
   const navigate = useNavigate();
-
+const getProfile = async () => {
+  const res = await apiGet("/admin/profile")
+  return ({profile:res.data})
+}
+const {data , isError} = useQuery({
+  queryKey:["profile-data"],
+  queryFn: getProfile
+})
+if (isError){
+  return(
+    <div>
+      {isError?.message}
+    </div>
+  )
+}
   const handleLogout = () => {
     
     tokenStorage.clear();
@@ -23,14 +39,15 @@ export default function Profile() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           <div className="flex items-center gap-4">
             <img
-              src="https://i.ibb.co.com/VcWhsLp9/Ellipse-25.png"
-              alt="Profile"
+              src={data.profile.avatarUrl}
+              alt=""
               className="h-20 w-20 rounded-full border-2 border-gray-700 object-cover"
             />
             <div>
-              <h2 className="text-xl font-semibold">Alexa Rawles</h2>
+              <h2 className="text-xl flex font-semibold">{data.profile.firstname} <span className="ml-2">{data.profile.lastname}</span>
+              </h2>
               <p className="text-gray-500 text-sm">
-                alexarawles@gmail.com
+               {data.profile.email}
               </p>
             </div>
           </div>
@@ -42,24 +59,22 @@ export default function Profile() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">
-                Full Name
+                First Name
               </label>
-              <input
-                type="text"
-                placeholder="Alexa Rawles"
+              <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              />
+              >{data.profile.firstname}
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">
                 Last Name
               </label>
-              <input
-                type="text"
-                placeholder="Rawles"
+              <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              />
+              >{data.profile.lastname}
+              </div>
             </div>
           </div>
 
@@ -68,22 +83,20 @@ export default function Profile() {
               <label className="text-sm font-medium text-gray-300">
                 Gender
               </label>
-              <input
-                type="text"
-                placeholder="Man"
+              <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              />
+              >{data.profile.gender}
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-300">
                 Country
               </label>
-              <input
-                type="text"
-                placeholder="USA"
+             <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              />
+              >{data.profile.country}
+              </div>
             </div>
           </div>
 

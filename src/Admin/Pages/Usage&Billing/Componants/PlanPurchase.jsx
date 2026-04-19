@@ -4,19 +4,7 @@ import { apiGet } from "../../../../lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export default function PlanPurchase() {
-  // const [users, setUsers] = useState([]);
 
-  // useEffect(() => {
-  //   fetch("/User.json")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-
-  //       const sortedData = data
-  //         .sort((a, b) => new Date(b.date) - new Date(a.date))
-  //         .slice(0, 5);
-  //       setUsers(sortedData);
-  //     });
-  // }, []);
   const getPlanPurchase = async () => {
     const res = await apiGet("/admin/usage-billing");
     return res.data.recentPurchases?.map((purchase) => ({
@@ -99,7 +87,7 @@ export default function PlanPurchase() {
           </tbody>
         </table>
       </div>
-      
+
    
     </div>
   );

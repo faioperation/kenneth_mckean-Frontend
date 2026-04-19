@@ -4,29 +4,8 @@ import { apiGet } from '../../../../lib/api';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Plans() {
-  // const pricingPlans = [
-  //   {
-  //     name: "Free",
-  //     price: "0",
-  //     features: ["100K tokens/month", "5 agents", "Basic workflows", "Email support"],
-  //     buttonText: "Free Plan",
-  //     isCurrent: false,
-  //   },
-  //   {
-  //     name: "Pro",
-  //     price: "99",
-  //     features: ["5M tokens/month", "50 agents", "Advanced workflows", "Priority support", "API access"],
-  //     buttonText: "Current Plan",
-  //     isCurrent: true,
-  //   },
-  //   {
-  //     name: "Enterprise",
-  //     price: "499",
-  //     features: ["Unlimited tokens", "Unlimited agents", "Custom workflows", "24/7 dedicated support", "Custom integrations", "SLA guarantee"],
-  //     buttonText: "Enterprise",
-  //     isCurrent: false,
-  //   }
-  // ];
+ 
+  
 const getPlans = async () => {
   const res = await apiGet("/admin/usage-billing/plans")
   return res.data.map((plan)=>({
