@@ -24,11 +24,20 @@ export const apiPost = async (url, data = {}, options = {}) => {
 export const apiPut = async (url, data = {}, options = {}) => {
   try {
     const response = await apiClient.put(url, data, options);
-    return response.data; 
+    return response.data;
   } catch (error) {
     throw error;
   }
-};  
+};
+
+export const apiPatch = async (url, data = {}, options = {}) => {
+  try {
+    const response = await apiClient.patch(url, data, options);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const apiDelete = async (url, options = {}) => {
   try {

@@ -1,17 +1,25 @@
-import { apiGet } from "../lib/api";
+import { apiGet, apiPatch, apiPut } from "../lib/api";
 
-export const getUserProfile = async () => {
-    const res = await apiGet("/user/profile");
-    return res.data;
+// GET profile
+export const getUserProfile = () => {
+    return apiGet("/user/profile");
 };
 
-export const updateUserProfile = async (formData) => {
-    const res = await apiClient.patch("/user/profile", formData, {
+// UPDATE profile (form-data)
+export const updateUserProfile = (formData) => {
+    return apiPut("/user/profile", formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
     });
-
-    return res.data;
 };
+
+// CHANGE PASSWORD
+export const changePassword = (data) => {
+    return apiPatch("/user/auth/change-password", data);
+};
+
+
+
+
 
