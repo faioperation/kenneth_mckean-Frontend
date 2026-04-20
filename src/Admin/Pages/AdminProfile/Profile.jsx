@@ -10,16 +10,16 @@ export default function Profile() {
   const navigate = useNavigate();
 const getProfile = async () => {
   const res = await apiGet("/admin/profile")
-  return ({profile:res.data})
+  return res.data;
 }
-const {data , isError} = useQuery({
+const {data={} , isError, error} = useQuery({
   queryKey:["profile-data"],
   queryFn: getProfile
 })
 if (isError){
   return(
     <div>
-      {isError?.message}
+      {error?.message}
     </div>
   )
 }
@@ -39,15 +39,15 @@ if (isError){
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           <div className="flex items-center gap-4">
             <img
-              src={data.profile.avatarUrl}
+              src={data.avatarUrl }
               alt=""
               className="h-20 w-20 rounded-full border-2 border-gray-700 object-cover"
             />
             <div>
-              <h2 className="text-xl flex font-semibold">{data.profile.firstname} <span className="ml-2">{data.profile.lastname}</span>
+              <h2 className="text-xl flex font-semibold">{data.firstname} <span className="ml-2">{data.lastname}</span>
               </h2>
               <p className="text-gray-500 text-sm">
-               {data.profile.email}
+               {data.email}
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@ if (isError){
               </label>
               <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              >{data.profile.firstname}
+              >{data.firstname}
               </div>
             </div>
 
@@ -73,7 +73,7 @@ if (isError){
               </label>
               <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              >{data.profile.lastname}
+              >{data.lastname}
               </div>
             </div>
           </div>
@@ -85,7 +85,7 @@ if (isError){
               </label>
               <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              >{data.profile.gender}
+              >{data.gender}
               </div>
             </div>
 
@@ -95,7 +95,7 @@ if (isError){
               </label>
              <div
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
-              >{data.profile.country}
+              >{data.country}
               </div>
             </div>
           </div>

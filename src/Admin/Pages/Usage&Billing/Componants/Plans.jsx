@@ -65,17 +65,9 @@ if(isLoading){
                   <span>{feature}</span>
                 </li>
               ))}
-                  <li  className="flex items-center gap-3 text-gray-300 text-sm">
-                  <HiOutlineCheckCircle className="text-emerald-500 shrink-0" size={20} />
-                  <span>{plan.requestLimit}</span>
-                </li>
-                  <li  className="flex items-center gap-3 text-gray-300 text-sm">
-                  <HiOutlineCheckCircle className="text-emerald-500 shrink-0" size={20} />
-                  <span>{plan.agentLimit}</span>
-                </li>
+                
             </ul>
-
-            {/* Action Button */}
+            
             <button 
               className={`w-full py-3 rounded-xl cursor-pointer font-semibold text-sm transition-all ${
                 plan.isCurrent 
@@ -83,7 +75,7 @@ if(isLoading){
                 : "bg-[#0A369D] text-white hover:bg-[#0d42bc] shadow-lg shadow-blue-900/20"
               }`}
             >
-              {plan.buttonText}
+              {plan.name}
             </button>
           </div>
         ))}
