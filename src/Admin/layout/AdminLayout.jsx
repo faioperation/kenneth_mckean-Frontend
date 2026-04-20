@@ -13,7 +13,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <div  className="flex h-screen w-full bg-[#020f2e] text-gray-100">
+    <div  className="flex h-screen w-full bg-black text-gray-100">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="flex flex-1 flex-col overflow-hidden ">

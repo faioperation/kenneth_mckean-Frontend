@@ -49,13 +49,13 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Sidebar Container */}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-black text-white transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-[#2B7FFF33] ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-black text-white transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-[#263e66] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col">
           {/* Logo Section */}
-          <div className="flex h-16 items-center justify-between px-6 border-b border-[#2B7FFF33]">
+          <div className="flex h-16 items-center justify-between px-6 border-b border-[#263e66]">
             <div className="flex items-center gap-3">
               <img
                 className="h-8 w-8"

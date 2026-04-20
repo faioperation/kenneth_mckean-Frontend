@@ -1,109 +1,116 @@
-import React from 'react';
-import { LuEyeOff } from "react-icons/lu"; 
-import { NavLink } from 'react-router';
+import React from "react";
+import { LuEyeOff } from "react-icons/lu";
+import { AiOutlineLogout } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { tokenStorage } from "../../../lib/tokenStorage";
+import { apiGet } from "../../../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
+  const navigate = useNavigate();
+const getProfile = async () => {
+  const res = await apiGet("/admin/profile")
+  return res.data;
+}
+const {data={} , isError, error} = useQuery({
+  queryKey:["profile-data"],
+  queryFn: getProfile
+})
+if (isError){
+  return(
+    <div>
+      {error?.message}
+    </div>
+  )
+}
+  const handleLogout = () => {
+    
+    tokenStorage.clear();
+    localStorage.removeItem("user");
+
+    navigate("/admin/login");
+  };
+
   return (
     <div className="bg-[#0b0e14] rounded-lg min-h-screen p-4 md:p-10 text-white">
       <div className="max-w-6xl bg-[#0b0e14]">
-        
+
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           <div className="flex items-center gap-4">
-            <img 
-              src="https://i.ibb.co.com/VcWhsLp9/Ellipse-25.png" 
-              alt="Profile" 
+            <img
+              src={data.avatarUrl }
+              alt=""
               className="h-20 w-20 rounded-full border-2 border-gray-700 object-cover"
             />
             <div>
-              <h2 className="text-xl font-semibold">Alexa Rawles</h2>
-              <p className="text-gray-500 text-sm">alexarawles@gmail.com</p>
+              <h2 className="text-xl flex font-semibold">{data.firstname} <span className="ml-2">{data.lastname}</span>
+              </h2>
+              <p className="text-gray-500 text-sm">
+               {data.email}
+              </p>
             </div>
           </div>
-         
         </div>
 
         {/* Form Section */}
         <form className="space-y-8">
-          
-          {/* Full Name & Last Name */}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Full Name</label>
-              <input 
-                type="text" 
-                placeholder="Alexa Rawles"
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-gray-400"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Last Name</label>
-              <input 
-                type="text" 
-                placeholder="Rawles"
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-gray-400"
-              />
-            </div>
-          </div>
-
-          {/* Gender & Country */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Gender</label>
-              <input 
-                type="text" 
-                placeholder="Man"
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-gray-400"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Country</label>
-              <input 
-                type="text" 
-                placeholder="USA"
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all text-gray-400"
-              />
-            </div>
-          </div>
-
-          {/* Password Section
-          <div className="space-y-6 pt-4">
-            <h3 className="text-md font-semibold text-gray-200">Password</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2 relative">
-                <label className="text-sm font-medium text-gray-300">Current Password</label>
-                <div className="relative">
-                  <input 
-                    type="password" 
-                    className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
-                  />
-                  <LuEyeOff className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer" />
-                </div>
+              <label className="text-sm font-medium text-gray-300">
+                First Name
+              </label>
+              <div
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+              >{data.firstname}
               </div>
-              
-              <div className="space-y-2 relative">
-                <label className="text-sm font-medium text-gray-300">New Password</label>
-                <div className="relative">
-                  <input 
-                    type="password" 
-                    className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
-                  />
-                  <LuEyeOff className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer" />
-                </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">
+                Last Name
+              </label>
+              <div
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+              >{data.lastname}
               </div>
             </div>
           </div>
 
-          {/* Submit Button */}
-          {/* <div className="flex justify-end pt-6">
-            <button 
-              type="submit" 
-              className="bg-[#2B7FFF] cursor pointer hover:bg-blue-600 text-white px-10 py-3 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/20"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">
+                Gender
+              </label>
+              <div
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+              >{data.gender}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">
+                Country
+              </label>
+             <div
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+              >{data.country}
+              </div>
+            </div>
+          </div>
+
+        
+          <div className="flex justify-end pt-10">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-red-700 hover:text-red-800 px-8 py-3 rounded-xl  font-semibold text-lg flex items-center gap-2 border border-red-800"
             >
-              Save changes
+               <AiOutlineLogout /> Logout
             </button>
-          </div>  */}
+          </div>
+
         </form>
       </div>
     </div>

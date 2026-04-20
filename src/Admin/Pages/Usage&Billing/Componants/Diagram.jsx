@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+import { useQuery } from '@tanstack/react-query';
 import { 
   LineChart, 
   Line, 
@@ -9,26 +11,52 @@ import {
   ResponsiveContainer, 
   Legend 
 } from 'recharts';
+import { apiGet } from '../../../../lib/api';
 
 export default function Diagram() {
-  const [usages, setUsages] = useState([]);
 
-  useEffect(() => {
-    fetch('/Diagram.json')
-      .then(res => res.json())
-      .then(data => setUsages(data));
-  }, []);
+  const getDiagramData = async () => {
+    const res = await apiGet("/admin/usage-billing");
+
+  
+    return res.data.chartData.map(item => ({
+      date: item.displayDate,
+      tokens: item.tokens,
+      requests: item.requests
+    }));
+  };
+
+  const { data: usages = [], isLoading, isError } = useQuery({
+    queryKey: ["usage"],
+    queryFn: getDiagramData
+  });
+  if (isLoading) {
+    return (
+      <div className="text-center py-20 text-green-500">
+        Loading chart...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-20 text-red-500">
+        Failed to load data
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-[#11141b] border border-[#1e232b] p-6 rounded-2xl w-full h-[400px]">
-      {/* Title */}
-      <h2 className="text-gray-200 text-sm font-medium mb-8">Api Request Usages (Last 7 Days)</h2>
+    <div className="bg-[#11141b] border border-[#263e66] p-6  rounded-2xl w-full h-[400px]">
+      
+      <h2 className="text-gray-200 text-sm font-medium mb-8">
+        Api Request Usages (Last 7 Days)
+      </h2>
 
-      {/* Chart Section */}
       <div className="w-full h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={usages} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
-            {/* Grid lines jemonta image-e ache */}
+            
             <CartesianGrid 
               strokeDasharray="3 3" 
               stroke="#1e232b" 
@@ -64,7 +92,6 @@ export default function Diagram() {
               wrapperStyle={{ paddingTop: '35px' }}
             />
             
-            {/* Main Blue Line */}
             <Line 
               type="monotone" 
               dataKey="tokens" 
@@ -76,13 +103,6 @@ export default function Diagram() {
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
-
-      {/* Optional Map List (Jodi dorkar hoy) */}
-      <div className="hidden">
-        {usages.map((usage, index) => (
-          <div key={index}>{usage.date}: {usage.tokens}</div>
-        ))}
       </div>
     </div>
   );
