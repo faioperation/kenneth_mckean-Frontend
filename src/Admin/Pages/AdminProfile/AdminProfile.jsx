@@ -9,7 +9,7 @@ export default function AdminProfile({ onClose }) {
         to="."
         end
         className={({ isActive }) =>
-          `flex items-center gap-3 rounded-4xl px-6 lg:px-29 py-3 text-sm font-medium transition-colors ${
+          `flex items-center gap-3 rounded-4xl px-12 sm:px-30 lg:px-40 py-3 text-sm font-medium transition-colors ${
             isActive
               ? "bg-[#4D81F5] text-white border-l-2 border-[#51A2FF]"
               : "text-gray-400 hover:bg-[#1f2d5c] hover:text-white"
@@ -23,7 +23,7 @@ export default function AdminProfile({ onClose }) {
       <NavLink
         to="editprofile"
         className={({ isActive }) =>
-          `flex items-center gap-3 rounded-4xl px-12 lg:px-40 py-3 text-sm font-medium transition-colors  ${
+          `flex items-center gap-3 rounded-4xl px-12 sm:px-30 lg:px-40 py-3 text-sm font-medium transition-colors  ${
             isActive
               ? "bg-[#4D81F5] text-white border-l-2 border-[#51A2FF]"
               : "text-gray-400 hover:bg-[#1f2d5c] hover:text-white"
