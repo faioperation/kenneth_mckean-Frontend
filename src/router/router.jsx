@@ -41,6 +41,7 @@ import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
 import UserResetPassword from "../user/authPages/UserResetPassword";
 import { tokenStorage } from "../lib/tokenStorage";
 
+
 const PrivateRoute = ({ children }) => {
   const token = tokenStorage.getAccessToken();
   const getUser = () => {
@@ -86,6 +87,7 @@ const UserPrivateRoute = ({ children }) => {
 };
 
 const router = createBrowserRouter([
+
   {
     path: "/",
     element: <CommonLayout />,
@@ -171,7 +173,9 @@ const router = createBrowserRouter([
     path: "/user",
     element: (
       <UserPrivateRoute>
+
         <NewUser />
+
       </UserPrivateRoute>
     ),
     children: [

@@ -4,10 +4,21 @@ import { FaArrowUp, FaLink } from "react-icons/fa6";
 import { FiMic } from "react-icons/fi";
 import SparkleIcon from "../../assets/icons/SparkleIcon";
 import { useLocation } from "react-router";
+import { useTask } from "../../context/TaskContext";
 
 const ChatPanel = () => {
   const location = useLocation();
   const textareaRef = useRef(null);
+  const { currentPrompt, setCurrentPrompt } = useTask();
+
+  const handleSend = () => {
+    const value = textareaRef.current.value;
+
+    if (!value.trim()) return;
+
+    setCurrentPrompt(value);
+    textareaRef.current.value = "";
+  };
 
   const handleInput = () => {
     const el = textareaRef.current;
@@ -47,7 +58,7 @@ const ChatPanel = () => {
       )}
 
       {/* Chat Content */}
-      <div className="flex-1 overflow-y-auto text-gray-500 leading-6 sm:leading-7 pr-1 sm:pr-2 mt-6 text-sm sm:text-base">
+      {/* <div className="flex-1 overflow-y-auto text-gray-500 leading-6 sm:leading-7 pr-1 sm:pr-2 mt-6 text-sm sm:text-base">
         <p className="font-semibold text-black mb-4">Algorithms AI</p>
         <p className="w-auto">
           I'd love to help you create a travel website! To get started, could
@@ -74,6 +85,19 @@ const ChatPanel = () => {
           Professional footer with links and contact information Your website is
           ready to preview and publish!
         </p>
+      </div> */}
+      <div className="flex-1 overflow-y-auto text-gray-500 leading-6 sm:leading-7 pr-1 sm:pr-2 mt-6 text-sm sm:text-base">
+        {currentPrompt ? (
+          <>
+            <p className="font-semibold text-black mb-4">You</p>
+            <p className="mb-4 text-black">{currentPrompt}</p>
+
+            <p className="font-semibold text-black mb-2">Algorithms AI</p>
+            <p>Generating response...</p>
+          </>
+        ) : (
+          <p className="text-gray-400">Start typing to create something...</p>
+        )}
       </div>
 
       {/* Input */}
@@ -120,8 +144,11 @@ const ChatPanel = () => {
               <FiMic className="text-sm sm:text-base" />
             </button>
 
-            <button className="size-9 sm:size-10 bg-black rounded-full flex items-center justify-center cursor-pointer">
-              <FaArrowUp className="text-white text-sm sm:text-base" />
+            <button
+              onClick={handleSend}
+              className="size-9 sm:size-10 bg-black rounded-full flex items-center justify-center cursor-pointer"
+            >
+              <FaArrowUp className="text-white" />
             </button>
           </div>
         </div>

@@ -1,9 +1,9 @@
 import { FiSearch, FiX } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TbShoppingBagPlus } from "react-icons/tb";
 import { LuEyeOff, LuCamera, LuEye } from "react-icons/lu";
 import { useEffect, useState } from "react";
-import { getUserProfile, updateUserProfile } from "../../../../api/profileApi";
+import { changePassword, getUserProfile, updateUserProfile } from "../../../../api/profileApi";
 
 export default function EditProfile({ onClose }) {
   const navigate = useNavigate();
@@ -14,6 +14,8 @@ export default function EditProfile({ onClose }) {
   const [email, setEmail] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const [profileImg, setProfileImg] = useState(
     "https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png"
@@ -32,8 +34,8 @@ export default function EditProfile({ onClose }) {
       try {
         const res = await getUserProfile();
 
-        setName(res.name);
-        setEmail(res.email);
+        setName(res?.data?.name || "");
+        setEmail(res?.data?.email || "");
         setProfileImg(
           res.avatarUrl ||
           "https://i.ibb.co.com/Rp6rKgTs/default.png"
@@ -63,24 +65,36 @@ export default function EditProfile({ onClose }) {
 
       setLoading(true);
 
+      //  profile update
       const formData = new FormData();
       formData.append("name", name);
-      if (email) {
-        formData.append("email", email);
-      }
 
       if (avatarFile) {
         formData.append("avatar", avatarFile);
       }
 
-      const res = await updateUserProfile(formData);
+      await updateUserProfile(formData);
 
-      console.log("Updated:", res);
+      // password update
+      if (currentPassword || newPassword) {
+        if (!currentPassword || !newPassword) {
+          alert("Both password fields are required");
+          return;
+        }
 
-   onClose();
+        await changePassword({
+          currentPassword,
+          newPassword,
+        });
+      }
+
+      alert("Profile updated successfully");
+
+      navigate("/user/newtask");
 
     } catch (error) {
       console.error("Update failed:", error);
+      alert("Update failed");
     } finally {
       setLoading(false);
     }
@@ -91,14 +105,12 @@ export default function EditProfile({ onClose }) {
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-4 sm:p-6 relative">
 
         {/* Close Button */}
-
         <button
-          onClick={onClose}
+          onClick={() => navigate(-1)}
           className="absolute top-4 right-4 border border-gray p-1 rounded-full"
         >
           <FiX size={20} className="text-black" />
         </button>
-
 
         {/* header */}
         <div className="flex items-center border-b pb-3 mb-5">
@@ -144,15 +156,14 @@ export default function EditProfile({ onClose }) {
             />
           </div>
 
-          {/* Email */}
+          {/* Email (READ ONLY) */}
           <div className="space-y-1.5">
             <p className="text-gray-800 text-sm sm:text-base">Email</p>
             <input
               type="text"
-              placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5"
+              readOnly
+              className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5 bg-gray-100 cursor-not-allowed"
             />
           </div>
 
@@ -168,6 +179,8 @@ export default function EditProfile({ onClose }) {
                 <input
                   type={showCurrent ? "text" : "password"}
                   placeholder="Enter current password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
                   className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5 pr-10"
                 />
 
@@ -181,7 +194,6 @@ export default function EditProfile({ onClose }) {
               </div>
             </div>
 
-            {/* New Password */}
             <div className="space-y-1.5">
               <p className="text-gray-800 text-sm sm:text-base">
                 New Password
@@ -191,6 +203,8 @@ export default function EditProfile({ onClose }) {
                 <input
                   type={showNew ? "text" : "password"}
                   placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5 pr-10"
                 />
 
