@@ -3,7 +3,7 @@ import { LuEyeOff } from "react-icons/lu";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { tokenStorage } from "../../../lib/tokenStorage";
-import { apiGet } from "../../../lib/api";
+import { apiGet, getImageUrl } from "../../../lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
@@ -39,14 +39,14 @@ if (isError){
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           <div className="flex items-center gap-4">
             <img
-              src={data.avatarUrl }
+              src={getImageUrl(data?.avatarUrl)}
               alt=""
-              className="h-20 w-20 rounded-full border-2 border-gray-700 object-cover"
+              className="md:h-20 md:w-20 h-16 w-16 rounded-full border-2 border-gray-700 object-cover"
             />
-            <div>
-              <h2 className="text-xl flex font-semibold">{data.firstname} <span className="ml-2">{data.lastname}</span>
+            <div >
+              <h2 className="sm:text-xl flex font-semibold">{data.firstname} <span className="ml-2">{data.lastname}</span>
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 text-xs sm:text-sm">
                {data.email}
               </p>
             </div>

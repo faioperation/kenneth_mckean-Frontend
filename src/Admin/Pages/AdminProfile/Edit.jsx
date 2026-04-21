@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { LuEyeOff, LuCamera } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { apiGet, apiPut } from "../../../lib/api";
+import { apiGet, apiPut, getImageUrl } from "../../../lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Edit() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [profileImg, setProfileImg] = useState("null");
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
     gender: "",
     country: "",
   });
-
-  const [profileImg, setProfileImg] = useState(
-    "null",
-  );
 
   const getProfile = async () => {
     const res = await apiGet("/admin/profile");
@@ -47,34 +45,39 @@ const [imageFile, setImageFile] = useState(null);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       setProfileImg(URL.createObjectURL(file));
-      setImageFile(file); 
     }
   };
 
   const { mutate, isPending } = useMutation({
-  mutationFn: (newFormData) => apiPut("/admin/profile", newFormData),
-  onSuccess: () => {
-    queryClient.invalidateQueries(["profile"]);
-    navigate("/admin/adminprofile");
-  },
-});
+    mutationFn: (newFormData) =>
+      apiPut("/admin/profile", newFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["profile"]);
+      navigate("/admin/adminprofile");
+    },
+  });
 
-const handleSaveChanges = (e) => {
-  e.preventDefault();
-  
-  const formDataToSend = new FormData();
-  formDataToSend.append("firstname", formData.firstname);
-  formDataToSend.append("lastname", formData.lastname);
-  formDataToSend.append("gender", formData.gender);
-  formDataToSend.append("country", formData.country);
+  const handleSaveChanges = (e) => {
+    e.preventDefault();
 
-  if (imageFile) {
-    formDataToSend.append("avatar", imageFile); 
-  }
+    const formDataToSend = new FormData();
+    formDataToSend.append("firstname", formData.firstname);
+    formDataToSend.append("lastname", formData.lastname);
+    formDataToSend.append("gender", formData.gender);
+    formDataToSend.append("country", formData.country);
 
-  mutate(formDataToSend); 
-};
+    if (imageFile) {
+      formDataToSend.append("avatar", imageFile);
+    }
+
+    mutate(formDataToSend);
+  };
   if (isLoading) {
     return (
       <div className="text-center py-20 text-green-500">Loading profile...</div>
@@ -96,13 +99,7 @@ const handleSaveChanges = (e) => {
           <div className="flex items-center gap-6">
             <div className="relative group">
               <img
-              src={
-    imageFile 
-      ? profileImg // নতুন সিলেক্ট করা ছবির জন্য (blob URL)
-      : data?.avatarUrl 
-        ? `https://test9.fireai.agency${data.avatarUrl}` // সার্ভারের ছবির জন্য
-        : "" // ছবি না থাকলে ডিফল্ট
-  }
+                src={imageFile ? profileImg : getImageUrl(data?.avatarUrl)}
                 alt="Profile"
                 className="h-24 w-24 rounded-full border-2 border-gray-700 object-cover"
               />

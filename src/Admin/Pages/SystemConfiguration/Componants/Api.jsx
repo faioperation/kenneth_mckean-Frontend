@@ -12,10 +12,10 @@ export default function Api() {
           <h2 className="text-gray-200 text-md font-medium">API Configuration</h2>
         </div>
 
-        {/* Form Fields */}
+
         <div className="space-y-6">
           
-          {/* OpenAI API Key */}
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-400">OpenAI API Key</label>
             <input 
@@ -25,7 +25,7 @@ export default function Api() {
             />
           </div>
 
-          {/* Anthropic API Key */}
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-400">Anthropic API Key</label>
             <input 
