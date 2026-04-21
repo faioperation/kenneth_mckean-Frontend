@@ -47,3 +47,9 @@ export const apiDelete = async (url, options = {}) => {
     throw error;
   }
 };
+
+export const getImageUrl = (path) => {
+  if (!path) return "https://via.placeholder.com/150"; 
+  if (path.startsWith('http')) return path; 
+  return `https://test9.fireai.agency${path}`; 
+};

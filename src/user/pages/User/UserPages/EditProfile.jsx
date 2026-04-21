@@ -3,107 +3,174 @@ import { useNavigate } from "react-router-dom";
 import { TbShoppingBagPlus } from "react-icons/tb";
 import { LuEyeOff, LuCamera, LuEye } from "react-icons/lu";
 import { useEffect, useState } from "react";
-import { changePassword, getUserProfile, updateUserProfile } from "../../../../api/profileApi";
+// import { changePassword, getUserProfile, updateUserProfile } from "../../../../api/profileApi";
+import { apiGet, apiPatch, getImageUrl } from "../../../../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function EditProfile({ onClose }) {
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+
   const [avatarFile, setAvatarFile] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [profileImg, setProfileImg] = useState(
+    "https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png",
+  );
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
-  const [profileImg, setProfileImg] = useState(
-    "https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png"
-  );
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImg(URL.createObjectURL(file));
       setAvatarFile(file);
+      setProfileImg(URL.createObjectURL(file));
     }
   };
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    gender: "",
+    country: "",
+  });
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await getUserProfile();
-
-        setName(res?.data?.name || "");
-        setEmail(res?.data?.email || "");
-        setProfileImg(
-          res.avatarUrl ||
-          "https://i.ibb.co.com/Rp6rKgTs/default.png"
-        );
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (profileImg && profileImg.startsWith("blob:")) {
-        URL.revokeObjectURL(profileImg);
-      }
-    };
-  }, [profileImg]);
-
-  const handleSubmit = async () => {
-    try {
-      if (!name.trim()) {
-        alert("Name is required");
-        return;
-      }
-
-      setLoading(true);
-
-      //  profile update
-      const formData = new FormData();
-      formData.append("name", name);
-
-      if (avatarFile) {
-        formData.append("avatar", avatarFile);
-      }
-
-      await updateUserProfile(formData);
-
-      // password update
-      if (currentPassword || newPassword) {
-        if (!currentPassword || !newPassword) {
-          alert("Both password fields are required");
-          return;
-        }
-
-        await changePassword({
-          currentPassword,
-          newPassword,
-        });
-      }
-
-      alert("Profile updated successfully");
-
-      navigate("/user/newtask");
-
-    } catch (error) {
-      console.error("Update failed:", error);
-      alert("Update failed");
-    } finally {
-      setLoading(false);
-    }
+  const getProfile = async () => {
+    const res = await apiGet("/user/profile");
+    return res.data;
   };
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+  });
+  useEffect(() => {
+    if (data) {
+      setFormData({
+      
+       name: data.name || "",
+       email: data.email || "",
+      });
+
+      if (data.avatarUrl) {
+        setProfileImg(data.avatarUrl);
+      }
+    }
+  }, [data]);
+   const { mutate, isPending } = useMutation({
+    mutationFn: (newFormData) =>
+      apiPatch("/user/profile", newFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["profile"]);
+      navigate("/user/profile");
+    },
+  });
+  const handleSaveChanges = (e) => {
+    e.preventDefault();
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+   
+    formDataToSend.append("gender", formData.gender);
+    formDataToSend.append("country", formData.country);
+
+    if (avatarFile) {
+      formDataToSend.append("avatar", avatarFile);
+    }
+
+    mutate(formDataToSend);
+  };
+  if (isLoading) {
+    return (
+      <div className="text-center py-20 text-green-500">Loading profile...</div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-20 text-red-500">
+        Failed to load profile
+      </div>
+    );
+  }
+
+  // // useEffect(() => {
+  // //   const fetchProfile = async () => {
+  // //     try {
+  // //       const res = await getUserProfile();
+
+  // //       setName(res?.data?.name || "");
+  // //       setEmail(res?.data?.email || "");
+  // //       setProfileImg(
+  // //         res.avatarUrl ||
+  // //         "https://i.ibb.co.com/Rp6rKgTs/default.png"
+  // //       );
+  // //     } catch (err) {
+  // //       console.error(err);
+  // //     }
+  // //   };
+
+  //   fetchProfile();
+  // }, []);
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (profileImg && profileImg.startsWith("blob:")) {
+  //       URL.revokeObjectURL(profileImg);
+  //     }
+  //   };
+  // }, [profileImg]);
+
+  // const handleSubmit = async () => {
+  //   try {
+  //     if (!name.trim()) {
+  //       alert("Name is required");
+  //       return;
+  //     }
+
+  //     setLoading(true);
+
+  //     //  profile update
+  //     const formData = new FormData();
+  //     formData.append("name", name);
+
+  //     if (avatarFile) {
+  //       formData.append("avatar", avatarFile);
+  //     }
+
+  //     await updateUserProfile(formData);
+
+  //     // // password update
+  //     // if (currentPassword || newPassword) {
+  //     //   if (!currentPassword || !newPassword) {
+  //     //     alert("Both password fields are required");
+  //     //     return;
+  //     //   }
+
+  //     //   await changePassword({
+  //     //     currentPassword,
+  //     //     newPassword,
+  //     //   });
+  //     // }
+
+  //     alert("Profile updated successfully");
+
+  //     navigate("/user/newtask");
+
+  //   } catch (error) {
+  //     console.error("Update failed:", error);
+  //     alert("Update failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-3 sm:px-4">
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-4 sm:p-6 relative">
-
         {/* Close Button */}
         <button
           onClick={() => navigate(-1)}
@@ -122,7 +189,7 @@ export default function EditProfile({ onClose }) {
         {/* edit image */}
         <div className="relative group mb-5">
           <img
-            src={profileImg}
+            src={avatarFile ? profileImg : getImageUrl(data?.avatarUrl)}
             alt="Profile"
             className="h-14 w-14 sm:h-16 sm:w-16 rounded-full border-2 border-gray-700 object-cover"
           />
@@ -142,15 +209,17 @@ export default function EditProfile({ onClose }) {
         </div>
 
         {/* form */}
-        <div className="space-y-5 max-h-[65vh] overflow-y-auto pr-1">
-
+        <form className="space-y-5 max-h-[65vh] overflow-y-auto pr-1"
+        onSubmit={handleSaveChanges}>
           {/* Name */}
           <div className="space-y-1.5">
             <p className="text-gray-800 text-sm sm:text-base">Name</p>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={formData.name}
+             onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
               placeholder="Name"
               className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5"
             />
@@ -161,15 +230,14 @@ export default function EditProfile({ onClose }) {
             <p className="text-gray-800 text-sm sm:text-base">Email</p>
             <input
               type="text"
-              value={email}
+              value={formData.email}
               readOnly
               className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5 bg-gray-100 cursor-not-allowed"
             />
           </div>
 
           {/* Password Section */}
-          <div className="pt-1.5 border-t space-y-4">
-
+          {/* <div className="pt-1.5 border-t space-y-4">
             <div className="space-y-1.5">
               <p className="text-gray-800 text-sm sm:text-base">
                 Current Password
@@ -195,9 +263,7 @@ export default function EditProfile({ onClose }) {
             </div>
 
             <div className="space-y-1.5">
-              <p className="text-gray-800 text-sm sm:text-base">
-                New Password
-              </p>
+              <p className="text-gray-800 text-sm sm:text-base">New Password</p>
 
               <div className="relative">
                 <input
@@ -217,21 +283,20 @@ export default function EditProfile({ onClose }) {
                 </button>
               </div>
             </div>
-
-          </div>
-        </div>
-
-        {/* button */}
+          </div> */}
+         {/* button */}
         <div className="flex justify-end pt-6">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-black text-white px-8 sm:px-10 py-2.5 sm:py-3 rounded-xl text-sm font-semibold"
-          >
-            {loading ? "Saving..." : "Save Changes"}
-          </button>
+      <button
+              type="submit"
+              disabled={isPending}
+              className="bg-[#2B7FFF] hover:bg-blue-600 px-10 py-3 rounded-xl text-sm font-semibold shadow-lg disabled:opacity-50"
+            >
+              {isPending ? "Saving..." : "Save changes"}
+            </button>
         </div>
+        </form>
+
+       
       </div>
     </div>
   );

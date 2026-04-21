@@ -4,7 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 export default function Nav({ onClose }) {
   return (
     <div className="lg:flex md:flex   items-center justify-between ">
-    <div className="bg-[#11141b] border border-[#1e232b] p-1 rounded-4xl flex max-w-2xl mx-8 text-center justify-between">
+    <div className="bg-[#11141b] border border-[#083b8b] p-1 rounded-4xl flex max-w-2xl mx-8 text-center justify-between">
       <NavLink
         to="../Configuration"
         end
