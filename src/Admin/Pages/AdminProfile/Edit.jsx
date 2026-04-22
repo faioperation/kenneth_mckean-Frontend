@@ -62,7 +62,7 @@ export default function Edit() {
         },
       });
       if (payload.passwordData.currentPassword && payload.passwordData.newPassword){
-        await apiPost ("/admin/auth/change-password, payload.passwordData");
+        await apiPost ("/admin/auth/change-password", payload.passwordData);
       }
     },
 
@@ -194,37 +194,39 @@ export default function Edit() {
               />
             </div>
             {/* change password section */}
-               <div className="pt-4 border-t space-y-4">
-                        <p className="text-sm font-bold text-gray-700">Change Password</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <div className="pt-4  space-y-4">
+                        <p className="text-sm font-bold border-b border-gray-500 text-gray-300">Change Password</p>
+                        <div className=" xl:flex xl:gap-8">
                           {/* Current Password */}
                           <div className="space-y-1 relative">
-                            <p className="text-sm font-medium">Current Password</p>
+                            <p className="text-sm text-gray-300 font-medium">Current Password</p>
                             <input
                               type={showCurrent ? "text" : "password"}
                               placeholder="••••••••"
                               value={currentPassword || ""}
                               onChange={(e) => setCurrentPassword(e.target.value)}
-                              className="border border-gray-200 text-gray-600 w-full rounded-lg p-2.5 text-sm"
+                              className="border border-gray-500 w-100 text-gray-400  rounded-lg p-2.5 text-sm"
                             />
-                            <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-[34px] text-gray-400">
+                            <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute left-90 top-[34px] text-gray-400">
                               {showCurrent ? <LuEyeOff size={16} /> : <LuEye size={16} />}
                             </button>
                           </div>
             
                           {/* New Password */}
-                          <div className="space-y-1 relative">
-                            <p className="text-sm font-medium">New Password</p>
-                            <input
+                          <div className="space-y-1 mt-3 xl:mt-0 relative">
+                            <p className="text-sm text-gray-300 font-medium">New Password</p>
+                           
+                              <input
                               type={showNew ? "text" : "password"}
                               placeholder="••••••••"
                               value={newPassword || ""}
                               onChange={(e) => setNewPassword(e.target.value)}
-                              className="border border-gray-200 text-gray-600 w-full rounded-lg p-2.5 text-sm"
+                              className="border border-gray-500 w-100 text-gray-400 rounded-lg p-2.5 text-sm"
                             />
-                            <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-[34px] text-gray-400">
+                            <button type="button" onClick={() => setShowNew(!showNew)} className="absolute  left-90 top-[34px] text-gray-400">
                               {showNew ? <LuEyeOff size={16} /> : <LuEye size={16} />}
                             </button>
+                            
                           </div>
                         </div>
                       </div>
