@@ -39,7 +39,7 @@ if (isError){
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           <div className="flex items-center gap-4">
             <img
-              src={getImageUrl(data?.avatarUrl)}
+              src={data?.avatarUrl ? getImageUrl(data.avatarUrl) : "/default-avatar.png"}
               alt=""
               className="md:h-20 md:w-20 h-16 w-16 rounded-full border-2 border-gray-700 object-cover"
             />

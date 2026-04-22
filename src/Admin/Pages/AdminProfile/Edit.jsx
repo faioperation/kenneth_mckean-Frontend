@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { LuEyeOff, LuCamera } from "react-icons/lu";
+import { LuEyeOff, LuCamera, LuEye  } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { apiGet, apiPut, getImageUrl } from "../../../lib/api";
+import { apiGet,  apiPost, apiPut, getImageUrl } from "../../../lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export default function Edit() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [imageFile, setImageFile] = useState(null);
   const [profileImg, setProfileImg] = useState("null");
-
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -51,14 +55,20 @@ export default function Edit() {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (newFormData) =>
-      apiPut("/admin/profile", newFormData, {
+    mutationFn: async (payload) => {
+     await apiPut("/admin/profile", payload.profileData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }),
+      });
+      if (payload.passwordData.currentPassword && payload.passwordData.newPassword){
+        await apiPost ("/admin/auth/change-password, payload.passwordData");
+      }
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
+      toast("profile updated successfully!")
       navigate("/admin/adminprofile");
     },
   });
@@ -76,7 +86,10 @@ export default function Edit() {
       formDataToSend.append("avatar", imageFile);
     }
 
-    mutate(formDataToSend);
+    mutate({
+      profileData: formDataToSend,
+      passwordData: { currentPassword, newPassword },
+    });
   };
   if (isLoading) {
     return (
@@ -131,7 +144,7 @@ export default function Edit() {
               <label className="text-sm text-gray-300">First Name</label>
               <input
                 type="text"
-                value={formData.firstname}
+                value={formData.firstname || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, firstname: e.target.value })
                 }
@@ -143,7 +156,8 @@ export default function Edit() {
               <label className="text-sm text-gray-300">Last Name</label>
               <input
                 type="text"
-                value={formData.lastname}
+                value={formData.lastname || ""
+                }
                 onChange={(e) =>
                   setFormData({ ...formData, lastname: e.target.value })
                 }
@@ -156,7 +170,7 @@ export default function Edit() {
             <div className="space-y-2">
               <label className="text-sm text-gray-300">Gender</label>
               <select
-                value={formData.gender}
+                value={formData.gender || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, gender: e.target.value })
                 }
@@ -179,6 +193,41 @@ export default function Edit() {
                 className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
               />
             </div>
+            {/* change password section */}
+               <div className="pt-4 border-t space-y-4">
+                        <p className="text-sm font-bold text-gray-700">Change Password</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Current Password */}
+                          <div className="space-y-1 relative">
+                            <p className="text-sm font-medium">Current Password</p>
+                            <input
+                              type={showCurrent ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={currentPassword || ""}
+                              onChange={(e) => setCurrentPassword(e.target.value)}
+                              className="border border-gray-200 text-gray-600 w-full rounded-lg p-2.5 text-sm"
+                            />
+                            <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-[34px] text-gray-400">
+                              {showCurrent ? <LuEyeOff size={16} /> : <LuEye size={16} />}
+                            </button>
+                          </div>
+            
+                          {/* New Password */}
+                          <div className="space-y-1 relative">
+                            <p className="text-sm font-medium">New Password</p>
+                            <input
+                              type={showNew ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={newPassword || ""}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              className="border border-gray-200 text-gray-600 w-full rounded-lg p-2.5 text-sm"
+                            />
+                            <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-[34px] text-gray-400">
+                              {showNew ? <LuEyeOff size={16} /> : <LuEye size={16} />}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
           </div>
 
           {/* Submit */}
