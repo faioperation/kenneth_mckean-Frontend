@@ -239,7 +239,7 @@ export default function Sidebar({ isOpen, onClose }) {
         className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-[#2B7FFF33] ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
-        <div className="flex h-full flex-col">
+        <div className="flex h-screen flex-col">
 
           {/* Logo */}
           <div className="flex h-16 items-center justify-between px-8">
@@ -334,7 +334,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <div className="p-4">
               <NavLink
                 to={navLinks[4].path}
-                className="flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                className="flex items-center gap-3 rounded-lg px-4  py-3 text-md font-medium text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
               >
                 <FaRegUser size={22} />
                 <span>{navLinks[4].name}</span>
