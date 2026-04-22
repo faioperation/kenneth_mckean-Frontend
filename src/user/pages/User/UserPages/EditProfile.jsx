@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { TbShoppingBagPlus } from "react-icons/tb";
 import { LuEyeOff, LuCamera, LuEye } from "react-icons/lu";
 import { useEffect, useState } from "react";
-// import { changePassword, getUserProfile, updateUserProfile } from "../../../../api/profileApi";
 import { apiGet, apiPatch, getImageUrl } from "../../../../lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
-export default function EditProfile({ onClose }) {
+export default function EditProfile() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showCurrent, setShowCurrent] = useState(false);
@@ -15,7 +15,7 @@ export default function EditProfile({ onClose }) {
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [profileImg, setProfileImg] = useState(
-    "https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png",
+    "",
   );
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -24,6 +24,10 @@ export default function EditProfile({ onClose }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 50 * 1024 * 1024) {
+      alert("File is too large! Please select a file under 50MB.");
+      return;
+    }
       setAvatarFile(file);
       setProfileImg(URL.createObjectURL(file));
     }
@@ -57,15 +61,23 @@ export default function EditProfile({ onClose }) {
     }
   }, [data]);
    const { mutate, isPending } = useMutation({
-    mutationFn: (newFormData) =>
-      apiPatch("/user/profile", newFormData, {
+    mutationFn: async(payload) => {
+       await apiPatch("/user/profile", payload.profileData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }),
+      });
+      if (payload.passwordData.currentPassword && payload.passwordData.newPassword) {
+        await apiPatch("/user/auth/change-password", payload.passwordData);
+      }
+    },
+    
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
+      toast("Profile updated successfully!");
       navigate("/user/profile");
+    }, onError: (error) => {
+      alert(error?.response?.data?.message || "Update failed!");
     },
   });
   const handleSaveChanges = (e) => {
@@ -81,7 +93,10 @@ export default function EditProfile({ onClose }) {
       formDataToSend.append("avatar", avatarFile);
     }
 
-    mutate(formDataToSend);
+   mutate({
+      profileData: formDataToSend,
+      passwordData: { currentPassword, newPassword },
+    });
   };
   if (isLoading) {
     return (
@@ -97,76 +112,7 @@ export default function EditProfile({ onClose }) {
     );
   }
 
-  // // useEffect(() => {
-  // //   const fetchProfile = async () => {
-  // //     try {
-  // //       const res = await getUserProfile();
-
-  // //       setName(res?.data?.name || "");
-  // //       setEmail(res?.data?.email || "");
-  // //       setProfileImg(
-  // //         res.avatarUrl ||
-  // //         "https://i.ibb.co.com/Rp6rKgTs/default.png"
-  // //       );
-  // //     } catch (err) {
-  // //       console.error(err);
-  // //     }
-  // //   };
-
-  //   fetchProfile();
-  // }, []);
-
-  // useEffect(() => {
-  //   return () => {
-  //     if (profileImg && profileImg.startsWith("blob:")) {
-  //       URL.revokeObjectURL(profileImg);
-  //     }
-  //   };
-  // }, [profileImg]);
-
-  // const handleSubmit = async () => {
-  //   try {
-  //     if (!name.trim()) {
-  //       alert("Name is required");
-  //       return;
-  //     }
-
-  //     setLoading(true);
-
-  //     //  profile update
-  //     const formData = new FormData();
-  //     formData.append("name", name);
-
-  //     if (avatarFile) {
-  //       formData.append("avatar", avatarFile);
-  //     }
-
-  //     await updateUserProfile(formData);
-
-  //     // // password update
-  //     // if (currentPassword || newPassword) {
-  //     //   if (!currentPassword || !newPassword) {
-  //     //     alert("Both password fields are required");
-  //     //     return;
-  //     //   }
-
-  //     //   await changePassword({
-  //     //     currentPassword,
-  //     //     newPassword,
-  //     //   });
-  //     // }
-
-  //     alert("Profile updated successfully");
-
-  //     navigate("/user/newtask");
-
-  //   } catch (error) {
-  //     console.error("Update failed:", error);
-  //     alert("Update failed");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-3 sm:px-4">
@@ -236,55 +182,41 @@ export default function EditProfile({ onClose }) {
             />
           </div>
 
-          {/* Password Section */}
-          {/* <div className="pt-1.5 border-t space-y-4">
-            <div className="space-y-1.5">
-              <p className="text-gray-800 text-sm sm:text-base">
-                Current Password
-              </p>
-
-              <div className="relative">
+          
+         <div className="pt-4 border-t space-y-4">
+            <p className="text-sm font-bold text-gray-700">Change Password</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Current Password */}
+              <div className="space-y-1 relative">
+                <p className="text-sm font-medium">Current Password</p>
                 <input
                   type={showCurrent ? "text" : "password"}
-                  placeholder="Enter current password"
-                  value={currentPassword}
+                  placeholder="••••••••"
+                  value={currentPassword || ""}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5 pr-10"
+                  className="border border-gray-200 text-gray-600 w-full rounded-lg p-2.5 text-sm"
                 />
-
-                <button
-                  type="button"
-                  onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                >
+                <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-[34px] text-gray-400">
                   {showCurrent ? <LuEyeOff size={16} /> : <LuEye size={16} />}
                 </button>
               </div>
-            </div>
 
-            <div className="space-y-1.5">
-              <p className="text-gray-800 text-sm sm:text-base">New Password</p>
-
-              <div className="relative">
+              {/* New Password */}
+              <div className="space-y-1 relative">
+                <p className="text-sm font-medium">New Password</p>
                 <input
                   type={showNew ? "text" : "password"}
-                  placeholder="Enter new password"
-                  value={newPassword}
+                  placeholder="••••••••"
+                  value={newPassword || ""}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="border border-gray-200 w-full rounded-md text-sm text-gray-600 p-2.5 pr-10"
+                  className="border border-gray-200 text-gray-600 w-full rounded-lg p-2.5 text-sm"
                 />
-
-                <button
-                  type="button"
-                  onClick={() => setShowNew(!showNew)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                >
+                <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-[34px] text-gray-400">
                   {showNew ? <LuEyeOff size={16} /> : <LuEye size={16} />}
                 </button>
               </div>
             </div>
-          </div> */}
-         {/* button */}
+          </div>
         <div className="flex justify-end pt-6">
       <button
               type="submit"
