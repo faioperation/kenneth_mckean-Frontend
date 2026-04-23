@@ -30,7 +30,7 @@ import UserProfile from "../user/pages/User/UserPages/UserProfile";
 import EditProfile from "../user/pages/User/UserPages/EditProfile";
 import Policy from "../user/pages/User/Policy";
 import Apikey from "../Admin/Pages/SystemConfiguration/Componants/Apikey";
-import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
+// import UserDashboard from "../user/pages/User/UserPages/UserDashboard";
 import OTPVerification from "../user/authPages/OTPVerification";
 import EmailVerificationNotice from "../user/authPages/EmailVerificationNotice";
 import Login from "../Admin/Pages/AdminAuth/Login";
@@ -179,10 +179,10 @@ const router = createBrowserRouter([
       </UserPrivateRoute>
     ),
     children: [
-      {
-        path: "newtask/dashboard",
-        element: <UserDashboard />,
-      },
+      // {
+      //   path: "newtask/dashboard",
+      //   element: <UserDashboard />,
+      // },
       {
         path: "newtask",
         element: <NewTask></NewTask>,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EveryButton from "./EveryButton";
 import { ChevronDown, ChevronRight, Menu, Copy } from "lucide-react";
-const EditorPanel = () => {
+const EditorPanel = ({messages}) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
@@ -77,26 +77,9 @@ const EditorPanel = () => {
           {/* Code Area */}
           <div className="flex-1 overflow-auto bg-white p-6">
             <pre className="text-sm text-gray-800 leading-6 whitespace-pre-wrap">
-              {`class WebSocketManager {
-  constructor() {
-    this.connections = new Map();
-    this.eventHandlers = new Map();
-  }
-
-  handleConnection(ws) {
-    const id = generateId();
-
-    // BUG: Event listeners not removed on close
-    ws.on('message', (data) => {
-      this.processMessage(id, data);
-    });
-
-    ws.on('close', () => {
-      this.connections.delete(id);
-      // MISSING: this.eventHandlers.delete(id);
-    });
-  }
-}`}
+              {messages.map((m, idx)=>(
+                <div  key={idx}>{m.output}</div>
+              ))}
             </pre>
           </div>
         </div>
