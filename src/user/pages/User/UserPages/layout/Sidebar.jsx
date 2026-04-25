@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { RiBookLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getTasks } from "../../../../../api/taskApi";
 
 export default function Sidebar({ isOpen, onClose }) {
+    const navigate = useNavigate();
   const navLinks = [
     {
       name: "New Task",
@@ -138,6 +139,10 @@ export default function Sidebar({ isOpen, onClose }) {
                   {tasks.map((task) => (
                     <div
                       key={task._id || task.id}
+                        onClick={() => {
+          navigate(`/user/newtask?taskId=${task._id || task.id}`);
+          window.innerWidth < 768 && onClose();
+        }}
                       className="px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
                     >
                       {task.title || task.prompt || "Untitled Task"}

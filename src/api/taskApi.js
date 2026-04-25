@@ -25,6 +25,10 @@ export const continueChat = async (taskId, data) => {
   }
 };
 
+export const getTaskById = async (taskId) => {
+  const res = await apiGet(`/user/new-task/${taskId}`);
+  return res.data;
+};
 
 // PDF generate
 export const generatePDF = async (taskId) => {
