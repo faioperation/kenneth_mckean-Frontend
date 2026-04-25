@@ -16,6 +16,8 @@ import { createTask, continueChat } from "../../api/taskApi";
 import EditorPanel from "./EditorPanel";
 import PDF from "./PDF";
 import ZIP from "./ZIP";
+import { useSearchParams } from "react-router-dom";
+import { getTaskById } from "../../api/taskApi";
 
 const features = [
   {
@@ -51,7 +53,61 @@ const TextCardLayouts = () => {
   const [messages, setMessages] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(null);
   const [isWebType, setIsWebType] = useState(false);
+  const [searchParams] = useSearchParams();
+  const taskIdFromUrl = searchParams.get("taskId");
+ useEffect(() => {
+  if (!taskIdFromUrl) return;
 
+  const loadTask = async () => {
+    try {
+      const task = await getTaskById(taskIdFromUrl);
+
+      let parsed = null;
+
+      // safe parse
+      try {
+        parsed =
+          typeof task.content === "string"
+            ? JSON.parse(task.content)
+            : task.content;
+      } catch {
+        parsed = null;
+      }
+
+      const formatted = parsed?.result?.formatted_results?.[0];
+
+      const output =
+        formatted?.output ||
+        parsed?.result?.output ||
+        task.content;
+
+      const taskType = formatted?.task_type;
+
+      setIsWebType(
+        taskType === "web_app" || taskType === "website"
+      );
+
+      setCurrentTaskId(taskIdFromUrl);
+
+      setMessages([
+        {
+          role: "user",
+          text: task.prompt,
+        },
+        {
+          role: "ai",
+          message: "Loaded Task",
+          output,
+          taskId: taskIdFromUrl,
+        },
+      ]);
+    } catch (err) {
+      console.log("Task load failed", err);
+    }
+  };
+
+  loadTask();
+}, [taskIdFromUrl]);
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -164,7 +220,10 @@ const TextCardLayouts = () => {
                             {isWebType ? (
                               <ZIP taskId={msg.taskId} />
                             ) : (
-                              <PDF taskId={msg.taskId} content={msg.output || msg.message} />
+                              <PDF
+                                taskId={msg.taskId}
+                                content={msg.output || msg.message}
+                              />
                             )}
                           </div>
                         </div>
