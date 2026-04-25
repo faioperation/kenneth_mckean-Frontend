@@ -12,8 +12,10 @@ import {
 import { FiMic } from "react-icons/fi";
 import { useRef, useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { createTask, continueChat } from "../../api/taskApi"; 
+import { createTask, continueChat } from "../../api/taskApi";
 import EditorPanel from "./EditorPanel";
+import PDF from "./PDF";
+import ZIP from "./ZIP";
 
 const features = [
   {
@@ -50,14 +52,12 @@ const TextCardLayouts = () => {
   const [currentTaskId, setCurrentTaskId] = useState(null);
   const [isWebType, setIsWebType] = useState(false);
 
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
- 
   const taskMutation = useMutation({
     mutationFn: (newPrompt) => createTask({ prompt: newPrompt }),
     onSuccess: (res) => {
@@ -74,8 +74,9 @@ const TextCardLayouts = () => {
         ...prev,
         {
           role: "ai",
-          message: res?.aiResponse?.message,
-          output: formatted?.output,
+          message: res?.aiResponse?.message || "Generated",
+          output: formatted?.output || res?.aiResponse?.data?.result?.output,
+          taskId: res?.taskId,
         },
       ]);
       setPrompt("");
@@ -83,7 +84,6 @@ const TextCardLayouts = () => {
     onError: () => alert("Error creating task."),
   });
 
- 
   const continueMutation = useMutation({
     mutationFn: (data) => continueChat(data.taskId, { prompt: data.prompt }),
     onSuccess: (res) => {
@@ -94,8 +94,9 @@ const TextCardLayouts = () => {
         ...prev,
         {
           role: "ai",
-          message: res?.aiResponse?.message,
-          output: formatted?.output,
+          message: res?.aiResponse?.message || "Updated",
+          output: formatted?.output || res?.aiResponse?.data?.result?.output,
+          taskId: res?.taskId || currentTaskId,
         },
       ]);
       setPrompt("");
@@ -107,7 +108,6 @@ const TextCardLayouts = () => {
     if (!prompt.trim() || taskMutation.isPending || continueMutation.isPending)
       return;
 
-    
     setMessages((prev) => [...prev, { role: "user", text: prompt }]);
 
     if (!currentTaskId) {
@@ -124,7 +124,6 @@ const TextCardLayouts = () => {
     setPrompt(e.target.value);
   };
 
-  
   if (messages.length > 0) {
     return (
       <div className="flex h-screen bg-white overflow-hidden">
@@ -157,8 +156,17 @@ const TextCardLayouts = () => {
                         {msg.message}
                       </p>
                       {msg.output && (
-                        <div className="prose prose-sm bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
-                          {msg.output}
+                        <div>
+                          <div className="prose prose-sm bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
+                            {msg.output}
+                          </div>
+                          <div>
+                            {isWebType ? (
+                              <ZIP />
+                            ) : (
+                              <PDF taskId={msg.taskId} content={msg.output || msg.message} />
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -177,12 +185,11 @@ const TextCardLayouts = () => {
           </div>
 
           {/* Persistent Bottom Input */}
-          
-    
+
           <div className="shadow-2xl border text-black border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white max-w-4xl ">
-        <div className="flex items-start gap-4">
-          <SparkleIcon />
-         <textarea
+            <div className="flex items-start gap-4">
+              <SparkleIcon />
+              <textarea
                 ref={textareaRef}
                 rows="1"
                 value={prompt}
@@ -190,46 +197,46 @@ const TextCardLayouts = () => {
                 placeholder="Ask a follow up..."
                 className="w-full resize-none focus:outline-none py-2 bg-transparent text-sm max-h-32"
               />
-        </div>
-
-        {/* Responsive buttons row */}
-        <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
-            <div className="p-3 border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50">
-              <FaLink size={18} />
             </div>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-              <Globe size={16} />{" "}
-              <span className="whitespace-nowrap">Search web</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-              <ImagePlus size={16} />{" "}
-              <span className="whitespace-nowrap">Create Image</span>
-            </button>
-          </div>
 
-          <div className="flex items-center gap-4">
-            <div className="p-3 border border-gray-200 rounded-full">
-              <FiMic size={18} />
+            {/* Responsive buttons row */}
+            <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
+                <div className="p-3 border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50">
+                  <FaLink size={18} />
+                </div>
+                <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
+                  <Globe size={16} />{" "}
+                  <span className="whitespace-nowrap">Search web</span>
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
+                  <ImagePlus size={16} />{" "}
+                  <span className="whitespace-nowrap">Create Image</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="p-3 border border-gray-200 rounded-full">
+                  <FiMic size={18} />
+                </div>
+                <button
+                  onClick={handleCreate}
+                  disabled={
+                    taskMutation.isPending || continueMutation.isPending
+                  }
+                  className="p-2 bg-black text-white rounded-full ml-2 hover:scale-105 transition disabled:opacity-30"
+                >
+                  <FaArrowUp size={14} />
+                </button>
+              </div>
             </div>
-             <button
-                onClick={handleCreate}
-                disabled={taskMutation.isPending || continueMutation.isPending}
-                className="p-2 bg-black text-white rounded-full ml-2 hover:scale-105 transition disabled:opacity-30"
-              >
-                <FaArrowUp size={14} />
-              </button>
           </div>
-        </div>
-      </div>
-
         </div>
 
         {isWebType && <EditorPanel messages={messages} />}
       </div>
     );
   }
-
 
   return (
     <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
