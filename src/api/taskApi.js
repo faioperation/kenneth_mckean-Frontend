@@ -32,5 +32,8 @@ export const generatePDF = async (taskId) => {
   return res.data;
 };
 
-// 
+export const generateZIP = async (taskId) => {
+  const res = await apiPost(`/user/new-task/${taskId}/codebase`, {});
+  return res.data;
+};
 
