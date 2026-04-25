@@ -162,7 +162,7 @@ const TextCardLayouts = () => {
                           </div>
                           <div>
                             {isWebType ? (
-                              <ZIP />
+                              <ZIP taskId={msg.taskId} />
                             ) : (
                               <PDF taskId={msg.taskId} content={msg.output || msg.message} />
                             )}

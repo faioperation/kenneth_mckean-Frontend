@@ -25,16 +25,15 @@ export const continueChat = async (taskId, data) => {
   }
 };
 
-import axios from "axios";
 
 // PDF generate
-export const generatePDF = async (taskId, prompt) => {
-  const res = await axios.post(`/user/new-task/${taskId}/pdf`, { prompt });
+export const generatePDF = async (taskId) => {
+  const res = await apiPost(`/user/new-task/${taskId}/pdf`, {});
   return res.data;
 };
 
-// PDF download URL builder
-export const getPDFDownloadUrl = (taskId) => {
-  return `/user/new-task/${taskId}/pdf/download`;
+export const generateZIP = async (taskId) => {
+  const res = await apiPost(`/user/new-task/${taskId}/codebase`, {});
+  return res.data;
 };
-1
+
