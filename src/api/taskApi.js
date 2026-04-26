@@ -17,10 +17,14 @@ export const createTask = async (data) => {
 };
 export const continueChat = async (taskId, data) => {
   try {
-    const res = await apiPost(`/user/new-task/${taskId}/continue`, data);
-    return res.data;
+    const res = await apiPost(`/user/new-task/${taskId}/continue`,{
+      prompt: data.prompt, 
+    });
+    return res;
   } catch (err) {
-    console.log("CONTINUE CHAT ERROR:", err.response?.data);
+    console.log("CONTINUE CHAT ERROR STATUS:", err.response?.status);
+    console.log("CONTINUE CHAT ERROR DATA:", err.response?.data);
+    console.log("CONTINUE CHAT FULL ERROR:", err);
     throw err;
   }
 };

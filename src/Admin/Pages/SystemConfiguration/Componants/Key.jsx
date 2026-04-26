@@ -1,11 +1,11 @@
 import React from 'react';
 import { FiCopy, FiTrash2 } from 'react-icons/fi';
 import { LuKey } from 'react-icons/lu';
-import { apiGet, apiDelete } from '../../../../lib/api'; 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiGet,  } from '../../../../lib/api'; 
+import { useQuery, } from '@tanstack/react-query';
 
 export default function Key() {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   
   const { data, isLoading, isError } = useQuery({
@@ -16,35 +16,35 @@ export default function Key() {
     }
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => apiDelete(`/admin/api-configuration/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['apiKeysManagement']);
-      alert("API Key deleted successfully!");
-    },
-    onError: (error) => {
-      console.error("Delete Error:", error);
-      alert("Failed to delete API key");
-    }
-  });
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this API key?")) {
-      deleteMutation.mutate(id);
-    }
-  };
+  // const deleteMutation = useMutation({
+  //   mutationFn: (id) => apiDelete(`/admin/api-configuration/${id}`),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(['apiKeysManagement']);
+  //     alert("API Key deleted successfully!");
+  //   },
+  //   onError: (error) => {
+  //     console.error("Delete Error:", error);
+  //     alert("Failed to delete API key");
+  //   }
+  // });
+  // const handleDelete = (id) => {
+  //   if (window.confirm("Are you sure you want to delete this API key?")) {
+  //     deleteMutation.mutate(id);
+  //   }
+  // };
 
   
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text);
-    alert("Key copied to clipboard!"); 
-  };
+  // const handleCopy = (text) => {
+  //   navigator.clipboard.writeText(text);
+  //   alert("Key copied to clipboard!"); 
+  // };
 
   if (isLoading) return <div className="text-center py-20 text-blue-500">Loading Keys...</div>;
   if (isError) return <div className="text-center py-20 text-red-500">Failed to load API keys</div>;
 
   return (
-    <div className="bg-[#0b0e14] p-4 md:p-6 max-w-6xl rounded-xl md:mx-6 lg:mx-8 min-h-[300px] flex items-start justify-center">
-      <div className="w-full max-w-6xl mx-auto bg-[#11141b] border border-[#1e232b] rounded-2xl p-6">
+    <div className="bg-[#0b0e14] border border-[#263e66] p-4 md:p-6 max-w-6xl rounded-xl md:mx-6 lg:mx-8 min-h-[300px] flex items-start justify-center">
+      <div className="w-full max-w-6xl mx-auto bg-[#111827] border border-[#1e232b] rounded-2xl p-6">
         
         {/* Header Section */}
         <div className="flex items-center gap-2 mb-8">
@@ -61,7 +61,7 @@ export default function Key() {
                 <th className="pb-4 font-normal">Name</th>
                 <th className="pb-4 font-normal">Created At</th>
                 <th className="pb-4 font-normal text-center">Status</th>
-                <th className="pb-4 font-normal text-right">Actions</th>
+              
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1e232b]">
@@ -83,7 +83,7 @@ export default function Key() {
                       {apiKey.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="py-5">
+                  {/* <td className="py-5">
                     <div className="flex items-center justify-end gap-3">
                       <button 
                         onClick={() => handleCopy(apiKey.key)}
@@ -101,7 +101,7 @@ export default function Key() {
                         <FiTrash2 size={16} />
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

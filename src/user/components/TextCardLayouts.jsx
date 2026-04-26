@@ -55,59 +55,55 @@ const TextCardLayouts = () => {
   const [isWebType, setIsWebType] = useState(false);
   const [searchParams] = useSearchParams();
   const taskIdFromUrl = searchParams.get("taskId");
- useEffect(() => {
-  if (!taskIdFromUrl) return;
+  useEffect(() => {
+    if (!taskIdFromUrl) return;
 
-  const loadTask = async () => {
-    try {
-      const task = await getTaskById(taskIdFromUrl);
-
-      let parsed = null;
-
-      // safe parse
+    const loadTask = async () => {
       try {
-        parsed =
-          typeof task.content === "string"
-            ? JSON.parse(task.content)
-            : task.content;
-      } catch {
-        parsed = null;
+        const task = await getTaskById(taskIdFromUrl);
+
+        let parsed = null;
+
+        try {
+          parsed =
+            typeof task.content === "string"
+              ? JSON.parse(task.content)
+              : task.content;
+        } catch {
+          parsed = null;
+        }
+
+        const formatted = parsed?.result?.formatted_results?.[0];
+
+        const output =
+          formatted?.output || parsed?.result?.output || task.content;
+
+        const taskType = formatted?.task_type;
+
+        setIsWebType(taskType === "web_app" || taskType === "website");
+
+        setCurrentTaskId(taskIdFromUrl);
+
+        setMessages([
+          {
+            role: "user",
+            text: task.prompt,
+          },
+          {
+            role: "ai",
+            message: "Loaded Task",
+            output,
+            taskId: taskIdFromUrl,
+          },
+        ]);
+      } catch (err) {
+        console.log("Task load failed", err);
       }
+    };
 
-      const formatted = parsed?.result?.formatted_results?.[0];
+    loadTask();
+  }, [taskIdFromUrl]);
 
-      const output =
-        formatted?.output ||
-        parsed?.result?.output ||
-        task.content;
-
-      const taskType = formatted?.task_type;
-
-      setIsWebType(
-        taskType === "web_app" || taskType === "website"
-      );
-
-      setCurrentTaskId(taskIdFromUrl);
-
-      setMessages([
-        {
-          role: "user",
-          text: task.prompt,
-        },
-        {
-          role: "ai",
-          message: "Loaded Task",
-          output,
-          taskId: taskIdFromUrl,
-        },
-      ]);
-    } catch (err) {
-      console.log("Task load failed", err);
-    }
-  };
-
-  loadTask();
-}, [taskIdFromUrl]);
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -143,21 +139,29 @@ const TextCardLayouts = () => {
   const continueMutation = useMutation({
     mutationFn: (data) => continueChat(data.taskId, { prompt: data.prompt }),
     onSuccess: (res) => {
-      const result = res?.aiResponse?.data?.result;
-      const formatted = result?.formatted_results?.[0];
-
+      console.log("CONTINUE RES:", res);
+        const result = res?.data?.content?.data?.result;
+    const formatted = result?.formatted_results?.[0];
+      setIsWebType(
+        formatted?.task_type === "web_app" ||
+          formatted?.task_type === "website",
+      );
       setMessages((prev) => [
         ...prev,
         {
           role: "ai",
-          message: res?.aiResponse?.message || "Updated",
-          output: formatted?.output || res?.aiResponse?.data?.result?.output,
-          taskId: res?.taskId || currentTaskId,
+          message: res?.data?.content?.message || "Updated",
+          output: formatted?.output || "no result is found",
+          taskId: res?.id || currentTaskId,
         },
       ]);
       setPrompt("");
     },
-    onError: () => alert("Failed to continue chat."),
+    onError: (err) => {
+      console.log("MUTATION ERROR:", err);
+      console.log("MUTATION ERROR RESPONSE:", err.response?.data);
+      alert(`Failed: ${err.response?.data?.message || err.message}`);
+    },
   });
 
   const handleCreate = () => {
@@ -168,9 +172,10 @@ const TextCardLayouts = () => {
 
     if (!currentTaskId) {
       taskMutation.mutate(prompt);
-    } else {
-      continueMutation.mutate({ taskId: currentTaskId, prompt: prompt });
-    }
+    }  else {
+    console.log("CONTINUING WITH:", { taskId: currentTaskId, prompt }); 
+    continueMutation.mutate({ taskId: currentTaskId, prompt });
+  }
   };
 
   const handleInput = (e) => {

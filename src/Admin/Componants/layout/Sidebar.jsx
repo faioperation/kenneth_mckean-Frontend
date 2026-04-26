@@ -4,6 +4,8 @@ import { RiBookLine } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
+import { apiGet, getImageUrl } from "../../../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Sidebar({ isOpen, onClose }) {
   const navLinks = [
@@ -28,12 +30,29 @@ export default function Sidebar({ isOpen, onClose }) {
   ];
 
   const location = useLocation();
-  const hideSidebar = location.pathname === "/admin/login"  ||
-   location.pathname === "/admin/login" || 
-  location.pathname === "/admin/forgot-password" || 
-  location.pathname === "/admin/verify-otp" || 
-  location.pathname === "/admin/reset-password" || 
-  location.pathname === "/admin/password-changed";
+  const getProfile = async () => {
+    const res = await apiGet("/admin/profile");
+    return res.data;
+  };
+  const {
+    data = {},
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["profile-data"],
+    queryFn: getProfile,
+  });
+  if (isError) {
+    return <div>{error?.message}</div>;
+  }
+
+  const hideSidebar =
+    location.pathname === "/admin/login" ||
+    location.pathname === "/admin/login" ||
+    location.pathname === "/admin/forgot-password" ||
+    location.pathname === "/admin/verify-otp" ||
+    location.pathname === "/admin/reset-password" ||
+    location.pathname === "/admin/password-changed";
   if (hideSidebar) return null;
 
   return (
@@ -105,16 +124,26 @@ export default function Sidebar({ isOpen, onClose }) {
           </nav>
 
           {/* Bottom Actions & User Profile */}
+
           <div className="border-t border-[#2B7FFF33] p-4 bg-[#0D0D12]">
             {/* User Info Section (New) */}
             <div className="flex items-center gap-3 px-3 py-4 mb-2 bg-[#16161E] rounded-xl border border-[#2B7FFF1A]">
-              <div className="relative">
-                <div className="h-10 w-10 bg-[#00C950] flex items-center justify-center rounded-full border border-gray-700">
-                  <FaRegUser />
+              {data ? ( 
+                <div >
+                  <img className="rounded-full h-10 w-10 " src={getImageUrl(
+                data.avatarUrl
+              )} alt="" />
                 </div>
+              ) : (
+                <div className="relative">
+                  <div className="h-10 w-10 bg-[#00C950] flex items-center justify-center rounded-full border border-gray-700">
+                    <FaRegUser />
+                  </div>
 
-                <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#16161E]"></div>
-              </div>
+                  <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#16161E]"></div>
+                </div>
+              )}
+
               <NavLink
                 key={navLinks[4].path}
                 to={navLinks[4].path}
@@ -129,10 +158,10 @@ export default function Sidebar({ isOpen, onClose }) {
               >
                 <div className="flex-1 overflow-hidden">
                   <h4 className="text-sm font-semibold truncate">
-                    {navLinks[4].name}
+                    {data?.name}
                   </h4>
-                  <p className="text-[11px] text-gray-500 truncate">
-                    {navLinks[4].mail}
+                  <p className="text-[11px]  text-gray-500 break-all leading-tight">
+                    {data?.email}
                   </p>
                 </div>{" "}
               </NavLink>
