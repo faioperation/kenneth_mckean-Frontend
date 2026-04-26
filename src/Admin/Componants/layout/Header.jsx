@@ -4,16 +4,35 @@ import { IoSearchSharp } from "react-icons/io5";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Notification from "./Notification";
 import AdminProfile from "../../Pages/AdminProfile/AdminProfile";
+import { apiGet, getImageUrl } from "../../../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Header({ onMenuClick }) {
   const location = useLocation();
-  const hideSidebar  = location.pathname === "/admin/login"  ||
-   location.pathname === "/admin/login" || 
-  location.pathname === "/admin/forgot-password" || 
-  location.pathname === "/admin/verify-otp" || 
-  location.pathname === "/admin/reset-password" || 
-  location.pathname === "/admin/password-changed";
+  const hideSidebar =
+    location.pathname === "/admin/login" ||
+    location.pathname === "/admin/login" ||
+    location.pathname === "/admin/forgot-password" ||
+    location.pathname === "/admin/verify-otp" ||
+    location.pathname === "/admin/reset-password" ||
+    location.pathname === "/admin/password-changed";
   if (hideSidebar) return null;
+
+  const getProfile = async () => {
+    const res = await apiGet("/admin/profile");
+    return res.data;
+  };
+  const {
+    data = {},
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["profile-data"],
+    queryFn: getProfile,
+  });
+  if (isError) {
+    return <div>{error?.message}</div>;
+  }
   return (
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between lg:justify-center bg-black border-b border-[#263e66] px-6 text-white shadow-sm">
       <div className="flex items-center gap-4">
@@ -39,7 +58,6 @@ export default function Header({ onMenuClick }) {
 
       {/* Right Side Actions */}
       <div className="flex  gap-2  items-center lg:mr-20">
-        
         <div className="dropdown dropdown-left">
           <div
             tabIndex={0}
@@ -61,12 +79,24 @@ export default function Header({ onMenuClick }) {
           </ul>
         </div>
         <Link to="/admin/adminProfile">
-    
-          <button className="btn relative rounded-full  hover:bg-[#1f2d5c] m-1">
-            <FaRegUser className="text-white " />
-          </button>
-          </Link>
- 
+          {data ? (
+            <div>
+              <img
+                className="rounded-full h-10 w-10 "
+                src={getImageUrl(data.avatarUrl)}
+                alt=""
+              />
+            </div>
+          ) : (
+            <div className="relative">
+              <div className="h-10 w-10 bg-[#00C950] flex items-center justify-center rounded-full border border-gray-700">
+                <FaRegUser />
+              </div>
+
+              <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#16161E]"></div>
+            </div>
+          )}
+        </Link>
       </div>
     </header>
   );
