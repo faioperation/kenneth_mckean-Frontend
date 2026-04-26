@@ -6,8 +6,8 @@ import Configuration from "../Admin/Pages/SystemConfiguration/Configuration";
 import User from "../Admin/Pages/User/User";
 import APIrequests from "../Admin/Pages/Usage&Billing/Componants/APIrequests";
 import Plans from "../Admin/Pages/Usage&Billing/Componants/Plans";
-import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
-import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
+// import Api from "../Admin/Pages/SystemConfiguration/Componants/Api";
+// import Key from "../Admin/Pages/SystemConfiguration/Componants/Key";
 import Edit from "../Admin/Pages/AdminProfile/Edit";
 import AdminProfile from "../Admin/Pages/AdminProfile/AdminProfile";
 import Profile from "../Admin/Pages/AdminProfile/Profile";
@@ -288,20 +288,20 @@ const router = createBrowserRouter([
       {
         path: "configuration",
         element: <Configuration></Configuration>,
-        children: [
-          {
-            index: true,
-            element: <Api></Api>,
-          },
-          {
-            path: "key",
-            element: <Key></Key>,
-          },
-          {
-            path: "addapikey",
-            element: <Apikey></Apikey>,
-          },
-        ],
+        // children: [
+        //   {
+        //     index: true,
+        //     element: <Api></Api>,
+        //   },
+        //   {
+        //     path: "key",
+        //     element: <Key></Key>,
+        //   },
+        //   {
+        //     path: "addapikey",
+        //     element: <Apikey></Apikey>,
+        //   },
+        // ],
       },
       {
         path: "adminprofile",
