@@ -39,7 +39,7 @@ export default function Stats() {
             </div>
           </div>
        
-          <div
+          {/* <div
            
             className="bg-[#11141b] border border-[#263e66] p-5 lg:px-4 xl:px-18 md:px-16 rounded-xl flex gap-8   items-center hover:border-gray-700 transition-colors"
           >
@@ -55,7 +55,7 @@ export default function Stats() {
                $ {stats?.apiRequests}
               </h3>
             </div>
-          </div>
+          </div> */}
        
           <div
            

@@ -6,7 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { apiGet, getImageUrl } from "../../../lib/api";
 import { useQuery } from "@tanstack/react-query";
-
+import logo from "../../../assets/images/logo.jpeg";
 export default function Sidebar({ isOpen, onClose }) {
   const navLinks = [
     {
@@ -78,7 +78,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <div className="flex items-center gap-3">
               <img
                 className="h-8 w-8"
-                src="https://i.ibb.co.com/mrpNqfkD/logo.png"
+                src={logo}
                 alt="Logo"
               />
               <div>
@@ -127,7 +127,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <div className="border-t border-[#2B7FFF33] p-4 bg-[#0D0D12]">
             {/* User Info Section (New) */}
-            <div className="flex items-center gap-3 px-3 py-4 mb-2 bg-[#16161E] rounded-xl border border-[#2B7FFF1A]">
+            <div className="flex items-center gap-1 px-3 py-4 mb-2 bg-[#16161E] rounded-xl border border-[#2B7FFF1A]">
               {data ? ( 
                 <div >
                   <img className="rounded-full h-10 w-10 " src={getImageUrl(
