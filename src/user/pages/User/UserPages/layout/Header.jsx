@@ -1,15 +1,34 @@
 import { Icon } from "@iconify/react";
 import { FaRegUser } from "react-icons/fa";
-import { Link, useNavigate,  } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PiSparkleBold } from "react-icons/pi";
+import { apiGet, getImageUrl } from "../../../../../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Header({ onMenuClick }) {
-  const navigate = useNavigate ();
+  const navigate = useNavigate();
+  const getProfile = async () => {
+    const res = await apiGet("/user/profile");
+    return res.data;
+  };
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["profileData"],
+    queryFn: getProfile,
+  });
+  if (isLoading) {
+    return (
+      <div>
+        <p>Loading.......</p>
+      </div>
+    );
+  }
+  if (isError) {
+    return <div>{error?.message}</div>;
+  }
   return (
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between bg-[#F8F8F7] px-4 md:px-6">
       {/* Left: Mobile Menu & Title */}
       <div className="flex items-center gap-2 md:gap-4">
-        {/* Mobile Menu Button - Visible only on small screens */}
         <button
           onClick={onMenuClick}
           className="rounded-md p-1 hover:bg-gray-200 lg:hidden text-black"
@@ -19,18 +38,20 @@ export default function Header({ onMenuClick }) {
 
         <p className="text-lg md:text-xl text-black font-bold flex gap-2 md:gap-4 items-center whitespace-nowrap">
           Algorithms Al <span className="hidden sm:inline"></span>
-       
         </p>
       </div>
       {/* Right Side Actions */}
       <div className="flex items-center gap-1 md:gap-3 lg:mr-10">
-        <button onClick={()=>navigate("/pricing")} className="hidden sm:flex btn relative text-gray-300 text-sm md:text-md rounded-full px-4 md:px-8 hover:bg-[#1f2d5c] hover:text-white transition-all border border-gray-300">
+        <button
+          onClick={() => navigate("/pricing")}
+          className="hidden sm:flex btn relative text-gray-300 text-sm md:text-md rounded-full px-4 md:px-8 hover:bg-[#1f2d5c] hover:text-white transition-all border border-gray-300"
+        >
           Upgrade
         </button>
 
         <button className="flex items-center justify-center p-2 md:p-3 gap-1 md:gap-2 rounded-full bg-white text-black border border-gray-200 shadow-sm">
           <PiSparkleBold className="text-blue-500 text-md md:text-lg" />
-          <span className="text-xs md:text-sm font-bold">300</span>
+          <span className="text-xs md:text-sm font-bold">{data.credits}</span>
         </button>
 
         <Link
@@ -40,17 +61,19 @@ export default function Header({ onMenuClick }) {
           <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2">
             <div className="relative">
               <img
-                src="https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png"
-                alt="Profile"
+                src={getImageUrl(
+                  data?.avatarUrl ||
+                    "https://i.ibb.co.com/Rp6rKgTs/4c53faf8564996d38193e347c7d2dca522816c71.png",
+                )}
                 className="h-9 w-9 md:h-10 md:h-10 rounded-full object-cover border border-gray-200"
               />
             </div>
 
             <div className="hidden lg:block">
               <h2 className="text-sm text-black font-semibold leading-none">
-                Akash Rahim
+              {data.name}
               </h2>
-              <p className="text-gray-500 text-[11px] mt-1">Free User</p>
+              <p className="text-gray-500 text-[11px] mt-1">{data.plan?.name || data.plan}</p>
             </div>
           </div>
         </Link>
