@@ -9,7 +9,7 @@ export default function NewUser() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Redirect to /admin/overview if the current path is exactly /admin
+  
   if (location.pathname === "/user") {
     return <Navigate to="/user/newtask" />;
   }
