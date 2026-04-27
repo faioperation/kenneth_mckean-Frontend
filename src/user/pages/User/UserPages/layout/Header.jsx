@@ -19,7 +19,7 @@ export default function Header({ onMenuClick }) {
 
         <p className="text-lg md:text-xl text-black font-bold flex gap-2 md:gap-4 items-center whitespace-nowrap">
           Algorithms Al <span className="hidden sm:inline"></span>
-          <span className="text-gray-600 text-sm cursor-pointer">∨</span>
+       
         </p>
       </div>
       {/* Right Side Actions */}

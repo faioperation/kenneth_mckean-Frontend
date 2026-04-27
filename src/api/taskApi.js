@@ -15,10 +15,15 @@ export const createTask = async (data) => {
     throw err;
   }
 };
+export const getTaskById = async (taskId) => {
+  const res = await apiGet(`/user/new-task/${taskId}`);
+  return res.data;
+};
+
 export const continueChat = async (taskId, data) => {
   try {
-    const res = await apiPost(`/user/new-task/${taskId}/continue`,{
-      prompt: data.prompt, 
+    const res = await apiPost(`/user/new-task/${taskId}/continue`, {
+      prompt: data.prompt,
     });
     return res;
   } catch (err) {
@@ -27,11 +32,6 @@ export const continueChat = async (taskId, data) => {
     console.log("CONTINUE CHAT FULL ERROR:", err);
     throw err;
   }
-};
-
-export const getTaskById = async (taskId) => {
-  const res = await apiGet(`/user/new-task/${taskId}`);
-  return res.data;
 };
 
 // PDF generate
@@ -44,4 +44,3 @@ export const generateZIP = async (taskId) => {
   const res = await apiPost(`/user/new-task/${taskId}/codebase`, {});
   return res.data;
 };
-
