@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
 import { FaRegUser } from "react-icons/fa";
-import { Link, } from "react-router-dom";
+import { Link, useNavigate,  } from "react-router-dom";
 import { PiSparkleBold } from "react-icons/pi";
 
 export default function Header({ onMenuClick }) {
-
+  const navigate = useNavigate ();
   return (
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between bg-[#F8F8F7] px-4 md:px-6">
       {/* Left: Mobile Menu & Title */}
@@ -24,7 +24,7 @@ export default function Header({ onMenuClick }) {
       </div>
       {/* Right Side Actions */}
       <div className="flex items-center gap-1 md:gap-3 lg:mr-10">
-        <button className="hidden sm:flex btn relative text-gray-300 text-sm md:text-md rounded-full px-4 md:px-8 hover:bg-[#1f2d5c] hover:text-white transition-all border border-gray-300">
+        <button onClick={()=>navigate("/pricing")} className="hidden sm:flex btn relative text-gray-300 text-sm md:text-md rounded-full px-4 md:px-8 hover:bg-[#1f2d5c] hover:text-white transition-all border border-gray-300">
           Upgrade
         </button>
 
