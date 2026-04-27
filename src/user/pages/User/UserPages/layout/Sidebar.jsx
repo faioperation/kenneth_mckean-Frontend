@@ -118,10 +118,10 @@ const [selectedProjectId, setSelectedProjectId] = useState(null);
 
           {/* Nav */}
           <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-6 text-black">
-            {navLinks.slice(0, 2).map((item) => (
+            
               <NavLink
-                key={item.path}
-                to={item.path}
+               
+                to="/user/newtask"
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium ${
                     isActive
@@ -131,10 +131,26 @@ const [selectedProjectId, setSelectedProjectId] = useState(null);
                 }
                 onClick={() => window.innerWidth < 768 && onClose()}
               >
-                <item.icon size={22} />
-                <span>{item.name}</span>
+                
+                <LuNotebookPen size={22}  />
+                <span>New Task</span>
               </NavLink>
-            ))}
+              <NavLink
+               
+                to="/user/search"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-4 py-3 text-md font-medium ${
+                    isActive
+                      ? "bg-[#155DFC33] text-[#53A3FF] border-l-2 border-[#51A2FF]"
+                      : "text-[#34322D] hover:bg-[#1f2d5c] hover:text-white"
+                  }`
+                }
+                onClick={() => window.innerWidth < 768 && onClose()}
+              >
+                  <IoSearch size={22}  />
+                <span>Search Chat</span>
+              </NavLink>
+           
           </nav>
 
           {/* Bottom */}
@@ -251,7 +267,7 @@ const [selectedProjectId, setSelectedProjectId] = useState(null);
                 <textarea 
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Tell me the pro and cons of AI..." 
+                  placeholder="what is on your mind" 
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 outline-none h-20 resize-none"
                 />
                 <button 

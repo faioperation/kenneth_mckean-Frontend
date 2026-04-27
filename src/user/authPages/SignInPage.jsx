@@ -18,6 +18,12 @@ const SigninPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleGoogleLogin = () => {
+    const baseURL =
+      import.meta.env.VITE_API_BASE_URL || "http://localhost:5173/api";
+
+    window.location.href = `${baseURL}/user/auth/google`;
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -70,17 +76,16 @@ const SigninPage = () => {
         setTimeout(() => {
           navigate("/user/newtask");
         }, 1000);
-
       } else {
         // Token key not found in expected response path
         toast.error("Token not found. Please try again.");
         console.error("Full response:", JSON.stringify(response, null, 2));
       }
-
     } catch (error) {
       // Handle 401 or other server errors
       const message =
-        error.response?.data?.message || "Invalid credentials. Please try again.";
+        error.response?.data?.message ||
+        "Invalid credentials. Please try again.";
       toast.error(message);
       console.error("Login error:", error.response?.data || error);
     } finally {
@@ -91,7 +96,9 @@ const SigninPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 font-inter">
       <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6 sm:p-8">
-        <h2 className="text-2xl font-bold text-center mb-6 text-black">Sign In</h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-black">
+          Sign In
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email Field */}
@@ -131,7 +138,10 @@ const SigninPage = () => {
             </div>
             {/* Forgot password link */}
             <div className="mt-2">
-              <Link to="/auth/forgot-password" className="text-xs text-blue-500 hover:underline font-medium">
+              <Link
+                to="/auth/forgot-password"
+                className="text-xs text-blue-500 hover:underline font-medium"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -156,6 +166,7 @@ const SigninPage = () => {
 
         {/* Google OAuth Button */}
         <button
+          onClick={handleGoogleLogin}
           type="button"
           className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-md py-2.5 cursor-pointer hover:bg-gray-50 transition-all"
         >
@@ -164,18 +175,26 @@ const SigninPage = () => {
             alt="google"
             className="w-4 h-4"
           />
-          <span className="text-sm text-black font-medium">Continue with Google</span>
+          <span className="text-sm text-black font-medium">
+            Continue with Google
+          </span>
         </button>
 
         {/* Footer Links */}
         <div className="mt-8 space-y-3 text-center text-sm">
           <p className="text-gray-600 font-medium">
             Are you not registered?{" "}
-            <Link to="/auth/signup" className="text-blue-500 font-semibold hover:text-blue-600 hover:underline transition-all">
+            <Link
+              to="/auth/signup"
+              className="text-blue-500 font-semibold hover:text-blue-600 hover:underline transition-all"
+            >
               Sign up
             </Link>
           </p>
-          <Link to="/" className="block text-gray-500 font-medium hover:text-black hover:underline transition-all">
+          <Link
+            to="/"
+            className="block text-gray-500 font-medium hover:text-black hover:underline transition-all"
+          >
             Back to home
           </Link>
         </div>

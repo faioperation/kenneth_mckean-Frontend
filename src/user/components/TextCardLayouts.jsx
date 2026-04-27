@@ -304,11 +304,11 @@ const TextCardLayouts = () => {
 
   return (
     <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
-      <div className="text-center mb-10">
+      {/* <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-gray-800">
           How can I assist you today?
         </h1>
-      </div>
+      </div> */}
 
       <div className="shadow-2xl border border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white max-w-4xl mx-auto">
         <div className="flex items-start gap-4">
@@ -325,7 +325,7 @@ const TextCardLayouts = () => {
         {/* Responsive buttons row */}
         <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
-            <div className="p-3 border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50">
+            <div className="p-3 border border-gray-200 rounded-full cursor-pointer text-black hover:bg-gray-50">
               <FaLink size={18} />
             </div>
             <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
@@ -339,7 +339,7 @@ const TextCardLayouts = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="p-3 border border-gray-200 rounded-full">
+            <div className="p-3 border text-black border-gray-200 rounded-full">
               <FiMic size={18} />
             </div>
             <button
@@ -364,7 +364,7 @@ const TextCardLayouts = () => {
             key={item.id}
             className="border border-gray-100 rounded-3xl p-6 bg-white hover:shadow-lg transition cursor-pointer group"
           >
-            <div className="w-12 h-12 flex items-center justify-center border border-gray-200 rounded-2xl mb-6 group-hover:bg-black group-hover:text-white transition">
+            <div className="w-12 h-12 flex items-center justify-center border border-gray-200 rounded-2xl mb-6 text-black group-hover:bg-black group-hover:text-white transition">
               <item.icon size={24} />
             </div>
             <h4 className="font-bold text-gray-800 mb-2">{item.title}</h4>

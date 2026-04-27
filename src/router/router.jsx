@@ -40,6 +40,7 @@ import PasswordChanged from "../Admin/Pages/AdminAuth/PasswordChanged";
 import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
 import UserResetPassword from "../user/authPages/UserResetPassword";
 import { tokenStorage } from "../lib/tokenStorage";
+import GoogleSuccess from "../user/authPages/GoogleSuccess";
 
 
 const PrivateRoute = ({ children }) => {
@@ -145,6 +146,8 @@ const router = createBrowserRouter([
         path: "/auth/reset-password",
         element: <UserResetPassword />,
       },
+      {path:"/auth/google/success" ,
+        element:<GoogleSuccess /> },
       // {
       //   path: "/auth/verify",
       //   element: <VerifyComponet />,
