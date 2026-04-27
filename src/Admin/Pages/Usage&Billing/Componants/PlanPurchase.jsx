@@ -38,7 +38,8 @@ export default function PlanPurchase() {
     );
   }
   return (
-    <div className="bg-[#0b0e14] border border-[#263e66] p-6 rounded-2xl w-full">
+    <div className="w-full lg:px-0 md:px-6">
+    <div className="bg-[#0b0e14] border border-[#263e66] p-6  rounded-2xl">
       {/* Header Section */}
       <div className="flex items-center gap-2 mb-6">
         <LuUsers className="text-purple-500 text-lg" />
@@ -89,6 +90,7 @@ export default function PlanPurchase() {
       </div>
 
    
+    </div>
     </div>
   );
 }

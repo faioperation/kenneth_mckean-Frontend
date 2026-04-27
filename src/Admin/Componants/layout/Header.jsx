@@ -34,30 +34,32 @@ export default function Header({ onMenuClick }) {
     return <div>{error?.message}</div>;
   }
   return (
-    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between lg:justify-center bg-black border-b border-[#263e66] px-6 text-white shadow-sm">
-      <div className="flex items-center gap-4">
-        {/* Mobile Menu Button */}
-        <button
-          onClick={onMenuClick}
-          className="rounded-md p-1 hover:bg-[#1f2d5c] md:hidden lg:hidden"
-        >
-          <Icon icon="material-symbols:menu" width="24" height="24" />
-        </button>
-      </div>
-      <div className="lg:mr-154  ">
-        <label className="input bg-black border-[#1E2939] border">
-          <IoSearchSharp className="lg:text-4xl md:text-4xl " />
-          <input
-            className="lg:w-180 md:w-180 text-white"
-            type="Search agents, workflows, logs..."
-            required
-            placeholder="Search agents, workflows, logs..."
-          />
-        </label>
+    <header className="sticky top-0 z-10 grid grid-cols-2 px-6 lg:px-12  h-16 items-center   bg-black border-b border-[#263e66]  text-white shadow-sm">
+      <div className="flex items-center gap-2 md:gap-0">
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={onMenuClick}
+            className="rounded-md p-1 hover:bg-[#1f2d5c] md:hidden lg:hidden"
+          >
+            <Icon icon="material-symbols:menu" width="24" height="24" />
+          </button>
+        </div>
+        <div className=" ">
+          <label className="input bg-black border-[#1E2939] border">
+            <IoSearchSharp className="lg:text-4xl md:text-4xl " />
+            <input
+              className=" md:w-180 text-white"
+              type="Search agents, workflows, logs..."
+              required
+              placeholder="Search agents, workflows, logs..."
+            />
+          </label>
+        </div>
       </div>
 
       {/* Right Side Actions */}
-      <div className="flex  gap-2  items-center lg:mr-20">
+      <div className="flex justify-end gap-2  items-center ">
         <div className="dropdown dropdown-left">
           <div
             tabIndex={0}
@@ -66,8 +68,8 @@ export default function Header({ onMenuClick }) {
           >
             <Icon
               icon="material-symbols:notifications-outline"
-              width="20"
-              height="20"
+              width="18"
+              height="18"
             />
             <span className="absolute top-2 l-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#111B3C]" />
           </div>
