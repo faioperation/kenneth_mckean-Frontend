@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AuthContainer from "./AuthContainer";
-import { Link} from "react-router";
+import { Link } from "react-router";
 import { apiPost } from "../../../lib/api";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   // const navigate = useNavigate();
- const handleLogin = async () => {
+  const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       alert("Email and password required");
       return;
@@ -24,22 +24,18 @@ export default function Login() {
         password,
       });
 
-      
       const token = res?.data?.tokens?.accessToken;
       const user = res?.data?.user;
 
-      localStorage.setItem("access_token", token);
+      localStorage.setItem("accessToken", token);
       localStorage.setItem("user", JSON.stringify(user));
 
       toast(res?.message || "Login successful");
 
       // navigate("/admin/overview");
-      window.location.href = "/admin/overview"
+      window.location.href = "/admin/overview";
     } catch (error) {
-      alert(
-        error?.response?.data?.message ||
-          "Login failed. Try again."
-      );
+      alert(error?.response?.data?.message || "Login failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -67,13 +63,13 @@ export default function Login() {
 
       <div className="text-right text-sm mb-4">
         <Link to="/admin/forgot-password">
-        <button className="text-blue-400 hover:underline">
-          Forgot Password?
-        </button>
+          <button className="text-blue-400 hover:underline">
+            Forgot Password?
+          </button>
         </Link>
       </div>
 
-       <button
+      <button
         onClick={handleLogin}
         disabled={loading}
         className="w-full bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition"

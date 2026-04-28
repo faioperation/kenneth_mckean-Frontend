@@ -73,7 +73,7 @@ export default function Header({ onMenuClick }) {
               <h2 className="text-sm text-black font-semibold leading-none">
               {data.name}
               </h2>
-              <p className="text-gray-500 text-[11px] mt-1">{data.plan?.name || data.plan}</p>
+              <p className="text-blue-400 text-[12px] mt-1">{data.plan?.name || data.plan} <span>user</span></p>
             </div>
           </div>
         </Link>

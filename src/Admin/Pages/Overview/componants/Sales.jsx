@@ -17,6 +17,7 @@ export default function Sales() {
       const res = await apiGet(`/admin/dashboard/sales-track?range=${range}`);
       return res?.data?.series || [];
     },
+    retry: false,
   });
 
   const filterOptions = [

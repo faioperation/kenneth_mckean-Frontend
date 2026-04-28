@@ -4,7 +4,7 @@ import { apiPost } from "../../lib/api"; // Integrated from your api logic
 import { tokenStorage } from "../../lib/tokenStorage"; // Integrated for token management
 import toast from "react-hot-toast";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
-
+import { env } from "../../config/env";
 // Initial state for the registration form
 const initialForm = {
   firstName: "",
@@ -12,7 +12,12 @@ const initialForm = {
   email: "",
   password: "",
 };
-
+const handleGoogleAuth = () => {
+  
+  const googleAuthUrl = `${env.apiBaseUrl}/user/auth/google`;
+  
+  window.location.href = googleAuthUrl;
+};
 const SignupPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialForm);
@@ -193,6 +198,7 @@ const SignupPage = () => {
 
         {/* Social Auth */}
         <button
+        onClick={handleGoogleAuth}
           type="button"
           className="mt-6 w-full flex items-center justify-center gap-3 border-2 border-gray-100 rounded-xl py-3 cursor-pointer hover:bg-gray-50 transition-all active:scale-[0.98]"
         >
@@ -201,7 +207,7 @@ const SignupPage = () => {
             alt="Google"
             className="w-5 h-5"
           />
-          <span className="text-sm text-gray-700 font-bold">Google</span>
+          <span className="text-sm text-gray-700 font-bold">Sign Up   with Google</span>
         </button>
 
         {/* Footer Links */}

@@ -13,6 +13,7 @@ export default function Stats() {
       const res = await apiGet('/admin/dashboard');
       return res.data; 
     },
+    retry: false,
   });
 
   const statItems = [

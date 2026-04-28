@@ -52,9 +52,19 @@ const TextCardLayouts = () => {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
   const [isWebType, setIsWebType] = useState(false);
   const [searchParams] = useSearchParams();
   const taskIdFromUrl = searchParams.get("taskId");
+  const refresh = searchParams.get("refresh");
+  useEffect(() => {
+    if (refresh) {
+      setMessages([]);
+      setCurrentTaskId(null);
+      setPrompt("");
+      setIsWebType(false);
+    }
+  }, [refresh]);
   useEffect(() => {
     if (!taskIdFromUrl) return;
 
@@ -67,14 +77,15 @@ const TextCardLayouts = () => {
         try {
           parsed =
             typeof task.content === "string"
-              ? JSON.parse(task.content)
-              : task.content;
+              ? JSON.parse(task.messages)
+              : task.messages;
         } catch {
           parsed = null;
         }
 
         const formatted = parsed?.result?.formatted_results?.[0];
-
+       const sId = parsed?.session_id || task?.session_id;
+        if (sId) setSessionId(sId);
         const output =
           formatted?.output || parsed?.result?.output || task.content;
 
@@ -117,6 +128,8 @@ const TextCardLayouts = () => {
       const formatted = result?.formatted_results?.[0];
 
       setCurrentTaskId(res?.taskId);
+    const newSessionId = res?.session_id;
+      if (newSessionId) setSessionId(newSessionId);
       setIsWebType(
         formatted?.task_type === "web_app" ||
           formatted?.task_type === "website",
@@ -135,34 +148,52 @@ const TextCardLayouts = () => {
     },
     onError: () => alert("Error creating task."),
   });
+const continueMutation = useMutation({
+  mutationFn: (data) =>
+    continueChat(data.taskId, {
+      prompt: data.prompt,
+      session_id: data.sessionId, 
+    }),
 
-  const continueMutation = useMutation({
-    mutationFn: (data) => continueChat(data.taskId, { prompt: data.prompt }),
-    onSuccess: (res) => {
-      console.log("CONTINUE RES:", res);
-        const result = res?.data?.content?.data?.result;
-    const formatted = result?.formatted_results?.[0];
-      setIsWebType(
-        formatted?.task_type === "web_app" ||
-          formatted?.task_type === "website",
-      );
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          message: res?.data?.content?.message || "Updated",
-          output: formatted?.output || "no result is found",
-          taskId: res?.id || currentTaskId,
-        },
-      ]);
-      setPrompt("");
-    },
-    onError: (err) => {
-      console.log("MUTATION ERROR:", err);
-      console.log("MUTATION ERROR RESPONSE:", err.response?.data);
-      alert(`Failed: ${err.response?.data?.message || err.message}`);
-    },
-  });
+  onSuccess: (res) => {
+    console.log("CONTINUE RES:", res);
+
+    const data = res?.data?.content?.data;
+
+    const result = data?.response;
+    const formatted = result?.formatted_results?.[0]; 
+    const sidFromRes = data?.session_id || res?.data?.session_id;
+    if (sidFromRes) {
+      setSessionId(sidFromRes);
+    }
+
+    setIsWebType(
+      formatted?.task_type === "web_app" ||
+        formatted?.task_type === "website"
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "ai",
+        message: res?.data?.content?.message || "Updated",
+        output:
+          formatted?.output ||
+          result?.output ||
+          "no result is found", 
+        taskId: res?.id || currentTaskId,
+      },
+    ]);
+
+    setPrompt("");
+  },
+
+  onError: (err) => {
+    console.log("MUTATION ERROR:", err);
+    console.log("MUTATION ERROR RESPONSE:", err.response?.data);
+    alert(`Failed: ${err.response?.data?.message || err.message}`);
+  },
+});
 
   const handleCreate = () => {
     if (!prompt.trim() || taskMutation.isPending || continueMutation.isPending)
@@ -172,10 +203,14 @@ const TextCardLayouts = () => {
 
     if (!currentTaskId) {
       taskMutation.mutate(prompt);
-    }  else {
-    console.log("CONTINUING WITH:", { taskId: currentTaskId, prompt }); 
-    continueMutation.mutate({ taskId: currentTaskId, prompt });
-  }
+    } else {
+      console.log("CONTINUING WITH:", { taskId: currentTaskId, sessionId, prompt });
+      continueMutation.mutate({
+        taskId: currentTaskId,
+        prompt,
+        sessionId: sessionId,
+      });
+    }
   };
 
   const handleInput = (e) => {
@@ -187,24 +222,24 @@ const TextCardLayouts = () => {
 
   if (messages.length > 0) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen relative overflow-hidden">
         <div
-          className={`flex flex-col border-r border-gray-200 transition-all duration-500 ${isWebType ? "w-1/2" : "w-full"}`}
+          className={`flex flex-col pb-16 transition-all duration-500 ${isWebType ? "w-1/2" : "w-full"}`}
         >
           {/* Chat Messages Area */}
           <div
             ref={scrollRef}
-            className="flex-1 p-6 overflow-y-auto space-y-8 scroll-smooth"
+            className="flex-1 py-6 xl:px-14 overflow-y-auto space-y-8 scroll-smooth"
           >
             {messages.map((msg, idx) => (
               <div key={idx} className="flex flex-col gap-4">
                 {msg.role === "user" ? (
-                  <div className="flex gap-4 self-start max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
-                      U
-                    </div>
+                  <div className="flex gap-4 self-end max-w-[85%]">
                     <div className="bg-gray-100 p-4 rounded-2xl rounded-tl-none text-gray-800 border border-gray-100 shadow-sm">
                       {msg.text}
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
+                      U
                     </div>
                   </div>
                 ) : (
@@ -213,12 +248,9 @@ const TextCardLayouts = () => {
                       <SparkleIcon />
                     </div>
                     <div className="flex-1 space-y-3">
-                      <p className="text-gray-700 leading-relaxed font-medium">
-                        {msg.message}
-                      </p>
                       {msg.output && (
                         <div>
-                          <div className="prose prose-sm bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
+                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
                             {msg.output}
                           </div>
                           <div>
@@ -250,7 +282,9 @@ const TextCardLayouts = () => {
 
           {/* Persistent Bottom Input */}
 
-          <div className="shadow-2xl border text-black border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white max-w-4xl ">
+          <div
+            className={`shadow-2xl  border text-black border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white sm:min-w-xl lg:min-w-2xl ${isWebType ? " max-w-4xl" : "mx-auto xl:min-w-4xl "} `}
+          >
             <div className="flex items-start gap-4">
               <SparkleIcon />
               <textarea
@@ -264,31 +298,31 @@ const TextCardLayouts = () => {
             </div>
 
             {/* Responsive buttons row */}
-            <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
-                <div className="p-3 border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50">
-                  <FaLink size={18} />
+            <div className="mt-8 flex flex-col flex-col-reverse md:flex-row items-center justify-between gap-4">
+              <div className="flex  items-center justify-center gap-3 w-full md:w-auto">
+                <div className="sm:p-3 p-1  border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50">
+                  <FaLink size={16} />
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
+                <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
                   <Globe size={16} />{" "}
                   <span className="whitespace-nowrap">Search web</span>
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
+                <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
                   <ImagePlus size={16} />{" "}
                   <span className="whitespace-nowrap">Create Image</span>
                 </button>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="p-3 border border-gray-200 rounded-full">
-                  <FiMic size={18} />
+              <div className="flex sm:w-full justify-end  items-center gap-4">
+                <div className="p-1 sm:p-3 border border-gray-200 rounded-full">
+                  <FiMic size={16} />
                 </div>
                 <button
                   onClick={handleCreate}
                   disabled={
                     taskMutation.isPending || continueMutation.isPending
                   }
-                  className="p-2 bg-black text-white rounded-full ml-2 hover:scale-105 transition disabled:opacity-30"
+                  className="p-1 sm:p-2 bg-black text-white rounded-full ml-2 hover:scale-105 transition disabled:opacity-30"
                 >
                   <FaArrowUp size={14} />
                 </button>
@@ -309,7 +343,21 @@ const TextCardLayouts = () => {
           How can I assist you today?
         </h1>
       </div> */}
+      <div className="px-4 sm:px-6 lg:px-12 xl:px-20">
+        <div className="text-center mt-10 sm:mt-12 lg:mt-[60px] font-inter font-semibold">
+          <h2 className="text-base sm:text-lg text-gray max-w-md mx-auto">
+            Hello, Akash!
+          </h2>
 
+          <p
+            className="text-gray mt-2 mb-10 sm:mb-12 lg:mb-[60px] 
+                   max-w-md sm:max-w-lg lg:max-w-xl 
+                   text-xl sm:text-2xl lg:text-[32px] mx-auto"
+          >
+            How can I assist you today?
+          </p>
+        </div>
+      </div>
       <div className="shadow-2xl border border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white max-w-4xl mx-auto">
         <div className="flex items-start gap-4">
           <SparkleIcon />
