@@ -157,7 +157,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 onClick={() => window.innerWidth < 768 && onClose()}
               >
                 <div className="flex-1 overflow-hidden">
-                  <h4 className="text-sm font-semibold truncate">
+                  <h4 className="text-sm font-semibold break-all leading-tight">
                     {data?.name}
                   </h4>
                   <p className="text-[11px]  text-gray-500 break-all leading-tight">

@@ -14,7 +14,8 @@ const getProfile = async () => {
 }
 const {data={} , isError, error} = useQuery({
   queryKey:["profile-data"],
-  queryFn: getProfile
+  queryFn: getProfile,
+  retry: false,
 })
 if (isError){
   return(

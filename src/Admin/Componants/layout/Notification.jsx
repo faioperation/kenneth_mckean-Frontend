@@ -13,6 +13,7 @@ export default function Notification() {
       const res = await apiGet("/admin/notification/");
       return res?.data || [];
     },
+    retry: false,
   });
 
   const markAsReadMutation = useMutation({

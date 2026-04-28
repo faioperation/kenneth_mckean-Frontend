@@ -5,12 +5,13 @@ import { apiGet } from '../../../../lib/api';
 
 export default function SubscriptionSummary() {
 
-  const { data, isLoading } = useQuery({
+  const { data=[], isLoading } = useQuery({
     queryKey: ['subscriptionSummary'],
     queryFn: async () => {
       const res = await apiGet('/admin/dashboard');
       return res?.data?.subscriptionSummary || [];
     },
+    retry: false,
   });
 
 
@@ -27,10 +28,10 @@ export default function SubscriptionSummary() {
              <div className="h-6 bg-gray-800 animate-pulse rounded"></div>
           </div>
         ) : (
-          data.map((item, index) => (
-            <div key={item.planId} className="flex justify-between items-center border-b border-gray-800 pb-3 last:border-0">
-              <span className="text-gray-400 font-medium">{item.planName}</span>
-              <span className="text-white font-semibold">{item.purchases}</span>
+          data.map((item) => (
+            <div key={item?.planId} className="flex justify-between items-center border-b border-gray-800 pb-3 last:border-0">
+              <span className="text-gray-400 font-medium">{item?.planName}</span>
+              <span className="text-white font-semibold">{item?.purchases}</span>
             </div>
           ))
         )}
@@ -59,9 +60,9 @@ export default function SubscriptionSummary() {
         {/* Chart Legend with Percentage */}
         <div className="flex-1 space-y-2">
           {data?.map((item, index) => (
-            <div key={item.planId} className="flex justify-between items-center text-sm">
+            <div key={item?.planId} className="flex justify-between items-center text-sm">
               <span style={{ color: COLORS[index % COLORS.length] }} className="font-semibold">
-                {item.planName}
+                {item?.planName}
               </span>
               <span style={{ color: COLORS[index % COLORS.length] }} className="font-medium opacity-80">
                
