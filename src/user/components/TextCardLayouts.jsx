@@ -72,42 +72,69 @@ const TextCardLayouts = () => {
       try {
         const task = await getTaskById(taskIdFromUrl);
 
-        let parsed = null;
+        const taskData = task.data;
 
-        try {
-          parsed =
-            typeof task.content === "string"
-              ? JSON.parse(task.messages)
-              : task.messages;
-        } catch {
-          parsed = null;
-        }
+        // try {
+        //   parsed =
+        //     typeof task.content === "string"
+        //       ? JSON.parse(task.messages)
+        //       : task.messages;
+        // } catch {
+        //   parsed = null;
+        // }
 
-        const formatted = parsed?.result?.formatted_results?.[0];
-       const sId = parsed?.session_id || task?.session_id;
+        // const formatted = parsed?.result?.formatted_results?.[0];
+        const sId = taskData?.session_id || task?.session_id;
         if (sId) setSessionId(sId);
-        const output =
-          formatted?.output || parsed?.result?.output || task.content;
-
-        const taskType = formatted?.task_type;
-
-        setIsWebType(taskType === "web_app" || taskType === "website");
-
+        const firstAiMsg = task?.messages.find(
+          (m) => m.role === "assistant",
+        );
+        let isWeb = false;
+        if (firstAiMsg) {
+          try {
+            const parsedContent = JSON.parse(firstAiMsg.content);
+            const taskType =
+              parsedContent?.data?.result?.formatted_results?.[0]?.task_type;
+            isWeb = taskType === "web_app" || taskType === "website";
+          } catch (e) {
+            isWeb = false;
+          }
+        }
+        setIsWebType(isWeb);
         setCurrentTaskId(taskIdFromUrl);
 
-        setMessages([
-          {
+        const history = task?.messages?.map((msg) => {
+        if (msg.role === "user") {
+          return {
             role: "user",
-            text: task.prompt,
-          },
-          {
+            text: msg.content,
+          };
+        } else {
+          let outputText = "";
+          try {
+            const parsed = JSON.parse(msg.content);
+          
+            outputText = 
+              parsed?.data?.response || 
+              parsed?.data?.result?.formatted_results?.[0]?.output || 
+              parsed?.data?.result?.output ||
+              "No content found";
+          } catch (e) {
+            outputText = msg.content; 
+          }
+
+          return {
             role: "ai",
-            message: "Loaded Task",
-            output,
+            message: "Loaded",
+            output: outputText,
             taskId: taskIdFromUrl,
-          },
-        ]);
-      } catch (err) {
+          };
+        }
+      });
+
+      setMessages(history); 
+
+    }catch (err) {
         console.log("Task load failed", err);
       }
     };
@@ -124,11 +151,12 @@ const TextCardLayouts = () => {
   const taskMutation = useMutation({
     mutationFn: (newPrompt) => createTask({ prompt: newPrompt }),
     onSuccess: (res) => {
-      const result = res?.aiResponse?.data?.result;
+      const result =
+        res?.aiResponse?.data?.result || res?.data?.aiResponse?.data?.result;
       const formatted = result?.formatted_results?.[0];
 
       setCurrentTaskId(res?.taskId);
-    const newSessionId = res?.session_id;
+      const newSessionId = res?.session_id;
       if (newSessionId) setSessionId(newSessionId);
       setIsWebType(
         formatted?.task_type === "web_app" ||
@@ -148,52 +176,49 @@ const TextCardLayouts = () => {
     },
     onError: () => alert("Error creating task."),
   });
-const continueMutation = useMutation({
-  mutationFn: (data) =>
-    continueChat(data.taskId, {
-      prompt: data.prompt,
-      session_id: data.sessionId, 
-    }),
+  const continueMutation = useMutation({
+    mutationFn: (data) =>
+      continueChat(data.taskId, {
+        prompt: data.prompt,
+        session_id: data.sessionId,
+      }),
 
-  onSuccess: (res) => {
-    console.log("CONTINUE RES:", res);
+    onSuccess: (res) => {
+      console.log("CONTINUE RES:", res);
 
-    const data = res?.data?.content?.data;
+      const data = res?.data?.content?.data;
 
-    const result = data?.response;
-    const formatted = result?.formatted_results?.[0]; 
-    const sidFromRes = data?.session_id || res?.data?.session_id;
-    if (sidFromRes) {
-      setSessionId(sidFromRes);
-    }
+      const result = data?.response;
 
-    setIsWebType(
-      formatted?.task_type === "web_app" ||
-        formatted?.task_type === "website"
-    );
+      const sidFromRes = data?.session_id || res?.data?.session_id;
+      if (sidFromRes) {
+        setSessionId(sidFromRes);
+      }
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        message: res?.data?.content?.message || "Updated",
-        output:
-          formatted?.output ||
-          result?.output ||
-          "no result is found", 
-        taskId: res?.id || currentTaskId,
-      },
-    ]);
+      // setIsWebType(
+      //   formatted?.task_type === "web_app" ||
+      //     formatted?.task_type === "website"
+      // );
 
-    setPrompt("");
-  },
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          message: res?.data?.content?.message || "Updated",
+          output: result || "no result is found",
+          taskId: res?.id || currentTaskId,
+        },
+      ]);
 
-  onError: (err) => {
-    console.log("MUTATION ERROR:", err);
-    console.log("MUTATION ERROR RESPONSE:", err.response?.data);
-    alert(`Failed: ${err.response?.data?.message || err.message}`);
-  },
-});
+      setPrompt("");
+    },
+
+    onError: (err) => {
+      console.log("MUTATION ERROR:", err);
+      console.log("MUTATION ERROR RESPONSE:", err.response?.data);
+      alert(`Failed: ${err.response?.data?.message || err.message}`);
+    },
+  });
 
   const handleCreate = () => {
     if (!prompt.trim() || taskMutation.isPending || continueMutation.isPending)
@@ -204,12 +229,22 @@ const continueMutation = useMutation({
     if (!currentTaskId) {
       taskMutation.mutate(prompt);
     } else {
-      console.log("CONTINUING WITH:", { taskId: currentTaskId, sessionId, prompt });
+      console.log("CONTINUING WITH:", {
+        taskId: currentTaskId,
+        sessionId,
+        prompt,
+      });
       continueMutation.mutate({
         taskId: currentTaskId,
         prompt,
         sessionId: sessionId,
       });
+    }
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleCreate();
     }
   };
 
@@ -292,6 +327,7 @@ const continueMutation = useMutation({
                 rows="1"
                 value={prompt}
                 onChange={handleInput}
+                onKeyDown={handleKeyDown}
                 placeholder="Ask a follow up..."
                 className="w-full resize-none focus:outline-none py-2 bg-transparent text-sm max-h-32"
               />
