@@ -18,11 +18,9 @@ const GoogleSuccess = () => {
 
     const handleGoogleAuth = async () => {
       try {
-        // ✅ Set token FIRST before making any API call
+    
         tokenStorage.setAccessToken(token.trim());
         localStorage.setItem("accessToken", token.trim());
-
-        // ✅ apiClient will now pick up the token automatically
         const response = await apiClient.get("/user/profile");
 
         console.log("Profile response:", response.data);

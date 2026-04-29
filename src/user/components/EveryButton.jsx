@@ -130,9 +130,7 @@ const EveryButton = () => {
 
         {/* Left Buttons */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <button className="p-2 rounded-lg border border-gray-200 cursor-pointer">
-            <Eye size={18} />
-          </button>
+       
 
           <button
             onClick={() => setActiveTab("code")}
@@ -193,9 +191,7 @@ const EveryButton = () => {
             Publish
           </button>
 
-          <button className="p-2 rounded-lg bg-gray-200 border border-gray-200 cursor-pointer">
-            <X size={18} />
-          </button>
+        
         </div>
       </div>
 
