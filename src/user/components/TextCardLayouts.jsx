@@ -8,6 +8,7 @@ import {
   Smartphone,
   Palette,
   Loader,
+  Eye
 } from "lucide-react";
 import { FiMic } from "react-icons/fi";
 import { useRef, useState, useEffect } from "react";
@@ -55,6 +56,7 @@ const TextCardLayouts = () => {
   const [sessionId, setSessionId] = useState(null);
   const [isWebType, setIsWebType] = useState(false);
   const [searchParams] = useSearchParams();
+  const [showEditor, setShowEditor] = useState(true);
   const taskIdFromUrl = searchParams.get("taskId");
   const refresh = searchParams.get("refresh");
   useEffect(() => {
@@ -73,17 +75,6 @@ const TextCardLayouts = () => {
         const task = await getTaskById(taskIdFromUrl);
 
         const taskData = task.data;
-
-        // try {
-        //   parsed =
-        //     typeof task.content === "string"
-        //       ? JSON.parse(task.messages)
-        //       : task.messages;
-        // } catch {
-        //   parsed = null;
-        // }
-
-        // const formatted = parsed?.result?.formatted_results?.[0];
         const sId = taskData?.session_id || task?.session_id;
         if (sId) setSessionId(sId);
         const firstAiMsg = task?.messages.find(
@@ -257,9 +248,9 @@ const TextCardLayouts = () => {
 
   if (messages.length > 0) {
     return (
-      <div className="flex h-screen relative overflow-hidden">
+      <div className="flex h-[calc(100vh-12vh)] relative overflow-hidden">
         <div
-          className={`flex flex-col pb-16 transition-all duration-500 ${isWebType ? "w-1/2" : "w-full"}`}
+          className={`flex flex-col pb-4 transition-all duration-500 ${isWebType && showEditor ? "hidden lg:flex w-1/2" : "w-full flex"}`}
         >
           {/* Chat Messages Area */}
           <div
@@ -273,7 +264,7 @@ const TextCardLayouts = () => {
                     <div className="bg-gray-100 p-4 rounded-2xl rounded-tl-none text-gray-800 border border-gray-100 shadow-sm">
                       {msg.text}
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">
                       U
                     </div>
                   </div>
@@ -288,7 +279,7 @@ const TextCardLayouts = () => {
                           <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
                             {msg.output}
                           </div>
-                          <div>
+                          <div className="flex items-center gap-2 mt-2">
                             {isWebType ? (
                               <ZIP taskId={msg.taskId} />
                             ) : (
@@ -296,6 +287,14 @@ const TextCardLayouts = () => {
                                 taskId={msg.taskId}
                                 content={msg.output || msg.message}
                               />
+                            )}
+                            {isWebType && !showEditor && (
+                              <button 
+                                onClick={() => setShowEditor(true)}
+                                className="flex items-center gap-2 mt-3 px-3 py-1.5 bg-blue-400 text-white rounded-lg text-xs hover:bg-gray-800 transition"
+                              >
+                                <Eye size={14} /> Open Editor
+                              </button>
                             )}
                           </div>
                         </div>
@@ -318,7 +317,7 @@ const TextCardLayouts = () => {
           {/* Persistent Bottom Input */}
 
           <div
-            className={`shadow-2xl  border text-black border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white sm:min-w-xl lg:min-w-2xl ${isWebType ? " max-w-4xl" : "mx-auto xl:min-w-4xl "} `}
+            className={`shadow-xl   border text-black border-gray-100 rounded-[32px] p-4 sm:p-6  bg-white sm:min-w-xl lg:min-w-2xl ${isWebType && showEditor ? " max-w-4xl" : "mx-auto xl:min-w-4xl "} `}
           >
             <div className="flex items-start gap-4">
               <SparkleIcon />
@@ -367,13 +366,18 @@ const TextCardLayouts = () => {
           </div>
         </div>
 
-        {isWebType && <EditorPanel messages={messages} />}
+        {isWebType && showEditor && (
+          <EditorPanel 
+            messages={messages} 
+            onClose={() => setShowEditor(false)} 
+          />
+        )}
       </div>
     );
   }
 
   return (
-    <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+    <div className="font-inter max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-22">
       {/* <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-gray-800">
           How can I assist you today?

@@ -126,7 +126,7 @@ if (isError){
                 <h4 className="text-lg font-semibold text-gray-800">
                   {data?.plan || "Free"}
                 </h4>
-                <button className="bg-black text-white text-sm px-4 py-1.5 rounded-full hover:bg-gray-800 cursor-pointer">
+                <button onClick={() => navigate("/pricing")} className="bg-black text-white text-sm px-4 py-1.5 rounded-full hover:bg-gray-800 cursor-pointer">
                   Upgrade
                 </button>
               </div>

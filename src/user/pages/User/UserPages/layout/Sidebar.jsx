@@ -86,13 +86,13 @@ export default function Sidebar({ isOpen, onClose }) {
     <div>
       {isOpen && (
         <div
-          className="fixed inset-0 z-20 bg-white transition-opacity md:hidden"
+          className="fixed inset-0 z-20 bg-white transition-opacity lg:hidden"
           onClick={onClose}
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-[#2B7FFF33] ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 border-r border-[#2B7FFF33] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -242,7 +242,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="fixed inset-0 z-100  flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden text-black border border-gray-200">
             <div className="flex items-center justify-between p-5 border-b bg-gray-50">
-              <h3 className="text-lg font-bold truncate pr-4 text-blue-600">
+              <h3 className="text-lg font-bold truncate pr-4 text-blue-500">
                 {detailsLoading ? "Loading Project..." : projectDetails?.name}
               </h3>
               <button
@@ -268,7 +268,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 <button
                   disabled={createTaskMutation.isPending}
                   onClick={handleCreateTask}
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+                  className="w-full bg-blue-400 text-white py-2 rounded-lg text-sm font-bold hover:bg-blue-500 transition-colors disabled:bg-gray-400"
                 >
                   {createTaskMutation.isPending
                     ? "Generating AI Response..."
