@@ -80,7 +80,7 @@
 
 //           <button
 //             onClick={() => setActiveTab("publish")}
-//             className={`p-2 rounded-lg bg-black text-white cursor-pointer 
+//             className={`p-2 rounded-lg bg-black text-white cursor-pointer
 //             `}
 //           >
 //             Publish
@@ -120,18 +120,15 @@ import SettingsLayout from "./SettingsLayout";
 import Dashboard from "./Dashboard";
 import PublishPage from "./PublishPage";
 
-const EveryButton = () => {
+const EveryButton = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState("code");
 
   return (
     <>
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b bg-white text-black border-gray-200">
-
         {/* Left Buttons */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-       
-
           <button
             onClick={() => setActiveTab("code")}
             className={`p-2 rounded-lg border border-gray-200 ${
@@ -191,7 +188,13 @@ const EveryButton = () => {
             Publish
           </button>
 
-        
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg bg-gray-200 border border-gray-200 cursor-pointer hover:text-black text-gray-600 transition-colors"
+            title="Close Panel"
+          >
+            <X size={20} />
+          </button>
         </div>
       </div>
 
