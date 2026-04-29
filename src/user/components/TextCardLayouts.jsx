@@ -124,7 +124,7 @@ const TextCardLayouts = () => {
   const taskMutation = useMutation({
     mutationFn: (newPrompt) => createTask({ prompt: newPrompt }),
     onSuccess: (res) => {
-      const result = res?.aiResponse?.data?.result;
+      const result = res?.aiResponse?.data?.result || res?.data?.aiResponse?.data?.result;
       const formatted = result?.formatted_results?.[0];
 
       setCurrentTaskId(res?.taskId);
@@ -161,16 +161,16 @@ const continueMutation = useMutation({
     const data = res?.data?.content?.data;
 
     const result = data?.response;
-    const formatted = result?.formatted_results?.[0]; 
+    
     const sidFromRes = data?.session_id || res?.data?.session_id;
     if (sidFromRes) {
       setSessionId(sidFromRes);
     }
 
-    setIsWebType(
-      formatted?.task_type === "web_app" ||
-        formatted?.task_type === "website"
-    );
+    // setIsWebType(
+    //   formatted?.task_type === "web_app" ||
+    //     formatted?.task_type === "website"
+    // );
 
     setMessages((prev) => [
       ...prev,
@@ -178,8 +178,8 @@ const continueMutation = useMutation({
         role: "ai",
         message: res?.data?.content?.message || "Updated",
         output:
-          formatted?.output ||
-          result?.output ||
+          
+          result ||
           "no result is found", 
         taskId: res?.id || currentTaskId,
       },

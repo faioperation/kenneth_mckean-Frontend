@@ -20,10 +20,12 @@ export const getTaskById = async (taskId) => {
   return res.data;
 };
 
-export const continueChat = async (taskId, data) => {
+export const continueChat = async (taskId, payload) => {
   try {
     const res = await apiPost(`/user/new-task/${taskId}/continue`, {
-      prompt: data.prompt,
+      prompt: payload.prompt,
+      session_id: payload.session_id,
+
     });
     return res;
   } catch (err) {
