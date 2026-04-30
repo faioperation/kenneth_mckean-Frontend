@@ -21,7 +21,7 @@ const SigninPage = () => {
   const handleGoogleLogin = () => {
     const baseURL =
       import.meta.env.VITE_API_BASE_URL ;
-
+      console.log("BASE URL:", baseURL);
     window.location.href = `${baseURL}/user/auth/google`;
   };
   const handleSubmit = async (event) => {
