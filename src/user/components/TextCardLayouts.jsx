@@ -26,13 +26,13 @@ const features = [
     id: 1,
     title: "Create Slides",
     desc: "Generate presentation-ready slides",
-    icon: Code2,
+    icon: LayoutDashboard ,
   },
   {
     id: 2,
     title: "Build Website",
     desc: "Build and deploy complete websites",
-    icon: LayoutDashboard,
+    icon: Code2,
   },
   {
     id: 3,
