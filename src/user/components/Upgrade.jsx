@@ -1,10 +1,9 @@
 import { IoIosCheckmark } from "react-icons/io";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiGet, apiPost } from "../../../lib/api"; 
+import { apiGet, apiPost } from "../../lib/api"; 
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
-const PricingCards = () => {
+const Upgrade = () => {
   const navigate = useNavigate();
 
   const {
@@ -19,12 +18,35 @@ const PricingCards = () => {
     },
   });
 
- const purchase = ()=>{
-  toast("To purchase a plan signin first !")
-  return
- }
+  const checkoutMutation = useMutation({
+    mutationFn: async ({ planId, interval }) => {
+    
+      const res = await apiPost("/user/payment/stripe/checkout-session", {
+        planId,
+        interval,
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error) => {
+      console.error("Payment session creation failed:", error);
+      alert("payment session has failed to load, try again!");
+    }
+  });
 
-
+  const handlePurchase = (planId, price) => {
+    if (price === 0) {
+      console.log("Free trial logic here");
+      return;
+    }
+  
+    checkoutMutation.mutate({ planId, interval: "monthly" });
+  };
 
   if (isLoading) {
     return <div className="text-center py-20 text-black">Loading Plans...</div>;
@@ -76,12 +98,14 @@ const PricingCards = () => {
             </div>
 
             <button
-              
-              className="mt-auto text-white py-3 cursor-pointer rounded-full transition font-bold bg-gray-800 hover:bg-gray-900"
-              
-              onClick={purchase}
+              disabled={checkoutMutation.isPending}
+              className={`mt-auto text-white py-3 cursor-pointer rounded-full transition font-bold ${
+                checkoutMutation.isPending ? "bg-gray-400" : "bg-gray-800 hover:bg-gray-900"
+              }`}
+              onClick={() => handlePurchase(plan.id, plan.monthlyPrice)}
             >
-              Purchase Now
+              {checkoutMutation.isPending ? "Processing..." : 
+               plan.monthlyPrice === 0 ? "Start Free Trial" : "Purchase Now"}
             </button>
           </div>
         ))}
@@ -97,4 +121,4 @@ const PricingCards = () => {
   );
 };
 
-export default PricingCards;
+export default Upgrade;

@@ -41,6 +41,7 @@ import ForgotPass from "../Admin/Pages/AdminAuth/ForgotPassword";
 import UserResetPassword from "../user/authPages/UserResetPassword";
 import { tokenStorage } from "../lib/tokenStorage";
 import GoogleSuccess from "../user/authPages/GoogleSuccess";
+import Upgrade from "../user/components/Upgrade";
 
 
 const PrivateRoute = ({ children }) => {
@@ -209,6 +210,10 @@ const router = createBrowserRouter([
       {
         path: "editprofile",
         element: <EditProfile></EditProfile>,
+      },
+      {
+        path: "upgrade",
+        element: <Upgrade/>
       },
     ],
   },

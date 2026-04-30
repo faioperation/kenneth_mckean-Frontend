@@ -43,7 +43,7 @@ export default function Header({ onMenuClick }) {
       {/* Right Side Actions */}
       <div className="flex items-center gap-1 md:gap-3 lg:mr-10">
         <button
-          onClick={() => navigate("/pricing")}
+          onClick={() => navigate("/user/upgrade")}
           className="hidden sm:flex btn relative text-gray-300 text-sm md:text-md rounded-full px-4 md:px-8 hover:bg-[#1f2d5c] hover:text-white transition-all border border-gray-300"
         >
           Upgrade
