@@ -19,7 +19,7 @@ import PDF from "./PDF";
 import ZIP from "./ZIP";
 import { useSearchParams } from "react-router-dom";
 import { getTaskById } from "../../api/taskApi";
-
+import MarkdownRenderer from "./MarkdownRenderer";
 
 const features = [
   {
@@ -180,15 +180,14 @@ const TextCardLayouts = () => {
       const data = res?.data?.content?.data;
 
       const result = data?.response;
-
+     
       const sidFromRes = data?.session_id || res?.data?.session_id;
       if (sidFromRes) {
         setSessionId(sidFromRes);
       }
 
       setIsWebType(
-        data?.task_type === "web_app" ||
-          data?.task_type === "website"
+        data?.task_type === "web_app" || data?.task_type === "website",
       );
 
       setMessages((prev) => [
@@ -315,7 +314,8 @@ const TextCardLayouts = () => {
                       {msg.output && (
                         <div>
                           <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
-                            {msg.output}
+                            {/* {msg.output}  */}
+                            <MarkdownRenderer content={msg.output} />
                           </div>
                           <div className="flex items-center gap-2 mt-2">
                             {isWebType ? (
@@ -452,6 +452,7 @@ const TextCardLayouts = () => {
           <textarea
             ref={textareaRef}
             value={prompt}
+            onKeyDown={handleKeyDown}
             onChange={handleInput}
             placeholder="Create in anything...."
             className="text-lg font-normal text-black w-full resize-none focus:outline-none max-h-40 pt-1"

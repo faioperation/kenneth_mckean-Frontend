@@ -14,7 +14,7 @@ const PricingCards = () => {
   } = useQuery({
     queryKey: ["paymentPlans"],
     queryFn: async () => {
-      const res = await apiGet("/user/payment/plans");
+      const res = await apiGet("/user/payment/get-plans");
       return res.data;
     },
   });
