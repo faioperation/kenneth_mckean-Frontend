@@ -61,15 +61,16 @@ export default function Notification() {
                 className={`flex justify-between items-start gap-4 border-b border-gray-800 pb-4 last:border-none cursor-pointer group`}
               >
                 <div className="space-y-1">
-                  <p className={`text-sm sm:text-base leading-relaxed transition-colors ${item.isRead ? 'text-gray-500' : 'text-gray-200 font-medium'}`}>
+                  <p className={`text-sm leading-relaxed transition-colors ${item.isRead ? 'text-gray-500' : 'text-gray-200 font-medium'}`}>
                     {item.message}
                   </p>
                   <div className="flex items-center gap-2">
                     {!item.isRead && <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full"></span>}
                     <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wider">
-                      {item.time || "Recently"}
+                      {item.createdAt || "Recently"}
                     </span>
                   </div>
+                  <hr className />
                 </div>
 
                 <span className="text-xs text-gray-600 group-hover:text-emerald-400 transition-colors">

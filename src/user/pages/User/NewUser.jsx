@@ -15,7 +15,7 @@ export default function NewUser() {
   }
 
   return (
-    <div className=" h-full w-full bg-[#F8F8F7] text-gray-100">
+    <div className=" h-full w-full  bg-[#F8F8F7] text-gray-100">
       <div className="flex ">
          <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
     
@@ -30,4 +30,5 @@ export default function NewUser() {
    
     </div>
   );
+  
 }
