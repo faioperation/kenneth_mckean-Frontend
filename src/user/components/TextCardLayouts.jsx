@@ -19,6 +19,7 @@ import PDF from "./PDF";
 import ZIP from "./ZIP";
 import { useSearchParams } from "react-router-dom";
 import { getTaskById } from "../../api/taskApi";
+import toast from "react-hot-toast";
 
 const features = [
   {
@@ -185,10 +186,10 @@ const TextCardLayouts = () => {
         setSessionId(sidFromRes);
       }
 
-      // setIsWebType(
-      //   formatted?.task_type === "web_app" ||
-      //     formatted?.task_type === "website"
-      // );
+      setIsWebType(
+        data?.task_type === "web_app" ||
+          data?.task_type === "website"
+      );
 
       setMessages((prev) => [
         ...prev,
