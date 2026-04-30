@@ -8,7 +8,7 @@ import {
   Smartphone,
   Palette,
   Loader,
-  Eye
+  Eye,
 } from "lucide-react";
 import { FiMic } from "react-icons/fi";
 import { useRef, useState, useEffect } from "react";
@@ -57,6 +57,8 @@ const TextCardLayouts = () => {
   const [isWebType, setIsWebType] = useState(false);
   const [searchParams] = useSearchParams();
   const [showEditor, setShowEditor] = useState(true);
+  const [isListening, setIsListening] = useState(false);
+
   const taskIdFromUrl = searchParams.get("taskId");
   const refresh = searchParams.get("refresh");
   useEffect(() => {
@@ -77,9 +79,7 @@ const TextCardLayouts = () => {
         const taskData = task.data;
         const sId = taskData?.session_id || task?.session_id;
         if (sId) setSessionId(sId);
-        const firstAiMsg = task?.messages.find(
-          (m) => m.role === "assistant",
-        );
+        const firstAiMsg = task?.messages.find((m) => m.role === "assistant");
         let isWeb = false;
         if (firstAiMsg) {
           try {
@@ -95,37 +95,36 @@ const TextCardLayouts = () => {
         setCurrentTaskId(taskIdFromUrl);
 
         const history = task?.messages?.map((msg) => {
-        if (msg.role === "user") {
-          return {
-            role: "user",
-            text: msg.content,
-          };
-        } else {
-          let outputText = "";
-          try {
-            const parsed = JSON.parse(msg.content);
-          
-            outputText = 
-              parsed?.data?.response || 
-              parsed?.data?.result?.formatted_results?.[0]?.output || 
-              parsed?.data?.result?.output ||
-              "No content found";
-          } catch (e) {
-            outputText = msg.content; 
+          if (msg.role === "user") {
+            return {
+              role: "user",
+              text: msg.content,
+            };
+          } else {
+            let outputText = "";
+            try {
+              const parsed = JSON.parse(msg.content);
+
+              outputText =
+                parsed?.data?.response ||
+                parsed?.data?.result?.formatted_results?.[0]?.output ||
+                parsed?.data?.result?.output ||
+                "No content found";
+            } catch (e) {
+              outputText = msg.content;
+            }
+
+            return {
+              role: "ai",
+              message: "Loaded",
+              output: outputText,
+              taskId: taskIdFromUrl,
+            };
           }
+        });
 
-          return {
-            role: "ai",
-            message: "Loaded",
-            output: outputText,
-            taskId: taskIdFromUrl,
-          };
-        }
-      });
-
-      setMessages(history); 
-
-    }catch (err) {
+        setMessages(history);
+      } catch (err) {
         console.log("Task load failed", err);
       }
     };
@@ -246,6 +245,44 @@ const TextCardLayouts = () => {
     setPrompt(e.target.value);
   };
 
+  // voice chat
+
+  const handleAddLink = () => {
+    const url = window.prompt("Enter the link URL:");
+    if (url && url.trim() !== "") {
+      setPrompt((prev) => `${prev} [Link: ${url}] `);
+    }
+  };
+
+  const handleVoiceInput = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Your browser does not support voice chat. Please use Chrome.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => setIsListening(true);
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setPrompt((prev) => (prev.trim() + " " + transcript).trim());
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+  };
+
   if (messages.length > 0) {
     return (
       <div className="flex h-[calc(100vh-12vh)] relative overflow-hidden">
@@ -289,7 +326,7 @@ const TextCardLayouts = () => {
                               />
                             )}
                             {isWebType && !showEditor && (
-                              <button 
+                              <button
                                 onClick={() => setShowEditor(true)}
                                 className="flex items-center gap-2 mt-3 px-3 py-1.5 bg-blue-400 text-white rounded-lg text-xs hover:bg-gray-800 transition"
                               >
@@ -335,7 +372,10 @@ const TextCardLayouts = () => {
             {/* Responsive buttons row */}
             <div className="mt-8 flex flex-col flex-col-reverse md:flex-row items-center justify-between gap-4">
               <div className="flex  items-center justify-center gap-3 w-full md:w-auto">
-                <div className="sm:p-3 p-1  border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50">
+                <div
+                  onClick={handleAddLink}
+                  className="sm:p-3 p-1  border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50"
+                >
                   <FaLink size={16} />
                 </div>
                 <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
@@ -349,7 +389,14 @@ const TextCardLayouts = () => {
               </div>
 
               <div className="flex sm:w-full justify-end  items-center gap-4">
-                <div className="p-1 sm:p-3 border border-gray-200 rounded-full">
+                <div
+                  onClick={handleVoiceInput}
+                  className={`p-1 sm:p-3 border text-balck border-gray-200 rounded-full cursor-pointer transition-all ${
+                    isListening
+                      ? "bg-blue-100 border-blue-500  animate-pulse"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
                   <FiMic size={16} />
                 </div>
                 <button
@@ -367,9 +414,9 @@ const TextCardLayouts = () => {
         </div>
 
         {isWebType && showEditor && (
-          <EditorPanel 
-            messages={messages} 
-            onClose={() => setShowEditor(false)} 
+          <EditorPanel
+            messages={messages}
+            onClose={() => setShowEditor(false)}
           />
         )}
       </div>
@@ -413,7 +460,10 @@ const TextCardLayouts = () => {
         {/* Responsive buttons row */}
         <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
-            <div className="p-3 border border-gray-200 rounded-full cursor-pointer text-black hover:bg-gray-50">
+            <div
+              onClick={handleAddLink}
+              className="p-3 border border-gray-200 rounded-full cursor-pointer text-black hover:bg-gray-50"
+            >
               <FaLink size={18} />
             </div>
             <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
@@ -427,7 +477,14 @@ const TextCardLayouts = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="p-3 border text-black border-gray-200 rounded-full">
+            <div
+              onClick={handleVoiceInput}
+              className={`p-1 sm:p-3 border  text-black   border-gray-200 rounded-full cursor-pointer transition-all ${
+                isListening
+                  ? "bg-blue-100 border-blue-500 animate-pulse"
+                  : "hover:bg-gray-50"
+              }`}
+            >
               <FiMic size={18} />
             </div>
             <button
