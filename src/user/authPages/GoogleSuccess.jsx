@@ -15,7 +15,7 @@ const GoogleSuccess = () => {
       navigate("/auth/signin");
       return;
     }
-
+    
     const handleGoogleAuth = async () => {
       try {
     
@@ -35,7 +35,7 @@ const GoogleSuccess = () => {
           localStorage.setItem(
             "user",
             JSON.stringify({
-              ...userData,
+              ...userData,   
               role: userData.role || "USER",
             })
           );
