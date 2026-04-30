@@ -20,7 +20,7 @@ const SigninPage = () => {
 
   const handleGoogleLogin = () => {
     const baseURL =
-      import.meta.env.VITE_API_BASE_URL || "http://localhost:5173/api";
+      import.meta.env.VITE_API_BASE_URL ;
 
     window.location.href = `${baseURL}/user/auth/google`;
   };

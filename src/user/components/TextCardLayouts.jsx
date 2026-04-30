@@ -32,7 +32,7 @@ const features = [
     id: 2,
     title: "Build Website",
     desc: "Build and deploy complete websites",
-    icon: Code2,
+    icon: Code2,  
   },
   {
     id: 3,
