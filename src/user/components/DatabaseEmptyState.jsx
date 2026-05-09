@@ -26,7 +26,7 @@ const DatabaseEmptyState = () => {
 
         {/* Description */}
         <p className="text-sm sm:text-base md:text-lg text-gray-500 mb-6 sm:mb-8 leading-relaxed px-2">
-          Let Manus create and connect one for your website to store data,
+          Let Algirothm Ai create and connect one for your website to store data,
           power dynamic content, and more.
         </p>
 

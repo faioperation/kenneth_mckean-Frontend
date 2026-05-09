@@ -213,11 +213,11 @@ const TextCardLayouts = () => {
   const handleCreate = () => {
     if (!prompt.trim() || taskMutation.isPending || continueMutation.isPending)
       return;
-
-    setMessages((prev) => [...prev, { role: "user", text: prompt }]);
-
+    const currentPrompt = prompt;
+    setMessages((prev) => [...prev, { role: "user", text: currentPrompt }]);
+    setPrompt("");
     if (!currentTaskId) {
-      taskMutation.mutate(prompt);
+      taskMutation.mutate(currentPrompt);
     } else {
       console.log("CONTINUING WITH:", {
         taskId: currentTaskId,
@@ -226,7 +226,7 @@ const TextCardLayouts = () => {
       });
       continueMutation.mutate({
         taskId: currentTaskId,
-        prompt,
+        prompt: currentPrompt,
         sessionId: sessionId,
       });
     }
@@ -297,23 +297,23 @@ const TextCardLayouts = () => {
             {messages.map((msg, idx) => (
               <div key={idx} className="flex flex-col gap-4">
                 {msg.role === "user" ? (
-                  <div className="flex gap-4 self-end max-w-[85%]">
-                    <div className="bg-gray-100 p-4 rounded-2xl rounded-tl-none text-gray-800 border border-gray-100 shadow-sm">
+                  <div className="flex gap-4 self-end max-w-full">
+                    <div className=" bg-gray-100 p-4 ml-8  rounded-2xl break-all leading-tight rounded-tl-none text-gray-800 border border-gray-100 shadow-sm">
                       {msg.text}
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                       U
                     </div>
                   </div>
                 ) : (
-                  <div className="flex gap-4 self-start w-full">
+                  <div className="flex gap-2 self-start w-full">
                     <div className="w-8 h-8 flex-shrink-0">
                       <SparkleIcon />
                     </div>
                     <div className="flex-1 space-y-3">
                       {msg.output && (
                         <div>
-                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-gray-600">
+                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600">
                             {/* {msg.output}  */}
                             <MarkdownRenderer content={msg.output} />
                           </div>
@@ -347,7 +347,7 @@ const TextCardLayouts = () => {
                 <div className="w-8 h-8 flex-shrink-0">
                   <SparkleIcon />
                 </div>
-                <div className="h-10 bg-gray-100 rounded-xl w-1/2"></div>
+                <div className="h-10 bg-gray-200 rounded-xl w-1/2"></div>
               </div>
             )}
           </div>
