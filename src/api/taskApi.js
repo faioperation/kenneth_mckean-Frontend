@@ -46,3 +46,7 @@ export const generateZIP = async (taskId) => {
   const res = await apiPost(`/user/new-task/${taskId}/codebase`, {});
   return res.data;
 };
+export const getPreview = async (taskId) => {
+  const res = await apiPost(`/user/new-task/${taskId}/preview`, {});
+  return res.data;
+};
