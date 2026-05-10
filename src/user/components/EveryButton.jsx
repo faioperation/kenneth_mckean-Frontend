@@ -144,10 +144,10 @@ const EveryButton = ({ onClose }) => {
               activeTab === "dashboard" ? "bg-gray-200 border-gray-800" : ""
             }`}
           >
-            <AppWindow size={18} />
+            <Eye size={18} />
           </button>
 
-          <button
+          {/* <button
             onClick={() => setActiveTab("database")}
             className={`p-2 rounded-lg border border-gray-200 ${
               activeTab === "database" ? "bg-gray-200 border-gray-800" : ""
@@ -172,12 +172,12 @@ const EveryButton = ({ onClose }) => {
             }`}
           >
             <Settings size={18} />
-          </button>
+          </button> */}
         </div>
 
         {/* Right Buttons */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <button className="p-2 rounded-lg bg-gray-200 border border-gray-200 cursor-pointer">
+          {/* <button className="p-2 rounded-lg bg-gray-200 border border-gray-200 cursor-pointer">
             <Share2 size={18} />
           </button>
 
@@ -186,7 +186,7 @@ const EveryButton = ({ onClose }) => {
             className="px-4 py-2 rounded-lg bg-black text-white text-sm sm:text-base"
           >
             Publish
-          </button>
+          </button> */}
 
           <button
             onClick={onClose}
@@ -200,10 +200,10 @@ const EveryButton = ({ onClose }) => {
 
       {/* Pages */}
       {activeTab === "dashboard" && <Dashboard />}
-      {activeTab === "database" && <DatabaseEmptyState />}
+      {/* {activeTab === "database" && <DatabaseEmptyState />}
       {activeTab === "folder" && <FileStorageEmptyState />}
       {activeTab === "settings" && <SettingsLayout />}
-      {activeTab === "publish" && <PublishPage />}
+      {activeTab === "publish" && <PublishPage />} */}
     </>
   );
 };
