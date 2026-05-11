@@ -1,4 +1,5 @@
 const StructuredMessageRenderer = ({ blocks }) => {
+   if (!Array.isArray(blocks)) return null;
   return (
     <div className="space-y-4">
       {blocks.map((block, index) => {
@@ -56,7 +57,7 @@ const StructuredMessageRenderer = ({ blocks }) => {
                   )}
                   
                   {item.text && (
-                    <span className="text-gray-700">
+                    <span className="text-gray-700 ">
                       {" "}
                        {item.text}
                     </span>

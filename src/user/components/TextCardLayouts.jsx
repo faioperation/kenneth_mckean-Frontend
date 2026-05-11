@@ -105,58 +105,80 @@ const TextCardLayouts = () => {
     const loadTask = async () => {
       try {
         const task = await getTaskById(taskIdFromUrl);
-
-        const taskData = task.data;
-        const sId = taskData?.session_id || task?.session_id;
+        console.log("FULL TASK RESPONSE:", task);
+        const taskData = task;
+        const sId = taskData?.session_id;
         if (sId) setSessionId(sId);
-        const firstAiMsg = task?.messages.find((m) => m.role === "assistant");
+        const firstAiMsg = taskData?.messages.find(
+          (m) => m.role === "assistant",
+        );
         let isWeb = false;
         if (firstAiMsg) {
           try {
-            const parsedContent = JSON.parse(firstAiMsg.content);
             const taskType =
-              parsedContent?.data?.result?.formatted_results?.[0]?.task_type;
-            isWeb = taskType === "web_app" || taskType === "website";
-          } catch (e) {
+              firstAiMsg?.content?.data?.result?.formatted_results?.[0]
+                ?.task_type;
+              
+                
+            isWeb = taskType === "web_app" || taskType === "website" ;
+          } catch {
             isWeb = false;
           }
         }
         setIsWebType(isWeb);
         setCurrentTaskId(taskIdFromUrl);
-
-        const history = task?.messages?.map((msg) => {
+        
+        const history = taskData?.messages?.map((msg) => {
           if (msg.role === "user") {
+            const userText = Array.isArray(msg.content)
+              ? msg.content.map((b) => b.text || "").join(" ")
+              : typeof msg.content === "string"
+                ? msg.content
+                : "";
             return {
               role: "user",
-              text: msg.content,
+              text: userText,
             };
           } else {
-            let outputData;
+            // let outputData;
 
-            try {
-              const parsed = JSON.parse(msg.content);
+            // try {
+            //   const parsed = JSON.parse(msg.content);
 
-              const rawContent =
-                parsed?.data?.response ||
-                parsed?.data?.result?.formatted_results?.[0]?.output ||
-                parsed?.data?.result?.output ||
-                "No content found";
+            //   const rawContent =
+            //     parsed?.data?.response ||
+            //     parsed?.data?.result?.formatted_results?.[0]?.output ||
+            //     parsed?.data?.result?.output ||
+            //     "No content found";
 
-              outputData = extractMessageContent(rawContent);
-            } catch (e) {
-              outputData = extractMessageContent(msg.content);
-            }
+            //   outputData = extractMessageContent(rawContent);
+            // } catch (e) {
+            //   outputData = extractMessageContent(msg.content);
+            // }
+
+            // return {
+            //   role: "ai",
+            //   message: "Loaded",
+            //   output: outputData,
+            //   taskId: taskIdFromUrl,
+            // };
+            const content = msg.content;
+
+            const rawResponse =
+              content?.data?.response ||
+              content?.data?.structured_response ||
+              content?.data?.result?.formatted_results?.[0]?.output ||
+              null;
 
             return {
               role: "ai",
-              message: "Loaded",
-              output: outputData,
+              message: content?.message || "Loaded",
+              output: extractMessageContent(rawResponse),
               taskId: taskIdFromUrl,
             };
           }
         });
-
-        setMessages(history);
+        setMessages(history ?? []);
       } catch (err) {
         console.log("Task load failed", err);
       }
@@ -334,8 +356,12 @@ const TextCardLayouts = () => {
               <div key={idx} className="flex flex-col gap-4">
                 {msg.role === "user" ? (
                   <div className="flex gap-4 self-end max-w-full">
-                    <div className=" bg-gray-100 p-4 ml-8  rounded-2xl break-all leading-tight rounded-tl-none text-gray-800 border border-gray-100 shadow-sm">
-                      {msg.text}
+                    <div className=" bg-gray-100 p-4 ml-8  rounded-2xl break-all leading-tight rounded-tr-none text-gray-800 border border-gray-200 shadow-sm ">
+                      {typeof msg.text === "string"
+                        ? msg.text
+                        : Array.isArray(msg.text)
+                          ? msg.text.map((b) => b.text || "").join(" ")
+                          : JSON.stringify(msg.text)}
                     </div>
                     <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                       U
@@ -349,7 +375,7 @@ const TextCardLayouts = () => {
                     <div className="flex-1 space-y-3">
                       {msg.output && (
                         <div>
-                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600">
+                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl  border border-blue-100 text-gray-600">
                             {/* {msg.output}  */}
                             {msg.output?.type === "markdown" ? (
                               <MarkdownRenderer content={msg.output.content} />
