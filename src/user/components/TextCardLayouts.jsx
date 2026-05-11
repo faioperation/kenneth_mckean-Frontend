@@ -20,19 +20,20 @@ import ZIP from "./ZIP";
 import { useSearchParams } from "react-router-dom";
 import { getTaskById } from "../../api/taskApi";
 import MarkdownRenderer from "./MarkdownRenderer";
+import StructuredMessageRenderer from "./StructuredMessageRenderer";
 
 const features = [
   {
     id: 1,
     title: "Create Slides",
     desc: "Generate presentation-ready slides",
-    icon: LayoutDashboard ,
+    icon: LayoutDashboard,
   },
   {
     id: 2,
     title: "Build Website",
     desc: "Build and deploy complete websites",
-    icon: Code2,  
+    icon: Code2,
   },
   {
     id: 3,
@@ -47,7 +48,35 @@ const features = [
     icon: Palette,
   },
 ];
+const extractMessageContent = (rawData) => {
+  try {
+    // OLD FORMAT SUPPORT
+    if (typeof rawData === "string") {
+      return {
+        type: "markdown",
+        content: rawData,
+      };
+    }
 
+    // NEW STRUCTURED RESPONSE
+    if (Array.isArray(rawData)) {
+      return {
+        type: "structured",
+        content: rawData,
+      };
+    }
+
+    return {
+      type: "text",
+      content: "No content found",
+    };
+  } catch {
+    return {
+      type: "text",
+      content: "Failed to parse content",
+    };
+  }
+};
 const TextCardLayouts = () => {
   const textareaRef = useRef(null);
   const scrollRef = useRef(null);
@@ -102,23 +131,26 @@ const TextCardLayouts = () => {
               text: msg.content,
             };
           } else {
-            let outputText = "";
+            let outputData;
+
             try {
               const parsed = JSON.parse(msg.content);
 
-              outputText =
+              const rawContent =
                 parsed?.data?.response ||
                 parsed?.data?.result?.formatted_results?.[0]?.output ||
                 parsed?.data?.result?.output ||
                 "No content found";
+
+              outputData = extractMessageContent(rawContent);
             } catch (e) {
-              outputText = msg.content;
+              outputData = extractMessageContent(msg.content);
             }
 
             return {
               role: "ai",
               message: "Loaded",
-              output: outputText,
+              output: outputData,
               taskId: taskIdFromUrl,
             };
           }
@@ -159,7 +191,11 @@ const TextCardLayouts = () => {
         {
           role: "ai",
           message: res?.aiResponse?.message || "Generated",
-          output: formatted?.output || res?.aiResponse?.data?.result?.output,
+          output: extractMessageContent(
+            formatted?.output ||
+              res?.aiResponse?.data?.result?.output ||
+              res?.aiResponse?.data?.response,
+          ),
           taskId: res?.taskId,
         },
       ]);
@@ -180,7 +216,7 @@ const TextCardLayouts = () => {
       const data = res?.data?.content?.data;
 
       const result = data?.response;
-     
+
       const sidFromRes = data?.session_id || res?.data?.session_id;
       if (sidFromRes) {
         setSessionId(sidFromRes);
@@ -195,7 +231,7 @@ const TextCardLayouts = () => {
         {
           role: "ai",
           message: res?.data?.content?.message || "Updated",
-          output: result || "no result is found",
+          output: extractMessageContent(result),
           taskId: res?.id || currentTaskId,
         },
       ]);
@@ -315,7 +351,15 @@ const TextCardLayouts = () => {
                         <div>
                           <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600">
                             {/* {msg.output}  */}
-                            <MarkdownRenderer content={msg.output} />
+                            {msg.output?.type === "markdown" ? (
+                              <MarkdownRenderer content={msg.output.content} />
+                            ) : msg.output?.type === "structured" ? (
+                              <StructuredMessageRenderer
+                                blocks={msg.output.content}
+                              />
+                            ) : (
+                              <p>{msg.output?.content}</p>
+                            )}
                           </div>
                           <div className="flex items-center gap-2 mt-2">
                             {isWebType ? (
@@ -323,7 +367,15 @@ const TextCardLayouts = () => {
                             ) : (
                               <PDF
                                 taskId={msg.taskId}
-                                content={msg.output || msg.message}
+                                content={
+                                  typeof msg.output?.content === "string"
+                                    ? msg.output.content
+                                    : JSON.stringify(
+                                        msg.output?.content,
+                                        null,
+                                        2,
+                                      )
+                                }
                               />
                             )}
                             {isWebType && !showEditor && (
@@ -444,8 +496,6 @@ const TextCardLayouts = () => {
           >
             How can I assist you today?
           </p>
-
-          
         </div>
       </div>
       <div className="shadow-2xl border border-gray-100 rounded-[32px] p-4 sm:p-6 mb-12 bg-white max-w-4xl mx-auto">
