@@ -64,13 +64,7 @@ if (isError){
 
      
         <button
-          onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate("/user/newtask");
-            }
-          }}
+          onClick={() => navigate(-1)}
           className="absolute cursor-pointer top-4 right-4 text-black border border-gray p-1 text-sm rounded-full hover:text-black"
         >
           <FiX size={20} />
