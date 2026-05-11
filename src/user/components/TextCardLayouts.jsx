@@ -118,14 +118,16 @@ const TextCardLayouts = () => {
             const taskType =
               firstAiMsg?.content?.data?.result?.formatted_results?.[0]
                 ?.task_type;
-            isWeb = taskType === "web_app" || taskType === "website";
+              
+                
+            isWeb = taskType === "web_app" || taskType === "website" ;
           } catch {
             isWeb = false;
           }
         }
         setIsWebType(isWeb);
         setCurrentTaskId(taskIdFromUrl);
-
+        
         const history = taskData?.messages?.map((msg) => {
           if (msg.role === "user") {
             const userText = Array.isArray(msg.content)
