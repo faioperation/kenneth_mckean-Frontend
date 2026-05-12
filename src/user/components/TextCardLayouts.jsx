@@ -1,5 +1,5 @@
 import SparkleIcon from "../../assets/icons/SparkleIcon";
-import { FaArrowUp, FaLink } from "react-icons/fa6";
+import { FaArrowUp, FaLink, FaArrowDown } from "react-icons/fa6";
 import {
   Globe,
   ImagePlus,
@@ -88,6 +88,25 @@ const TextCardLayouts = () => {
   const [searchParams] = useSearchParams();
   const [showEditor, setShowEditor] = useState(true);
   const [isListening, setIsListening] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop - clientHeight > 150) {
+      setShowScrollButton(true);
+    } else {
+      setShowScrollButton(false);
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const taskIdFromUrl = searchParams.get("taskId");
   const refresh = searchParams.get("refresh");
@@ -203,11 +222,14 @@ const TextCardLayouts = () => {
       setCurrentTaskId(res?.taskId);
       const newSessionId = res?.session_id;
       if (newSessionId) setSessionId(newSessionId);
+      if (formatted?.task_type) {
       setIsWebType(
         formatted?.task_type === "web_app" ||
-          formatted?.task_type === "website",
+          formatted?.task_type === "website" ||
+          formatted?.task_type === "app" ||
+          formatted?.task_type === "html-css",
       );
-
+      }
       setMessages((prev) => [
         ...prev,
         {
@@ -244,9 +266,9 @@ const TextCardLayouts = () => {
         setSessionId(sidFromRes);
       }
 
-      setIsWebType(
-        data?.task_type === "web_app" || data?.task_type === "website",
-      );
+      if (data?.task_type) {
+    setIsWebType(data.task_type === "web_app" || data.task_type === "website");
+  }
 
       setMessages((prev) => [
         ...prev,
@@ -345,11 +367,12 @@ const TextCardLayouts = () => {
     return (
       <div className="flex h-[calc(100vh-12vh)] relative overflow-hidden">
         <div
-          className={`flex flex-col pb-4 transition-all duration-500 ${isWebType && showEditor ? "hidden lg:flex w-1/2" : "w-full flex"}`}
+          className={`relative flex flex-col pb-4 transition-all duration-500 ${isWebType && showEditor ? "hidden lg:flex w-1/2" : "w-full flex"}`}
         >
           {/* Chat Messages Area */}
           <div
             ref={scrollRef}
+            onScroll={handleScroll}
             className="flex-1 py-6 xl:px-14 overflow-y-auto space-y-8 scroll-smooth"
           >
             {messages.map((msg, idx) => (
@@ -429,6 +452,19 @@ const TextCardLayouts = () => {
               </div>
             )}
           </div>
+
+          {/* Scroll to Bottom Button */}
+          {showScrollButton && (
+            <div className="absolute bottom-46 left-1/2 -translate-x-1/2 z-50">
+              <button
+                onClick={scrollToBottom}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full py-2 px-4 shadow-xl transition-all hover:scale-105 active:scale-95 border border-gray-700 flex items-center justify-center "
+              >
+                <FaArrowDown size={14} />
+                <span className="text-sm font-medium"></span>
+              </button>
+            </div>
+          )}
 
           {/* Persistent Bottom Input */}
 

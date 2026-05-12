@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const MarkdownRenderer = ({ content }) => {
   return (
@@ -10,13 +10,16 @@ const MarkdownRenderer = ({ content }) => {
           const match = /language-(\w+)/.exec(className || "");
 
           return !inline ? (
-            <SyntaxHighlighter
-              style={oneDark}
-              language={match ? match[1] : "text"}
-              PreTag="div"
-            >
-              {String(children).trim()}
-            </SyntaxHighlighter>
+            <div className="not-prose [&_*]:!no-underline [&_*]:!border-0 [&_*]:!shadow-none max-h-[500px] overflow-auto">
+              <SyntaxHighlighter
+                style={oneLight}
+                language={match ? match[1] : "text"}
+                PreTag="div"
+                customStyle={{ backgroundColor: "#e5e7eb" }}
+              >
+                {children ? String(children).replace(/\n$/, "") : ""}
+              </SyntaxHighlighter>
+            </div>
           ) : (
             <code className="bg-gray-200 px-1 rounded">
               {children}
