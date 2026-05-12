@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EveryButton from "./EveryButton";
 import Dashboard from "./Dashboard";
 import {
@@ -146,7 +146,7 @@ const EditorPanel = ({ messages, onClose }) => {
               <div className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "code" ? "flex" : "hidden"}`}>
                 <SandpackLayout style={{ height: "100%", width: "100%" }} className="flex-1 h-full">
                   <SandpackFileExplorer style={{ height: "100%", width: "25%", minWidth: "200px" }} />
-                  <SandpackCodeEditor showTabs={true} showLineNumbers={true} style={{ height: "100%", flex: 1 }} />
+                  <SandpackCodeEditor showTabs={false} showLineNumbers={true} style={{ height: "100%", flex: 1 }} />
                 </SandpackLayout>
               </div>
               <div className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "dashboard" ? "flex" : "hidden"}`}>
