@@ -77,9 +77,15 @@ const EditorPanel = ({messages, onClose}) => {
           {/* Code Area */}
           <div className="flex-1 overflow-auto bg-white p-6">
             <pre className="text-sm text-gray-800 leading-6 whitespace-pre-wrap">
-              {messages.map((m, idx)=>(
-                <div  key={idx}>{m.output}</div>
-              ))}
+              {messages.map((m, idx) => {
+                if (!m.output) return null;
+                const content = m.output.content !== undefined ? m.output.content : m.output;
+                return (
+                  <div key={idx}>
+                    {typeof content === "string" ? content : JSON.stringify(content, null, 2)}
+                  </div>
+                );
+              })}
             </pre>
           </div>
         </div>

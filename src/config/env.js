@@ -1,4 +1,4 @@
-const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_TIMEOUT = 600000;
 
 const parseTimeout = (value) => {
   const timeout = Number(value);

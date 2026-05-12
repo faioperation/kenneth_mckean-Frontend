@@ -10,7 +10,10 @@ export const createTask = async (data) => {
     const res = await apiPost("/user/new-task/create", data);
     return res.data;
   } catch (err) {
-    console.log("FULL ERROR:", err.response);
+    console.log("FULL ERROR OBJECT:", err);
+    console.log("ERROR MESSAGE:", err.message);
+    console.log("ERROR CODE:", err.code);
+    console.log("FULL ERROR RESPONSE:", err.response);
     console.log("ERROR DATA:", err.response?.data);
     throw err;
   }
