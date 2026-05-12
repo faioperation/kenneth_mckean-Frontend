@@ -209,9 +209,9 @@ export default function Sidebar({ isOpen, onClose }) {
                 <div className="h-52 overflow-y-auto space-y-1 px-3">
                   {tasks.map((task) => (
                     <div
-                      key={task._id || task.id}
+                      key={task.taskId || task._id || task.id}
                       onClick={() => {
-                        navigate(`/user/newtask?taskId=${task._id || task.id}`);
+                        navigate(`/user/newtask?taskId=${task.taskId || task._id || task.id}`);
                         window.innerWidth < 768 && onClose();
                       }}
                       className="px-3 shadow py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
@@ -287,10 +287,10 @@ export default function Sidebar({ isOpen, onClose }) {
                   <div className="space-y-2">
                     {projectDetails.tasks.map((task, index) => (
                       <div
-                        key={task._id || task.id}
+                        key={task.taskId || task._id || task.id}
                         onClick={() => {
                           navigate(
-                            `/user/newtask?taskId=${task._id || task.id}`,
+                            `/user/newtask?taskId=${task.taskId || task._id || task.id}`,
                           );
                           window.innerWidth < 768 && onClose();
                         }}

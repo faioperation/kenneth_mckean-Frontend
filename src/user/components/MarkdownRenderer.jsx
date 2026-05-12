@@ -10,7 +10,7 @@ const MarkdownRenderer = ({ content }) => {
           const match = /language-(\w+)/.exec(className || "");
 
           return !inline ? (
-            <div className="not-prose [&_*]:!no-underline [&_*]:!border-0 [&_*]:!shadow-none max-h-[500px] overflow-auto">
+            <div className="not-prose [&_*]:!no-underline [&_*]:!border-0 [&_*]:!shadow-none min-h-full overflow-auto  my-4">
               <SyntaxHighlighter
                 style={oneLight}
                 language={match ? match[1] : "text"}
@@ -21,9 +21,9 @@ const MarkdownRenderer = ({ content }) => {
               </SyntaxHighlighter>
             </div>
           ) : (
-            <code className="bg-gray-200 px-1 rounded">
+            <span className="bg-gray-200 px-1 rounded font-mono text-sm">
               {children}
-            </code>
+            </span>
           );
         },
       }}

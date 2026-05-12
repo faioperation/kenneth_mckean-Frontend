@@ -119,85 +119,128 @@ const TextCardLayouts = () => {
     }
   }, [refresh]);
   useEffect(() => {
-    if (!taskIdFromUrl) return;
+    if (!taskIdFromUrl || taskIdFromUrl === "undefined") return;
 
     const loadTask = async () => {
       try {
         const task = await getTaskById(taskIdFromUrl);
         console.log("FULL TASK RESPONSE:", task);
-        const taskData = task;
+
+        // Support both { data: { ... } } wrapper and direct data
+        const taskData = task?.data || task;
+
         const sId = taskData?.session_id;
         if (sId) setSessionId(sId);
-        const firstAiMsg = taskData?.messages.find(
-          (m) => m.role === "assistant",
-        );
-        let isWeb = false;
-        if (firstAiMsg) {
-          try {
-            const taskType =
-              firstAiMsg?.content?.data?.result?.formatted_results?.[0]
-                ?.task_type;
-              
-                
-            isWeb = taskType === "web_app" || taskType === "website" ;
-          } catch {
-            isWeb = false;
-          }
-        }
-        setIsWebType(isWeb);
+
         setCurrentTaskId(taskIdFromUrl);
-        
-        const history = taskData?.messages?.map((msg) => {
-          if (msg.role === "user") {
-            const userText = Array.isArray(msg.content)
-              ? msg.content.map((b) => b.text || "").join(" ")
-              : typeof msg.content === "string"
-                ? msg.content
-                : "";
-            return {
+
+        // Check if the response has the OLD format (messages array) or NEW format (prompt + aiResponse)
+        if (taskData?.messages && Array.isArray(taskData.messages) && taskData.messages.length > 0) {
+          // ===== OLD FORMAT: messages array =====
+          const firstAiMsg = taskData.messages.find(
+            (m) => m.role === "assistant",
+          );
+          let isWeb = false;
+          if (firstAiMsg) {
+            try {
+              const taskType =
+                firstAiMsg?.content?.data?.result?.formatted_results?.[0]
+                  ?.task_type;
+              isWeb =
+                taskType === "web_app" ||
+                taskType === "website" ||
+                taskType === "app" ||
+                taskType === "html-css";
+            } catch {
+              isWeb = false;
+            }
+          }
+          setIsWebType(isWeb);
+
+          const history = taskData.messages.map((msg) => {
+            if (msg.role === "user") {
+              const userText = Array.isArray(msg.content)
+                ? msg.content.map((b) => b.text || "").join(" ")
+                : typeof msg.content === "string"
+                  ? msg.content
+                  : "";
+              return {
+                role: "user",
+                text: userText,
+              };
+            } else {
+              let content = msg.content;
+              if (typeof content === "string") {
+                try {
+                  content = JSON.parse(content);
+                } catch (e) {
+                  console.error("Failed to parse msg.content", e);
+                }
+              }
+
+              const rawResponse =
+                content?.data?.response ||
+                content?.data?.structured_response ||
+                content?.data?.result?.formatted_results?.[0]?.output ||
+                null;
+
+              const rawCodebase = content?.codebase?.files || content?.data?.codebase?.files || content?.data?.result?.codebase || content?.data?.codebase || [];
+
+              return {
+                role: "ai",
+                message: content?.message || "Loaded",
+                output: extractMessageContent(rawResponse || msg.content),
+                codebase: rawCodebase,
+                taskId: taskIdFromUrl,
+              };
+            }
+          });
+          setMessages(history ?? []);
+        } else {
+          // ===== NEW FORMAT: prompt + aiResponse (no messages array) =====
+          const formatted = taskData?.aiResponse?.data?.result?.formatted_results?.[0];
+          const taskType = formatted?.task_type;
+          const isWeb =
+            taskType === "web_app" ||
+            taskType === "website" ||
+            taskType === "app" ||
+            taskType === "html-css";
+          setIsWebType(isWeb);
+
+          const history = [];
+
+          // Add user message from prompt
+          if (taskData?.prompt) {
+            history.push({
               role: "user",
-              text: userText,
-            };
-          } else {
-            // let outputData;
+              text: taskData.prompt,
+            });
+          }
 
-            // try {
-            //   const parsed = JSON.parse(msg.content);
-
-            //   const rawContent =
-            //     parsed?.data?.response ||
-            //     parsed?.data?.result?.formatted_results?.[0]?.output ||
-            //     parsed?.data?.result?.output ||
-            //     "No content found";
-
-            //   outputData = extractMessageContent(rawContent);
-            // } catch (e) {
-            //   outputData = extractMessageContent(msg.content);
-            // }
-
-            // return {
-            //   role: "ai",
-            //   message: "Loaded",
-            //   output: outputData,
-            //   taskId: taskIdFromUrl,
-            // };
-            const content = msg.content;
-
-            const rawResponse =
-              content?.data?.response ||
-              content?.data?.structured_response ||
-              content?.data?.result?.formatted_results?.[0]?.output ||
+          // Add AI response
+          if (taskData?.aiResponse) {
+            const rawOutput =
+              formatted?.output ||
+              taskData?.aiResponse?.data?.result?.output ||
+              taskData?.aiResponse?.data?.response ||
               null;
 
-            return {
+            const codebaseFiles =
+              taskData?.codebase?.files ||
+              taskData?.aiResponse?.data?.result?.codebase ||
+              [];
+
+            history.push({
               role: "ai",
-              message: content?.message || "Loaded",
-              output: extractMessageContent(rawResponse),
+              message: taskData?.aiResponse?.message || "Generated",
+              output: extractMessageContent(rawOutput),
+              codebase: codebaseFiles,
               taskId: taskIdFromUrl,
-            };
+            });
           }
-        });
-        setMessages(history ?? []);
+
+          setMessages(history);
+        }
       } catch (err) {
         console.log("Task load failed", err);
       }
@@ -215,32 +258,42 @@ const TextCardLayouts = () => {
   const taskMutation = useMutation({
     mutationFn: (newPrompt) => createTask({ prompt: newPrompt }),
     onSuccess: (res) => {
-      const result =
-        res?.aiResponse?.data?.result || res?.data?.aiResponse?.data?.result;
+      const taskData = res?.data || res;
+      const aiResData = taskData?.aiResponse?.data;
+      const result = aiResData?.result || aiResData;
       const formatted = result?.formatted_results?.[0];
 
-      setCurrentTaskId(res?.taskId);
-      const newSessionId = res?.session_id;
+      setCurrentTaskId(taskData?.taskId);
+      const newSessionId = taskData?.session_id || aiResData?.session_id;
       if (newSessionId) setSessionId(newSessionId);
+
       if (formatted?.task_type) {
-      setIsWebType(
-        formatted?.task_type === "web_app" ||
-          formatted?.task_type === "website" ||
-          formatted?.task_type === "app" ||
-          formatted?.task_type === "html-css",
-      );
+        setIsWebType(
+          formatted?.task_type === "web_app" ||
+            formatted?.task_type === "website" ||
+            formatted?.task_type === "app" ||
+            formatted?.task_type === "html-css",
+        );
       }
+
+      const codebase =
+        taskData?.codebase?.files ||
+        aiResData?.result?.codebase ||
+        [];
+
+      console.log("MUTATION SUCCESS RES:", res);
+      console.log("EXTRACTED CODEBASE:", codebase);
+
       setMessages((prev) => [
         ...prev,
         {
           role: "ai",
-          message: res?.aiResponse?.message || "Generated",
+          message: taskData?.aiResponse?.message || "Generated",
           output: extractMessageContent(
-            formatted?.output ||
-              res?.aiResponse?.data?.result?.output ||
-              res?.aiResponse?.data?.response,
+            formatted?.output || aiResData?.response || aiResData?.structured_response || result?.output
           ),
-          taskId: res?.taskId,
+          codebase: codebase,
+          taskId: taskData?.taskId,
         },
       ]);
       setPrompt("");
@@ -256,27 +309,37 @@ const TextCardLayouts = () => {
 
     onSuccess: (res) => {
       console.log("CONTINUE RES:", res);
-
-      const data = res?.data?.content?.data;
-
-      const result = data?.response;
-
-      const sidFromRes = data?.session_id || res?.data?.session_id;
+      const taskData = res?.data || res;
+      const aiResData = taskData?.aiResponse?.data;
+      
+      const sidFromRes = taskData?.session_id || aiResData?.session_id;
       if (sidFromRes) {
         setSessionId(sidFromRes);
       }
 
-      if (data?.task_type) {
-    setIsWebType(data.task_type === "web_app" || data.task_type === "website");
-  }
+      // Check for task_type update if present
+      const taskType = taskData?.aiResponse?.data?.result?.formatted_results?.[0]?.task_type;
+      if (taskType) {
+        setIsWebType(
+          taskType === "web_app" ||
+            taskType === "website" ||
+            taskType === "app" ||
+            taskType === "html-css",
+        );
+      }
+
+      const codebase = taskData?.codebase?.files || aiResData?.result?.codebase || [];
 
       setMessages((prev) => [
         ...prev,
         {
           role: "ai",
-          message: res?.data?.content?.message || "Updated",
-          output: extractMessageContent(result),
-          taskId: res?.id || currentTaskId,
+          message: taskData?.aiResponse?.message || "Updated",
+          output: extractMessageContent(
+            aiResData?.response || aiResData?.structured_response || aiResData?.result?.formatted_results?.[0]?.output
+          ),
+          codebase: codebase,
+          taskId: taskData?.taskId || currentTaskId,
         },
       ]);
 
