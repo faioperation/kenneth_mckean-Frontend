@@ -120,8 +120,7 @@ import SettingsLayout from "./SettingsLayout";
 import Dashboard from "./Dashboard";
 import PublishPage from "./PublishPage";
 
-const EveryButton = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState("code");
+const EveryButton = ({ onClose, activeTab, setActiveTab }) => {
 
   return (
     <>
@@ -198,12 +197,6 @@ const EveryButton = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Pages */}
-      {activeTab === "dashboard" && <Dashboard />}
-      {/* {activeTab === "database" && <DatabaseEmptyState />}
-      {activeTab === "folder" && <FileStorageEmptyState />}
-      {activeTab === "settings" && <SettingsLayout />}
-      {activeTab === "publish" && <PublishPage />} */}
     </>
   );
 };

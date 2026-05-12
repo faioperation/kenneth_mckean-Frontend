@@ -60,9 +60,9 @@ export default function SearchChat({ onClose }) {
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <div
-                key={item.id}
+                key={item.taskId || item._id || item.id}
                       onClick={() => {
-                        navigate(`/user/newtask?taskId=${item._id || item.id}`);
+                        navigate(`/user/newtask?taskId=${item.taskId || item._id || item.id}`);
                         window.innerWidth < 768 && onClose();
                         }}
                 className="flex items-start gap-4 p-1 md:p-4 rounded-xl hover:bg-blue-50 border border-transparent hover:border-blue-100 cursor-pointer transition group"
