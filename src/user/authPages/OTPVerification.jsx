@@ -122,7 +122,7 @@ const OTPVerification = () => {
                                 onChange={(e) => handleChange(e.target.value, index)}
                                 onKeyDown={(e) => handleKeyDown(e, index)}
                                 onPaste={index === 0 ? handlePaste : undefined}
-                                className="w-11 h-14 sm:w-14 sm:h-16 border-2 border-gray-200 rounded-xl text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-black transition-all bg-gray-50 focus:bg-white"
+                                className="w-11 h-14 sm:w-14 sm:h-16 border-2 border-gray-200 rounded-xl text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-black transition-all bg-gray-50 focus:bg-white text-black"
                             />
                         ))}
                     </div>
