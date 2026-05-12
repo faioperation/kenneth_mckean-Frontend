@@ -6,6 +6,7 @@ import { tokenStorage } from "../../../../lib/tokenStorage";
 
 import { apiGet, getImageUrl } from "../../../../lib/api";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 // import { getUserProfile } from "../../../../api/profileApi";
 
 export default function UserProfile({ onClose, onEdit }) {
@@ -17,8 +18,8 @@ export default function UserProfile({ onClose, onEdit }) {
 
   const handleLogout = () => {
     tokenStorage.clear();
-    localStorage.removeItem("user");
-    navigate("/auth/signin");
+    toast.success("Logout successful");
+    navigate("/");
   };
 
   // useEffect(() => {

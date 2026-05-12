@@ -1,43 +1,65 @@
-const ACCESS_TOKEN_KEY = "accessToken"; 
-const REFRESH_TOKEN_KEY = "refreshToken";
+import Cookies from "js-cookie";
 
-const isBrowser = typeof window !== "undefined";
+const ACCESS_TOKEN_KEY = "accessToken";
+const REFRESH_TOKEN_KEY = "refreshToken";
+const USER_KEY = "user";
+const RESET_TOKEN_KEY = "resetToken";
 
 export const tokenStorage = {
+  // Access Token
   getAccessToken() {
-    return isBrowser ? localStorage.getItem(ACCESS_TOKEN_KEY) : null;
+    return Cookies.get(ACCESS_TOKEN_KEY);
   },
-
   setAccessToken(token) {
-    if (isBrowser) {
-      localStorage.setItem(ACCESS_TOKEN_KEY, token);
-    }
+    Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 7, secure: true, sameSite: 'strict' });
   },
-
   removeAccessToken() {
-    if (isBrowser) {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-    }
+    Cookies.remove(ACCESS_TOKEN_KEY);
   },
 
+  // Refresh Token
   getRefreshToken() {
-    return isBrowser ? localStorage.getItem(REFRESH_TOKEN_KEY) : null;
+    return Cookies.get(REFRESH_TOKEN_KEY);
   },
-
   setRefreshToken(token) {
-    if (isBrowser) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, token);
-    }
+    Cookies.set(REFRESH_TOKEN_KEY, token, { expires: 30, secure: true, sameSite: 'strict' });
+  },
+  removeRefreshToken() {
+    Cookies.remove(REFRESH_TOKEN_KEY);
   },
 
-  removeRefreshToken() {
-    if (isBrowser) {
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
+  // User Data
+  getUser() {
+    const user = Cookies.get(USER_KEY);
+    try {
+      return user ? JSON.parse(user) : null;
+    } catch (e) {
+      console.error("Error parsing user from cookies", e);
+      return null;
     }
+  },
+  setUser(user) {
+    Cookies.set(USER_KEY, JSON.stringify(user), { expires: 7, secure: true, sameSite: 'strict' });
+  },
+  removeUser() {
+    Cookies.remove(USER_KEY);
+  },
+
+  // Reset Token (short-lived)
+  getResetToken() {
+    return Cookies.get(RESET_TOKEN_KEY);
+  },
+  setResetToken(token) {
+    Cookies.set(RESET_TOKEN_KEY, token, { expires: 1/24, secure: true, sameSite: 'strict' }); // 1 hour
+  },
+  removeResetToken() {
+    Cookies.remove(RESET_TOKEN_KEY);
   },
 
   clear() {
     this.removeAccessToken();
     this.removeRefreshToken();
+    this.removeUser();
+    this.removeResetToken();
   },
 };

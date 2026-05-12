@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { apiPost } from "../../lib/api";
 import toast from "react-hot-toast";
+import { tokenStorage } from "../../lib/tokenStorage";
 
 const OTPVerification = () => {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -74,7 +75,7 @@ const OTPVerification = () => {
                 const resetToken = response?.data?.resetToken;
 
                 if (resetToken) {
-                    localStorage.setItem("resetToken", resetToken);
+                    tokenStorage.setResetToken(resetToken);
                     toast.success("OTP Verified! Set your new password.");
                     navigate("/auth/reset-password");
                 } else {

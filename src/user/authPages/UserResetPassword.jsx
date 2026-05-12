@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiPost } from "../../lib/api";
 import toast from "react-hot-toast";
+import { tokenStorage } from "../../lib/tokenStorage";
 import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const UserResetPassword = () => {
@@ -15,7 +16,7 @@ const UserResetPassword = () => {
 
     // Check for the reset token on component mount to handle page refreshes
     useEffect(() => {
-        const token = localStorage.getItem("resetToken");
+        const token = tokenStorage.getResetToken();
         if (!token) {
             toast.error("Session expired or invalid access. Please verify OTP again.");
             navigate("/auth/forgot-password");
@@ -41,7 +42,7 @@ const UserResetPassword = () => {
 
         try {
             // Retrieve the token from localStorage
-            const resetToken = localStorage.getItem("resetToken");
+            const resetToken = tokenStorage.getResetToken();
 
             const response = await apiPost("/user/auth/reset-password", {
                 token: resetToken,
@@ -51,7 +52,7 @@ const UserResetPassword = () => {
             toast.success(response?.message || "Password reset successful!");
 
             // Operation successful: remove token from localStorage to prevent reuse
-            localStorage.removeItem("resetToken");
+            tokenStorage.removeResetToken();
 
             // Redirect to sign-in page after a short delay
             setTimeout(() => {

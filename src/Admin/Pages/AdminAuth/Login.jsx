@@ -3,6 +3,7 @@ import AuthContainer from "./AuthContainer";
 import { Link } from "react-router";
 import { apiPost } from "../../../lib/api";
 import toast from "react-hot-toast";
+import { tokenStorage } from "../../../lib/tokenStorage";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -27,8 +28,8 @@ export default function Login() {
       const token = res?.data?.tokens?.accessToken;
       const user = res?.data?.user;
 
-      localStorage.setItem("accessToken", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      tokenStorage.setAccessToken(token);
+      tokenStorage.setUser(user);
 
       toast(res?.message || "Login successful");
 

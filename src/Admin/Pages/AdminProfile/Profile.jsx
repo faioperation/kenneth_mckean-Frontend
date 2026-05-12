@@ -25,10 +25,7 @@ if (isError){
   )
 }
   const handleLogout = () => {
-      
     tokenStorage.clear();
-    localStorage.removeItem("user");
-
     navigate("/admin/login");
   };
 

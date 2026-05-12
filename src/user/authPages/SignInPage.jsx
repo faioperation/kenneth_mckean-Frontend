@@ -48,25 +48,17 @@ const SigninPage = () => {
       const user = response?.data?.user;
 
       if (accessToken) {
-        // Save access token to localStorage for persistent auth
-        localStorage.setItem("accessToken", accessToken);
+        // Save access token to cookies via tokenStorage
+        tokenStorage.setAccessToken(accessToken);
 
         // Save refresh token if available
         if (refreshToken) {
-          localStorage.setItem("refreshToken", refreshToken);
-        }
-
-        // Save user info to localStorage for profile display
-        if (user) {
-          localStorage.setItem("user", JSON.stringify(user));
-        }
-
-        // Sync tokens with tokenStorage utility
-        if (tokenStorage?.setAccessToken) {
-          tokenStorage.setAccessToken(accessToken);
-        }
-        if (refreshToken && tokenStorage?.setRefreshToken) {
           tokenStorage.setRefreshToken(refreshToken);
+        }
+
+        // Save user info to cookies via tokenStorage
+        if (user) {
+          tokenStorage.setUser(user);
         }
 
         toast.success(response?.message || "Login successful!");
