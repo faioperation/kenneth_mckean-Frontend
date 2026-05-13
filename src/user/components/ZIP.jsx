@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FaDownload } from "react-icons/fa";
 import { generateZIP } from "../../api/taskApi";
 import { apiClient } from "../../lib/apiClient";
-
+import toast from "react-hot-toast";
 export default function ZIP({ taskId }) {
   const [isGenerated, setIsGenerated] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -14,7 +14,7 @@ export default function ZIP({ taskId }) {
       console.log("ZIP SUCCESS", res);
       setIsGenerated(true);
     },
-    onError: () => alert("Failed to generate ZIP"),
+    onError: () => toast.error("Failed to generate ZIP"),
   });
 
   const handleGenerate = () => {
@@ -34,7 +34,7 @@ export default function ZIP({ taskId }) {
       console.log("ZIP Blob size:", blob.size);
 
       if (blob.size === 0) {
-        alert("ZIP file is empty");
+        toast.error("ZIP file is empty");
         return;
       }
 
@@ -49,7 +49,7 @@ export default function ZIP({ taskId }) {
 
     } catch (err) {
       console.error("ZIP Download error:", err);
-      alert("Failed to download ZIP");
+      toast.error("Failed to download ZIP");
     } finally {
       setIsDownloading(false);
     }

@@ -1,10 +1,24 @@
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { IoCheckmarkDoneOutline, IoPhonePortraitOutline } from "react-icons/io5";
+import { IoCheckmarkDoneOutline, IoNotificationsOutline } from "react-icons/io5";
+import { FiClock } from "react-icons/fi";
 import { apiGet, apiPatch } from "../../../lib/api";
 
 export default function Notification() {
   const queryClient = useQueryClient();
+
+  const formatTime = (dateString) => {
+    if (!dateString) return "Just now";
+    const date = new Date(dateString);
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   const { data: notifications, isLoading } = useQuery({
     queryKey: ["notifications"],
@@ -22,109 +36,78 @@ export default function Notification() {
     },
   });
 
+  const markReadMutation = useMutation({
+    mutationFn: (id) => apiPatch(`/admin/notification/${id}/read`),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["notifications"]);
+    },
+  });
+
   return (
-    <div className="min-h-screen bg-[#000000] text-gray-300 p-4 md:p-10 font-sans">
-      <div className="max-w-3xl mx-auto space-y-10">
-        
-        {/* Section 1: Header */}
-        <section className="space-y-2">
-          <h1 className="text-3xl font-bold text-white">Notification</h1>
-          <p className="text-gray-400 text-lg">Add notification capabilities to your website</p>
-        </section>
-
-        {/* Section 2: Promo Card */}
-        <div className="bg-[#1c1c1c] border border-gray-800 rounded-2xl p-6 md:p-8 space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">
-              Ask  to set up rule-based notifications for your website. 
-              Get notified whenever your site data changes.
-            </h3>
-            <p className="text-gray-400">For example:</p>
-            <ul className="list-disc list-inside space-y-3 text-gray-400 ml-2">
-              <li>My website collects forms filled out by users. Notify me when a new form is submitted.</li>
-              <li>My website sells products. Notify me when a new product is sold.</li>
-              <li>My website has a comment feature. Notify me when a user leaves a negative review.</li>
-            </ul>
-          </div>
-          
-          <button className="bg-white text-black font-bold py-3 px-6 rounded-lg hover:bg-gray-200 transition-all">
-            Ask to set up notifications
-          </button>
+    <div className="w-full bg-[#11141b] rounded-2xl shadow-2xl border border-[#1e232b] overflow-hidden flex flex-col h-[400px]">
+      {/* Header */}
+      <div className="p-4 border-b border-[#1e232b] flex justify-between items-center bg-[#161b22]">
+        <div className="flex items-center gap-2">
+          <IoNotificationsOutline className="text-[#2B7FFF] text-xl" />
+          <h2 className="text-white font-semibold text-lg">Notifications</h2>
         </div>
+        {notifications?.some(n => !n.isRead) && (
+          <button 
+            onClick={() => markAllReadMutation.mutate()}
+            className="text-xs font-medium text-gray-400 hover:text-[#2B7FFF] transition-colors flex items-center gap-1"
+            title="Mark all as read"
+          >
+            <IoCheckmarkDoneOutline size={16} />
+            Mark all read
+          </button>
+        )}
+      </div>
 
-        {/* Section 3: Preferences */}
-        <section className="space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold text-white">Notification delivery preferences</h2>
-            <p className="text-gray-500 text-sm">
-              By default, website notifications are sent via email and in-app messages. 
-              You can customize your preferences below.
-            </p>
-          </div>
-
-          <div className="bg-[#1c1c1c] border border-gray-800 rounded-2xl p-6 space-y-6">
-            {/* Email Toggle */}
-            <div className="flex items-center justify-between">
-              <span className="text-gray-200">Receive email notifications</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-
-            {/* In-App Toggle */}
-            <div className="flex items-center justify-between">
-              <span className="text-gray-200">Receive in-app notifications</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          </div>
-
-          {/* App Download Link */}
-          <div className="flex items-start gap-3 text-gray-500 text-sm">
-            <IoPhonePortraitOutline className="text-lg mt-0.5" />
-            <div>
-              <p>Get the mobile app to receive notifications on your phone.</p>
-              <a href="#" className="text-blue-500 hover:underline">Get it now</a>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 4: Actual Notification List (Optional integration from your code) */}
-        <section className="pt-10 border-t border-gray-800">
-           <div className="flex justify-between items-center mb-6">
-             <h2 className="text-xl font-bold text-white">Recent Notifications</h2>
-             <button 
-               onClick={() => markAllReadMutation.mutate()}
-               className="text-sm font-semibold text-blue-500 hover:text-blue-400 flex items-center gap-2"
-             >
-               <IoCheckmarkDoneOutline /> Mark all as read
-             </button>
+      {/* List */}
+      <div className="overflow-y-auto flex-1 p-2 space-y-1 custom-scrollbar">
+        {isLoading ? (
+           <div className="p-8 flex justify-center">
+             <span className="loading loading-spinner text-[#2B7FFF]"></span>
            </div>
-           
-           <div className="space-y-4">
-              {isLoading ? (
-                <div className="animate-pulse space-y-4">
-                  {[1, 2, 3].map(i => <div key={i} className="h-16 bg-[#1c1c1c] rounded-xl"></div>)}
+        ) : notifications?.length > 0 ? (
+          notifications.map((item) => (
+            <div 
+              key={item.id} 
+              onClick={() => {
+                if (!item.isRead) markReadMutation.mutate(item.id);
+              }}
+              className={`p-3 rounded-xl transition-colors cursor-pointer flex gap-3 items-start ${item.isRead ? 'hover:bg-[#1a1f2b]' : 'bg-[#151b2b] border border-[#1e2e4a] hover:bg-[#1a2336]'}`}
+            >
+              <div className="mt-1.5 flex-shrink-0">
+                <div className={`w-2 h-2 rounded-full ${item.isRead ? 'bg-transparent' : 'bg-[#2B7FFF] shadow-[0_0_8px_#2B7FFF]'}`}></div>
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className={`text-sm ${item.isRead ? 'text-gray-400' : 'text-gray-200 font-medium'} leading-snug`}>
+                  {item.message}
+                </p>
+                <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-medium pt-1">
+                  <FiClock size={12} />
+                  <span>{formatTime(item.createdAt)}</span>
                 </div>
-              ) : notifications?.length > 0 ? (
-                notifications.map((item) => (
-                  <div key={item.id} className="bg-[#1c1c1c] p-4 rounded-xl border border-gray-800 flex justify-between items-center">
-                    <div>
-                      <p className={item.isRead ? "text-gray-500" : "text-white"}>{item.message}</p>
-                      <span className="text-xs text-gray-600">{item.createdAt || "Just now"}</span>
-                    </div>
-                    {!item.isRead && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
-                  </div>
-                ))
-              ) : (
-                <p className="text-center text-gray-600">No notifications found.</p>
-              )}
-           </div>
-        </section>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center gap-3">
+             <div className="p-4 bg-[#161b22] rounded-full border border-[#1e232b]">
+               <IoNotificationsOutline className="text-3xl text-gray-600" />
+             </div>
+             <p className="font-medium text-gray-400">No new notifications</p>
+             <p className="text-xs text-gray-600">We'll notify you when something arrives.</p>
+          </div>
+        )}
+      </div>
 
+      {/* Footer */}
+      <div className="p-3 border-t border-[#1e232b] text-center bg-[#161b22]">
+        <button className="text-sm text-[#2B7FFF] hover:text-blue-400 font-medium transition-colors">
+          View all notifications
+        </button>
       </div>
     </div>
   );

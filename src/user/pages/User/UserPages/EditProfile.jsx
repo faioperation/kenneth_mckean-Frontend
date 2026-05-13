@@ -25,7 +25,7 @@ export default function EditProfile() {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 50 * 1024 * 1024) {
-      alert("File is too large! Please select a file under 50MB.");
+      toast.error("File is too large! Please select a file under 50MB.");
       return;
     }
       setAvatarFile(file);
@@ -77,7 +77,7 @@ export default function EditProfile() {
       toast.success("Profile updated successfully!");
       navigate("/user/newtask");
     }, onError: (error) => {
-      alert(error?.response?.data?.message || "Update failed!");
+      toast.error(error?.response?.data?.message || "Update failed!");
     },
   });
   const handleSaveChanges = (e) => {

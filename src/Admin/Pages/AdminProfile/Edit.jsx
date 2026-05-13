@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { LuEyeOff, LuCamera, LuEye  } from "react-icons/lu";
+import { LuEyeOff, LuCamera, LuEye } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { apiGet,  apiPost, apiPut, getImageUrl } from "../../../lib/api";
+import { apiGet, apiPost, apiPut, getImageUrl } from "../../../lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -56,19 +56,22 @@ export default function Edit() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (payload) => {
-     await apiPut("/admin/profile", payload.profileData, {
+      await apiPut("/admin/profile", payload.profileData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (payload.passwordData.currentPassword && payload.passwordData.newPassword){
-        await apiPost ("/admin/auth/change-password", payload.passwordData);
+      if (
+        payload.passwordData.currentPassword &&
+        payload.passwordData.newPassword
+      ) {
+        await apiPost("/admin/auth/change-password", payload.passwordData);
       }
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
-      toast("profile updated successfully!")
+      toast("profile updated successfully!");
       navigate("/admin/adminprofile");
     },
   });
@@ -129,8 +132,8 @@ export default function Edit() {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold">
-                {formData.firstname} {formData.lastname}
+              <h2 className="sm:text-xl flex font-semibold">
+                {data?.firstname} <span className="ml-2">{data?.lastname}</span>
               </h2>
               <p className="text-gray-500 text-sm">{data?.email}</p>
             </div>
@@ -148,7 +151,7 @@ export default function Edit() {
                 onChange={(e) =>
                   setFormData({ ...formData, firstname: e.target.value })
                 }
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-[#2B7FFF] transition-colors"
               />
             </div>
 
@@ -156,12 +159,11 @@ export default function Edit() {
               <label className="text-sm text-gray-300">Last Name</label>
               <input
                 type="text"
-                value={formData.lastname || ""
-                }
+                value={formData.lastname || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, lastname: e.target.value })
                 }
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-[#2B7FFF] transition-colors"
               />
             </div>
           </div>
@@ -174,10 +176,10 @@ export default function Edit() {
                 onChange={(e) =>
                   setFormData({ ...formData, gender: e.target.value })
                 }
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-[#2B7FFF] transition-colors"
               >
-                <option value="male">Man</option>
-                <option value="female">Woman</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
             </div>
@@ -190,46 +192,63 @@ export default function Edit() {
                 onChange={(e) =>
                   setFormData({ ...formData, country: e.target.value })
                 }
-                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-400"
+                className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-[#2B7FFF] transition-colors"
               />
             </div>
-            {/* change password section */}
-               <div className="pt-4  space-y-4">
-                        <p className="text-sm font-bold border-b border-gray-500 text-gray-300">Change Password</p>
-                        <div className=" xl:flex xl:gap-8">
-                          {/* Current Password */}
-                          <div className="space-y-1 relative">
-                            <p className="text-sm text-gray-300 font-medium">Current Password</p>
-                            <input
-                              type={showCurrent ? "text" : "password"}
-                              placeholder="••••••••"
-                              value={currentPassword || ""}
-                              onChange={(e) => setCurrentPassword(e.target.value)}
-                              className="border border-gray-500 w-100 text-gray-400  rounded-lg p-2.5 text-sm"
-                            />
-                            <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute left-90 top-[34px] text-gray-400">
-                              {showCurrent ? <LuEyeOff size={16} /> : <LuEye size={16} />}
-                            </button>
-                          </div>
-            
-                          {/* New Password */}
-                          <div className="space-y-1 mt-3 xl:mt-0 relative">
-                            <p className="text-sm text-gray-300 font-medium">New Password</p>
-                           
-                              <input
-                              type={showNew ? "text" : "password"}
-                              placeholder="••••••••"
-                              value={newPassword || ""}
-                              onChange={(e) => setNewPassword(e.target.value)}
-                              className="border border-gray-500 w-100 text-gray-400 rounded-lg p-2.5 text-sm"
-                            />
-                            <button type="button" onClick={() => setShowNew(!showNew)} className="absolute  left-90 top-[34px] text-gray-400">
-                              {showNew ? <LuEyeOff size={16} /> : <LuEye size={16} />}
-                            </button>
-                            
-                          </div>
-                        </div>
-                      </div>
+          </div>
+
+          {/* change password section */}
+          <div className="pt-8 space-y-6">
+            <p className="text-sm font-bold border-b border-[#1e232b] pb-2 text-gray-300">
+              Change Password
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Current Password */}
+              <div className="space-y-2 relative">
+                <p className="text-sm text-gray-300">
+                  Current Password
+                </p>
+                <div className="relative w-full">
+                  <input
+                    type={showCurrent ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={currentPassword || ""}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 pr-12 text-sm text-gray-200 focus:outline-none focus:border-[#2B7FFF] transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                  >
+                    {showCurrent ? <LuEyeOff size={18} /> : <LuEye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div className="space-y-2 relative">
+                <p className="text-sm text-gray-300">
+                  New Password
+                </p>
+                <div className="relative w-full">
+                  <input
+                    type={showNew ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={newPassword || ""}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full bg-[#11141b] border border-[#1e232b] rounded-xl px-4 py-3 pr-12 text-sm text-gray-200 focus:outline-none focus:border-[#2B7FFF] transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNew(!showNew)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                  >
+                    {showNew ? <LuEyeOff size={18} /> : <LuEye size={18} />}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Submit */}

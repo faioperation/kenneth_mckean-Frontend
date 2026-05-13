@@ -3,6 +3,7 @@ import { FiX } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { apiPost } from "../../../../lib/api"; // আপনার এপিআই ইনট্যান্স
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export default function Apikey({ onClose }) {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ export default function Apikey({ onClose }) {
     onSuccess: () => {
    
       queryClient.invalidateQueries(['apiKeysManagement']);
-      alert("API Key created successfully!");
+      toast.success("API Key created successfully!");
       navigate("/admin/configuration");
     },
     onError: (error) => {
       console.error("Creation Error:", error);
-      alert("Failed to create API key");
+      toast.error("Failed to create API key");
     }
   });
 
@@ -28,7 +29,7 @@ export default function Apikey({ onClose }) {
   const handleCreate = (e) => {
     e.preventDefault();
     if (!keyName.trim()) {
-      alert("Please enter a key name");
+      toast.error("Please enter a key name");
       return;
     }
 

@@ -18,7 +18,7 @@ export default function SubscriptionSummary() {
   const COLORS = ['#6366f1', '#10b981', '#f59e0b'];
 
   return (
-    <div className="w-full bg-[#111827] mt-4 lg:mt-0 p-6 rounded-2xl border border-gray-800 shadow-xl min-h-[400px] flex flex-col justify-between">
+    <div className="w-full bg-[#111827] lg:mt-0 p-6 rounded-2xl border border-gray-800 shadow-xl h-full flex flex-col justify-between">
       <h2 className="text-xl font-bold text-white ">Subscription Summary</h2>
 
       <div className="space-y-4">
@@ -38,14 +38,14 @@ export default function SubscriptionSummary() {
       </div>
 
       {/* Donut Chart Section */}
-      <div className="flex items-center gap-8 mt-8">
-        <div className="h-32 w-32">
+      <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 mt-6 flex-1 justify-center w-full">
+        <div className="h-48 w-48 lg:h-52 lg:w-52 flex-shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
-                innerRadius={35}
-                outerRadius={50}
+                innerRadius="65%"
+                outerRadius="85%"
                 paddingAngle={5}
                 dataKey="purchases"
               >
@@ -58,9 +58,9 @@ export default function SubscriptionSummary() {
         </div>
 
         {/* Chart Legend with Percentage */}
-        <div className="flex-1 space-y-2">
+        <div className="w-full md:flex-1 space-y-3 lg:space-y-4">
           {data?.map((item, index) => (
-            <div key={item?.planId} className="flex justify-between items-center text-sm">
+            <div key={item?.planId} className="flex justify-between items-center text-sm lg:text-base">
               <span style={{ color: COLORS[index % COLORS.length] }} className="font-semibold">
                 {item?.planName}
               </span>
