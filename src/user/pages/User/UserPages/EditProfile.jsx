@@ -74,8 +74,8 @@ export default function EditProfile() {
     
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
-      toast("Profile updated successfully!");
-      navigate("/user/profile");
+      toast.success("Profile updated successfully!");
+      navigate("/user/newtask");
     }, onError: (error) => {
       alert(error?.response?.data?.message || "Update failed!");
     },

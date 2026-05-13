@@ -48,25 +48,17 @@ const SigninPage = () => {
       const user = response?.data?.user;
 
       if (accessToken) {
-        // Save access token to localStorage for persistent auth
-        localStorage.setItem("accessToken", accessToken);
+        // Save access token to cookies via tokenStorage
+        tokenStorage.setAccessToken(accessToken);
 
         // Save refresh token if available
         if (refreshToken) {
-          localStorage.setItem("refreshToken", refreshToken);
-        }
-
-        // Save user info to localStorage for profile display
-        if (user) {
-          localStorage.setItem("user", JSON.stringify(user));
-        }
-
-        // Sync tokens with tokenStorage utility
-        if (tokenStorage?.setAccessToken) {
-          tokenStorage.setAccessToken(accessToken);
-        }
-        if (refreshToken && tokenStorage?.setRefreshToken) {
           tokenStorage.setRefreshToken(refreshToken);
+        }
+
+        // Save user info to cookies via tokenStorage
+        if (user) {
+          tokenStorage.setUser(user);
         }
 
         toast.success(response?.message || "Login successful!");
@@ -111,7 +103,7 @@ const SigninPage = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-black text-sm text-black placeholder-gray-400 mt-2 transition-all"
+              className="w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-black text-sm text-black placeholder-gray-400 mt-2 transition-all text-black"
             />
           </div>
 
@@ -133,7 +125,7 @@ const SigninPage = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-black transition-colors"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
             {/* Forgot password link */}

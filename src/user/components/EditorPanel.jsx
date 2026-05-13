@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EveryButton from "./EveryButton";
 import Dashboard from "./Dashboard";
 import {
@@ -15,7 +15,7 @@ const EditorPanel = ({ messages, onClose }) => {
   const latestMessageWithCodebase = [...messages]
     .reverse()
     .find((m) => m.codebase && m.codebase.length > 0);
-    
+
   const codebaseArray = latestMessageWithCodebase
     ? latestMessageWithCodebase.codebase
     : [];
@@ -25,9 +25,9 @@ const EditorPanel = ({ messages, onClose }) => {
   codebaseArray.forEach((file) => {
     let path = file.file_path || file.path;
     if (!path) return;
-    path = path.split('#')[0].trim();
+    path = path.split("#")[0].trim();
     if (!path.startsWith("/")) path = "/" + path;
-    
+
     let content = file.content || "";
     // Clean markdown code block formatting if present
     if (typeof content === "string") {
@@ -36,74 +36,112 @@ const EditorPanel = ({ messages, onClose }) => {
         content = match[1];
       } else {
         // Fallback for files that just have ``` at start and end
-        content = content.replace(/^```[a-z]*\s*\n/i, "").replace(/\n```\s*$/i, "");
+        content = content
+          .replace(/^```[a-z]*\s*\n/i, "")
+          .replace(/\n```\s*$/i, "");
       }
     }
-    
+
     sandpackFiles[path] = content;
   });
 
-  // NORMALIZATION: If all files (or most key files) are under a 'client' directory, 
-  // sandpack needs them at the root to run templates like 'vite-react' correctly.
+  // NORMALIZATION: If all files (or most key files) are under a 'client' or 'public' directory,
+  // sandpack needs them at the root to run templates like 'vite-react' or 'static' correctly.
   const allPaths = Object.keys(sandpackFiles);
-  const clientPaths = allPaths.filter(p => p.startsWith("/client/"));
-  
-  if (clientPaths.length > 0 && (clientPaths.length / allPaths.length) > 0.5) {
+  const clientPaths = allPaths.filter((p) => p.startsWith("/client/"));
+  const publicPaths = allPaths.filter((p) => p.startsWith("/public/"));
+  const srcPaths = allPaths.filter((p) => p.startsWith("/src/"));
+
+  if (clientPaths.length > 0 && clientPaths.length / allPaths.length > 0.4) {
     // Re-root files from /client/ to /
-    clientPaths.forEach(p => {
+    clientPaths.forEach((p) => {
       const newPath = p.replace("/client/", "/");
-      sandpackFiles[newPath] = sandpackFiles[p];
-      // Keep the old one too just in case
+      if (!sandpackFiles[newPath]) sandpackFiles[newPath] = sandpackFiles[p];
+    });
+  } else if (publicPaths.length > 0) {
+    // Always move public files to root if they exist, as they often contain index.html
+    publicPaths.forEach((p) => {
+      const newPath = p.replace("/public/", "/");
+      if (!sandpackFiles[newPath]) sandpackFiles[newPath] = sandpackFiles[p];
     });
   }
 
-  // Ensure index.html is at root for vite-react if it exists elsewhere
+  // If there's an index.html not at root, move it and try to move its siblings
   if (!sandpackFiles["/index.html"]) {
-    const htmlPath = Object.keys(sandpackFiles).find(p => p.endsWith("index.html"));
+    const htmlPath = Object.keys(sandpackFiles).find((p) =>
+      p.endsWith("index.html"),
+    );
     if (htmlPath) {
       sandpackFiles["/index.html"] = sandpackFiles[htmlPath];
+      // If it was in a subfolder, try to move siblings too
+      const folder = htmlPath.substring(0, htmlPath.lastIndexOf("/") + 1);
+      if (folder !== "/") {
+        Object.keys(sandpackFiles).forEach((p) => {
+          if (p.startsWith(folder)) {
+            const newPath = p.replace(folder, "/");
+            if (!sandpackFiles[newPath])
+              sandpackFiles[newPath] = sandpackFiles[p];
+          }
+        });
+      }
     }
   }
 
   // Determine the template
   let template = "vanilla";
-  
+
   // Check for any package.json or key frontend files anywhere in the tree
   const filePaths = Object.keys(sandpackFiles);
-  const hasReact = filePaths.some(p => p.includes("App.jsx") || p.includes("App.js") || p.includes("main.jsx") || p.includes("index.js") && sandpackFiles[p].includes("react"));
-  const hasVite = filePaths.some(p => p.includes("vite.config"));
-  const hasPackageJson = filePaths.some(p => p.endsWith("package.json"));
-  
+  const hasReact = filePaths.some(
+    (p) =>
+      p.includes("App.jsx") ||
+      p.includes("App.js") ||
+      p.includes("main.jsx") ||
+      (p.includes("index.js") && sandpackFiles[p].includes("react")),
+  );
+  const hasVite = filePaths.some((p) => p.includes("vite.config"));
+  const hasPackageJson = filePaths.some((p) => p.endsWith("package.json"));
+
   if (hasReact || hasVite) {
     template = "react"; // 'react' (CRA) is often more stable than 'vite-react' in browser sandpack
   } else if (hasPackageJson) {
     // Look closer at the package.json content
-    const pkgPaths = filePaths.filter(p => p.endsWith("package.json"));
+    const pkgPaths = filePaths.filter((p) => p.endsWith("package.json"));
     let isNode = false;
     let isReact = false;
-    
-    pkgPaths.forEach(p => {
+
+    pkgPaths.forEach((p) => {
       let content = sandpackFiles[p];
       // Clean package.json: strip versions to let sandpack resolve latest compatible
       try {
         const pkg = JSON.parse(content);
         if (pkg.dependencies) {
-           Object.keys(pkg.dependencies).forEach(dep => {
-             // For certain problematic deps, force latest or compatible version
-             pkg.dependencies[dep] = "latest";
-           });
+          Object.keys(pkg.dependencies).forEach((dep) => {
+            // For certain problematic deps, force latest or compatible version
+            pkg.dependencies[dep] = "latest";
+          });
         }
         content = JSON.stringify(pkg, null, 2);
         sandpackFiles[p] = content;
       } catch (e) {}
 
-      if (content.includes("\"react\"")) isReact = true;
-      if (content.includes("\"express\"") || content.includes("\"koa\"")) isNode = true;
+      if (content.includes('"react"')) isReact = true;
+      if (content.includes('"express"') || content.includes('"koa"'))
+        isNode = true;
     });
 
-    if (isReact) template = "react";
-    else if (isNode) template = "vanilla"; 
-  } else if (filePaths.some(p => p.endsWith(".html"))) {
+    if (isReact) {
+      template = "react";
+    } else if (isNode && !sandpackFiles["/index.html"]) {
+      // Only use vanilla for Node if there's no index.html (frontend)
+      template = "vanilla";
+    } else if (sandpackFiles["/index.html"]) {
+      template = "static";
+    }
+  } else if (
+    filePaths.some((p) => p.endsWith(".html")) ||
+    sandpackFiles["/index.html"]
+  ) {
     template = "static";
   }
 
@@ -112,15 +150,35 @@ const EditorPanel = ({ messages, onClose }) => {
   if (template === "react") {
     // Standard react template (CRA) expects /src/index.js
     if (!sandpackFiles["/src/index.js"]) {
-      const existingEntry = sandpackFiles["/src/main.jsx"] || sandpackFiles["/src/index.jsx"] || sandpackFiles["/src/App.js"];
+      const existingEntry =
+        sandpackFiles["/src/main.jsx"] ||
+        sandpackFiles["/src/index.jsx"] ||
+        sandpackFiles["/src/App.js"];
       if (existingEntry) {
         sandpackFiles["/src/index.js"] = existingEntry;
       }
     }
-    const commonEntries = ["/src/index.js", "/src/index.jsx", "/src/main.jsx", "/src/main.js", "/index.js", "/src/App.js", "/App.js"];
-    entry = commonEntries.find(e => sandpackFiles[e]);
+    const commonEntries = [
+      "/src/index.js",
+      "/src/index.jsx",
+      "/src/main.jsx",
+      "/src/main.js",
+      "/index.js",
+      "/src/App.js",
+      "/App.js",
+    ];
+    entry = commonEntries.find((e) => sandpackFiles[e]);
   } else if (template === "static") {
-    entry = filePaths.find(p => p.endsWith("index.html")) || filePaths.find(p => p.endsWith(".html"));
+    entry = "/index.html";
+  } else if (template === "vanilla") {
+    const commonVanillaEntries = [
+      "/src/index.js",
+      "/index.js",
+      "/src/main.js",
+      "/main.js",
+      "/script.js",
+    ];
+    entry = commonVanillaEntries.find((e) => sandpackFiles[e]);
   }
 
   // If there's no codebase at all, fallback to showing nothing or a message
@@ -129,30 +187,56 @@ const EditorPanel = ({ messages, onClose }) => {
   return (
     <section className="flex-[1.2] flex flex-col bg-white lg:ml-4 mr-5 lg:mb-5 rounded-2xl shadow border overflow-hidden h-full">
       {/* Header */}
-      <EveryButton onClose={onClose} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <EveryButton
+        onClose={onClose}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
       {/* Body */}
       <div className="flex-1 min-h-0 overflow-hidden relative">
         {hasFiles ? (
           <div className="w-full h-full flex flex-col min-h-0 [&_.sp-wrapper]:h-full [&_.sp-wrapper]:flex [&_.sp-wrapper]:flex-col [&_.sp-layout]:flex-1 [&_.sp-layout]:h-full [&_.sp-preview]:h-full [&_.sp-preview]:flex-1 [&_.sp-preview-container]:h-full [&_.sp-preview-iframe]:h-full">
-            <SandpackProvider 
-              template={template} 
-              files={sandpackFiles} 
+            <SandpackProvider
+              template={template}
+              files={sandpackFiles}
               theme="light"
               customSetup={{
-                entry: entry
+                entry: entry,
               }}
             >
-              <div className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "code" ? "flex" : "hidden"}`}>
-                <SandpackLayout style={{ height: "100%", width: "100%" }} className="flex-1 h-full">
-                  <SandpackFileExplorer style={{ height: "100%", width: "25%", minWidth: "200px" }} />
-                  <SandpackCodeEditor showTabs={true} showLineNumbers={true} style={{ height: "100%", flex: 1 }} />
+              <div
+                className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "code" ? "flex" : "hidden"}`}
+              >
+                <SandpackLayout
+                  style={{ height: "100%", width: "100%" }}
+                  className="flex-1 h-full"
+                >
+                  <SandpackFileExplorer
+                    style={{ height: "100%", width: "25%", minWidth: "200px" }}
+                  />
+                  <SandpackCodeEditor
+                    showTabs={false}
+                    showLineNumbers={true}
+                    style={{ height: "100%", flex: 1 }}
+                  />
                 </SandpackLayout>
               </div>
-              <div className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "dashboard" ? "flex" : "hidden"}`}>
-                <SandpackLayout style={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", flex: 1 }} className="flex-1 h-full">
-                  <SandpackPreview 
-                    style={{ height: "100%", width: "100%", flex: 1 }} 
+              <div
+                className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "dashboard" ? "flex" : "hidden"}`}
+              >
+                <SandpackLayout
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                  }}
+                  className="flex-1 h-full"
+                >
+                  <SandpackPreview
+                    style={{ height: "100%", width: "100%", flex: 1 }}
                     className="flex-1 h-full"
                     showOpenInCodeSandbox={false}
                     showRefreshButton={true}
@@ -164,7 +248,9 @@ const EditorPanel = ({ messages, onClose }) => {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-gray-50">
             <p>No generated codebase files found yet.</p>
-            <p className="text-sm mt-2">Generate a website or app to see the preview here.</p>
+            <p className="text-sm mt-2">
+              Generate a website or app to see the preview here.
+            </p>
           </div>
         )}
       </div>
@@ -185,7 +271,7 @@ export default EditorPanel;
 //       {/* Header with Close Button */}
 //       <div className="flex items-center justify-between bg-gray-50 border-b px-4 py-2">
 //         <EveryButton />
-//         <button 
+//         <button
 //           onClick={onClose}
 //           className="p-2 rounded-lg bg-gray-200 border border-gray-200 cursor-pointer hover:text-black text-gray-600 transition-colors"
 //           title="Close Panel"
@@ -260,4 +346,3 @@ export default EditorPanel;
 // };
 
 // export default EditorPanel;
-

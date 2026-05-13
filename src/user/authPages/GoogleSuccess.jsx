@@ -20,7 +20,6 @@ const GoogleSuccess = () => {
       try {
     
         tokenStorage.setAccessToken(token.trim());
-        localStorage.setItem("accessToken", token.trim());
         const response = await apiClient.get("/user/profile");
 
         console.log("Profile response:", response.data);
@@ -32,13 +31,10 @@ const GoogleSuccess = () => {
           response.data?.user;
 
         if (userData) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              ...userData,   
-              role: userData.role || "USER",
-            })
-          );
+          tokenStorage.setUser({
+            ...userData,
+            role: userData.role || "USER",
+          });
           navigate("/user/newtask");
         } else {
           console.error("No user data found in response:", response.data);

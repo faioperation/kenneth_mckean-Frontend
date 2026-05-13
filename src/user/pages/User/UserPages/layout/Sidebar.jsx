@@ -99,12 +99,14 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="flex h-screen  flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center justify-between px-8">
+           <Link to={"/"}>
             <div className="flex items-center gap-3">
               <img className="h-8 w-8" src={logo} alt="Logo" />
               <h2 className="text-2xl font-semibold text-black tracking-tight">
                 Algorithms AI
               </h2>
             </div>
+            </Link>
             <button
               onClick={onClose}
               className="rounded-md p-1 hover:bg-[#1f2d5c] md:hidden"

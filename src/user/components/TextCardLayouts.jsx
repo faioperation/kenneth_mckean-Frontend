@@ -89,6 +89,8 @@ const TextCardLayouts = () => {
   const [showEditor, setShowEditor] = useState(true);
   const [isListening, setIsListening] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [linkInput, setLinkInput] = useState("");
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
@@ -135,7 +137,11 @@ const TextCardLayouts = () => {
         setCurrentTaskId(taskIdFromUrl);
 
         // Check if the response has the OLD format (messages array) or NEW format (prompt + aiResponse)
-        if (taskData?.messages && Array.isArray(taskData.messages) && taskData.messages.length > 0) {
+        if (
+          taskData?.messages &&
+          Array.isArray(taskData.messages) &&
+          taskData.messages.length > 0
+        ) {
           // ===== OLD FORMAT: messages array =====
           const firstAiMsg = taskData.messages.find(
             (m) => m.role === "assistant",
@@ -184,7 +190,12 @@ const TextCardLayouts = () => {
                 content?.data?.result?.formatted_results?.[0]?.output ||
                 null;
 
-              const rawCodebase = content?.codebase?.files || content?.data?.codebase?.files || content?.data?.result?.codebase || content?.data?.codebase || [];
+              const rawCodebase =
+                content?.codebase?.files ||
+                content?.data?.codebase?.files ||
+                content?.data?.result?.codebase ||
+                content?.data?.codebase ||
+                [];
 
               return {
                 role: "ai",
@@ -198,7 +209,8 @@ const TextCardLayouts = () => {
           setMessages(history ?? []);
         } else {
           // ===== NEW FORMAT: prompt + aiResponse (no messages array) =====
-          const formatted = taskData?.aiResponse?.data?.result?.formatted_results?.[0];
+          const formatted =
+            taskData?.aiResponse?.data?.result?.formatted_results?.[0];
           const taskType = formatted?.task_type;
           const isWeb =
             taskType === "web_app" ||
@@ -220,6 +232,7 @@ const TextCardLayouts = () => {
           // Add AI response
           if (taskData?.aiResponse) {
             const rawOutput =
+              formatted?.summary ||
               formatted?.output ||
               taskData?.aiResponse?.data?.result?.output ||
               taskData?.aiResponse?.data?.response ||
@@ -228,6 +241,7 @@ const TextCardLayouts = () => {
             const codebaseFiles =
               taskData?.codebase?.files ||
               taskData?.aiResponse?.data?.result?.codebase ||
+              taskData?.aiResponse?.data?.codebase?.files ||
               [];
 
             history.push({
@@ -277,12 +291,10 @@ const TextCardLayouts = () => {
       }
 
       const codebase =
-        taskData?.codebase?.files ||
-        aiResData?.result?.codebase ||
+        taskData?.codebase?.files || 
+        aiResData?.result?.codebase || 
+        aiResData?.codebase?.files || 
         [];
-
-      console.log("MUTATION SUCCESS RES:", res);
-      console.log("EXTRACTED CODEBASE:", codebase);
 
       setMessages((prev) => [
         ...prev,
@@ -290,7 +302,11 @@ const TextCardLayouts = () => {
           role: "ai",
           message: taskData?.aiResponse?.message || "Generated",
           output: extractMessageContent(
-            formatted?.output || aiResData?.response || aiResData?.structured_response || result?.output
+            formatted?.summary ||
+            formatted?.output ||
+              aiResData?.response ||
+              aiResData?.structured_response ||
+              result?.output,
           ),
           codebase: codebase,
           taskId: taskData?.taskId,
@@ -311,14 +327,15 @@ const TextCardLayouts = () => {
       console.log("CONTINUE RES:", res);
       const taskData = res?.data || res;
       const aiResData = taskData?.aiResponse?.data;
-      
+
       const sidFromRes = taskData?.session_id || aiResData?.session_id;
       if (sidFromRes) {
         setSessionId(sidFromRes);
       }
 
       // Check for task_type update if present
-      const taskType = taskData?.aiResponse?.data?.result?.formatted_results?.[0]?.task_type;
+      const taskType =
+        taskData?.aiResponse?.data?.result?.formatted_results?.[0]?.task_type;
       if (taskType) {
         setIsWebType(
           taskType === "web_app" ||
@@ -328,7 +345,11 @@ const TextCardLayouts = () => {
         );
       }
 
-      const codebase = taskData?.codebase?.files || aiResData?.result?.codebase || [];
+      const codebase =
+        taskData?.codebase?.files || 
+        aiResData?.result?.codebase || 
+        aiResData?.codebase?.files || 
+        [];
 
       setMessages((prev) => [
         ...prev,
@@ -336,7 +357,10 @@ const TextCardLayouts = () => {
           role: "ai",
           message: taskData?.aiResponse?.message || "Updated",
           output: extractMessageContent(
-            aiResData?.response || aiResData?.structured_response || aiResData?.result?.formatted_results?.[0]?.output
+            aiResData?.result?.formatted_results?.[0]?.summary ||
+            aiResData?.result?.formatted_results?.[0]?.output ||
+            aiResData?.response ||
+            aiResData?.structured_response
           ),
           codebase: codebase,
           taskId: taskData?.taskId || currentTaskId,
@@ -391,10 +415,16 @@ const TextCardLayouts = () => {
   // voice chat
 
   const handleAddLink = () => {
-    const url = window.prompt("Enter the link URL:");
-    if (url && url.trim() !== "") {
-      setPrompt((prev) => `${prev} [Link: ${url}] `);
+    setIsLinkModalOpen(true);
+    setLinkInput("");
+  };
+
+  const handleLinkSubmit = () => {
+    if (linkInput && linkInput.trim() !== "") {
+      setPrompt((prev) => `${prev} [Link: ${linkInput.trim()}] `);
     }
+    setIsLinkModalOpen(false);
+    setLinkInput("");
   };
 
   const handleVoiceInput = () => {
@@ -556,14 +586,6 @@ const TextCardLayouts = () => {
                 >
                   <FaLink size={16} />
                 </div>
-                <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-                  <Globe size={16} />{" "}
-                  <span className="whitespace-nowrap">Search web</span>
-                </button>
-                <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-                  <ImagePlus size={16} />{" "}
-                  <span className="whitespace-nowrap">Create Image</span>
-                </button>
               </div>
 
               <div className="flex sm:w-full justify-end  items-center gap-4">
@@ -645,14 +667,6 @@ const TextCardLayouts = () => {
             >
               <FaLink size={18} />
             </div>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-              <Globe size={16} />{" "}
-              <span className="whitespace-nowrap">Search web</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-              <ImagePlus size={16} />{" "}
-              <span className="whitespace-nowrap">Create Image</span>
-            </button>
           </div>
 
           <div className="flex items-center gap-4">
@@ -696,6 +710,52 @@ const TextCardLayouts = () => {
           </div>
         ))}
       </div>
+
+      {/* Link Modal */}
+      {isLinkModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-[32px] p-8 w-full max-w-md shadow-2xl border border-gray-100">
+            <div className="flex items-center gap-3 mb-4 text-black">
+              <div className="p-3 bg-gray-50 rounded-2xl">
+                <FaLink size={20} />
+              </div>
+              <h3 className="text-xl font-bold">Add Link</h3>
+            </div>
+
+            <p className="text-gray-500 mb-6 text-xs">
+              Enter the URL of the link you want to include in your prompt.
+            </p>
+
+            <input
+              autoFocus
+              type="url"
+              value={linkInput}
+              onChange={(e) => setLinkInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleLinkSubmit();
+                if (e.key === "Escape") setIsLinkModalOpen(false);
+              }}
+              placeholder="https://example.com"
+              className="w-full px-4 py-2 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black/5 text-black mb-8 text-base"
+            />
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setIsLinkModalOpen(false)}
+                className="flex-1 px-4 py-2 rounded-2xl text-gray-600 hover:bg-gray-50 transition font-semibold border border-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLinkSubmit}
+                className="flex-1 px-4 py-2 bg-black text-white rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition font-semibold shadow-lg shadow-black/10"
+              >
+                Add Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
