@@ -16,7 +16,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e?.preventDefault();
     if (!email.trim() || !password.trim()) {
-      alert("Email and password required");
+      toast.error("Email and password required");
       return;
     }
 
@@ -39,7 +39,7 @@ export default function Login() {
       // navigate("/admin/overview");
       window.location.href = "/admin/overview";
     } catch (error) {
-      alert(error?.response?.data?.message || "Login failed. Try again.");
+      toast.error(error?.response?.data?.message || "Login failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -49,7 +49,7 @@ export default function Login() {
     <AuthContainer>
       <div className="mb-8 text-center">
         <h3 className="text-2xl font-bold text-[#4D81F5] tracking-tight">Log In to Account</h3>
-        <p className="text-sm text-gray-400 mt-2">Log In  to your admin account</p>
+        <p className="text-sm text-gray-400 mt-2">Log In to your admin account</p>
       </div>
 
       <form onSubmit={handleLogin}>

@@ -2,6 +2,7 @@ import { IoIosCheckmark } from "react-icons/io";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiGet, apiPost } from "../../lib/api"; 
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Upgrade = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const Upgrade = () => {
     },
     onError: (error) => {
       console.error("Payment session creation failed:", error);
-      alert("payment session has failed to load, try again!");
+      toast.error("Payment session has failed to load, try again!");
     }
   });
 

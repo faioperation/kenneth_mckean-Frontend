@@ -5,6 +5,7 @@ import { FaDownload } from "react-icons/fa";
 import { generatePDF} from "../../api/taskApi";
 import { apiGet } from "../../lib/api";
 import { apiClient } from "../../lib/apiClient";
+import toast from "react-hot-toast";
 
 export default function PDF({ taskId, content }) {
   const [isGenerated, setIsGenerated] = useState(false);
@@ -15,7 +16,7 @@ export default function PDF({ taskId, content }) {
       console.log("PDF SUCCESS", res);
       setIsGenerated(true);
     },
-    onError: () => alert("Failed to generate PDF"),
+    onError: () => toast.error("Failed to generate PDF"),
   });
 
   const handleGenerate = () => {
@@ -43,7 +44,7 @@ const handleDownload = async () => {
     
     if (!text.startsWith("%PDF")) {
       console.error("Not a PDF, server returned:", text);
-      alert("Server did not return a PDF file");
+      toast.error("Server did not return a PDF file");
       return;
     }
 
@@ -58,7 +59,7 @@ const handleDownload = async () => {
 
   } catch (err) {
     console.error("Download error:", err);
-    alert("Failed to download PDF");
+    toast.error("Failed to download PDF");
   } finally {
     setIsDownloading(false);
   }

@@ -18,6 +18,7 @@ import PDF from "./PDF";
 import ZIP from "./ZIP";
 import { useSearchParams } from "react-router-dom";
 import { getTaskById } from "../../api/taskApi";
+import toast from "react-hot-toast";
 
 const features = [
   {
@@ -133,7 +134,7 @@ const ChatPerID = () => {
       ]);
       setPrompt("");
     },
-    onError: () => alert("Error creating task."),
+    onError: () => toast.error("Error creating task."),
   });
 
   const continueMutation = useMutation({
@@ -160,7 +161,7 @@ const ChatPerID = () => {
     onError: (err) => {
       console.log("MUTATION ERROR:", err);
       console.log("MUTATION ERROR RESPONSE:", err.response?.data);
-      alert(`Failed: ${err.response?.data?.message || err.message}`);
+      toast.error(`Failed: ${err.response?.data?.message || err.message}`);
     },
   });
 

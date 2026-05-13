@@ -17,8 +17,8 @@ import { createTask, continueChat } from "../../api/taskApi";
 import EditorPanel from "./EditorPanel";
 import PDF from "./PDF";
 import ZIP from "./ZIP";
-import { useSearchParams } from "react-router-dom";
 import { getTaskById } from "../../api/taskApi";
+import toast from "react-hot-toast";
 import MarkdownRenderer from "./MarkdownRenderer";
 import StructuredMessageRenderer from "./StructuredMessageRenderer";
 import toast from "react-hot-toast";
@@ -476,7 +476,7 @@ const TextCardLayouts = () => {
     onError: (err) => {
       console.log("MUTATION ERROR:", err);
       console.log("MUTATION ERROR RESPONSE:", err.response?.data);
-      alert(`Failed: ${err.response?.data?.message || err.message}`);
+      toast.error(`Failed: ${err.response?.data?.message || err.message}`);
     },
   });
 
@@ -535,7 +535,7 @@ const TextCardLayouts = () => {
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Your browser does not support voice chat. Please use Chrome.");
+      toast.error("Your browser does not support voice chat. Please use Chrome.");
       return;
     }
 
@@ -1001,7 +1001,7 @@ export default TextCardLayouts;
 //         });
 //     } catch (error) {
 //       console.error("Navigation error:", error);
-//       alert("Error: " + (error.message || "Unknown error"));
+//       toast.error("Error: " + (error.message || "Unknown error"));
 //       setLoading(false);
 //     }
 //   };
