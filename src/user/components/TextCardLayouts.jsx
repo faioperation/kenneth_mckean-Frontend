@@ -5,7 +5,7 @@ import {
   ImagePlus,
   Code2,
   LayoutDashboard,
-  Smartphone,
+  Smartphone,   
   Palette,
   Loader,
   Eye,

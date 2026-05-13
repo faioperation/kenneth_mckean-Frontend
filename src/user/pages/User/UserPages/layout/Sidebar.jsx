@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onClose }) {
     <div>
       {isOpen && (
         <div
-          className="fixed inset-0 z-20 bg-white transition-opacity  lg:hidden"
+          className="fixed inset-0 z-20 bg-white/40 transition-opacity  lg:hidden"
           onClick={onClose}
         />
       )}
