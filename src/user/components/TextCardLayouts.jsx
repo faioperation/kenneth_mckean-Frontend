@@ -597,36 +597,9 @@ const TextCardLayouts = () => {
                         <div>
                           <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl  border border-blue-100 text-gray-600">
                             {msg.output?.type === "markdown" ? (
-                              msg.isTyping ? (
-                                <TypewriterMarkdown
-                                  content={msg.output.content}
-                                  onComplete={() => {
-                                    msg.isTyping = false;
-                                  }}
-                                />
-                              ) : (
-                                <MarkdownRenderer content={msg.output.content} />
-                              )
+                              <MarkdownRenderer content={msg.output.content} />
                             ) : msg.output?.type === "structured" ? (
-                              msg.isTyping ? (
-                                <TypewriterStructured
-                                  blocks={msg.output.content}
-                                  onComplete={() => {
-                                    msg.isTyping = false;
-                                  }}
-                                />
-                              ) : (
-                                <StructuredMessageRenderer
-                                  blocks={msg.output.content}
-                                />
-                              )
-                            ) : msg.isTyping ? (
-                              <TypewriterText
-                                content={msg.output?.content}
-                                onComplete={() => {
-                                  msg.isTyping = false;
-                                }}
-                              />
+                              <StructuredMessageRenderer blocks={msg.output.content} />
                             ) : (
                               <p>{msg.output?.content}</p>
                             )}
