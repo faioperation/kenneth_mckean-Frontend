@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { FiMic } from "react-icons/fi";
 import { useRef, useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createTask, continueChat } from "../../api/taskApi";
+import { apiGet, getImageUrl } from "../../lib/api";
+import { tokenStorage } from "../../lib/tokenStorage";
 import EditorPanel from "./EditorPanel";
 import PDF from "./PDF";
 import ZIP from "./ZIP";
@@ -154,6 +156,16 @@ const TextCardLayouts = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkInput, setLinkInput] = useState("");
+
+  const token = tokenStorage.getAccessToken();
+  const { data: profileData } = useQuery({
+    queryKey: ["profileData"],
+    queryFn: async () => {
+      const res = await apiGet("/user/profile");
+      return res.data;
+    },
+    enabled: !!token,
+  });
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
@@ -587,8 +599,18 @@ const TextCardLayouts = () => {
                           ? msg.text.map((b) => b.text || "").join(" ")
                           : JSON.stringify(msg.text)}
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                      U
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm">
+                      {profileData?.avatarUrl ? (
+                        <img 
+                          src={getImageUrl(profileData.avatarUrl)} 
+                          alt="U" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">
+                          U
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
