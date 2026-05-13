@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { FiMic } from "react-icons/fi";
 import { useRef, useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createTask, continueChat } from "../../api/taskApi";
+import { apiGet, getImageUrl } from "../../lib/api";
+import { tokenStorage } from "../../lib/tokenStorage";
 import EditorPanel from "./EditorPanel";
 import PDF from "./PDF";
 import ZIP from "./ZIP";
@@ -155,6 +157,16 @@ const TextCardLayouts = () => {
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkInput, setLinkInput] = useState("");
 
+  const token = tokenStorage.getAccessToken();
+  const { data: profileData } = useQuery({
+    queryKey: ["profileData"],
+    queryFn: async () => {
+      const res = await apiGet("/user/profile");
+      return res.data;
+    },
+    enabled: !!token,
+  });
+
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     if (scrollHeight - scrollTop - clientHeight > 150) {
@@ -279,6 +291,7 @@ const TextCardLayouts = () => {
                 output: extractMessageContent(rawResponse || msg.content),
                 codebase: normalizedCodebase,
                 taskId: taskIdFromUrl,
+                messageId: msg.id || msg._id,
               };
             }
           });
@@ -344,6 +357,7 @@ const TextCardLayouts = () => {
               output: extractMessageContent(rawOutput),
               codebase: codebaseFiles,
               taskId: taskIdFromUrl,
+              messageId: aiRes?.id || aiRes?._id || taskData?.aiResponse?.id || taskData?.aiResponse?._id,
             });
           }
 
@@ -408,6 +422,7 @@ const TextCardLayouts = () => {
           ),
           codebase: codebase,
           taskId: taskData?.taskId,
+          messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
           isTyping: true,
         },
       ]);
@@ -467,6 +482,7 @@ const TextCardLayouts = () => {
           ),
           codebase: codebase,
           taskId: taskData?.taskId || currentTaskId,
+          messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
           isTyping: true,
         },
       ]);
@@ -575,16 +591,26 @@ const TextCardLayouts = () => {
             {messages.map((msg, idx) => (
               <div key={idx} className="flex flex-col gap-4">
                 {msg.role === "user" ? (
-                  <div className="flex gap-4 self-end max-w-full">
-                    <div className=" bg-gray-100 p-4 ml-8  rounded-2xl break-all leading-tight rounded-tr-none text-gray-800 border border-gray-200 shadow-sm ">
+                  <div className="flex gap-4 self-end max-w-[90%] sm:max-w-full">
+                    <div className=" bg-gray-100 p-4 ml-2 sm:ml-8  rounded-2xl break-all leading-tight rounded-tr-none text-gray-800 border border-gray-200 shadow-sm ">
                       {typeof msg.text === "string"
                         ? msg.text
                         : Array.isArray(msg.text)
                           ? msg.text.map((b) => b.text || "").join(" ")
                           : JSON.stringify(msg.text)}
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                      U
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm">
+                      {profileData?.avatarUrl ? (
+                        <img 
+                          src={getImageUrl(profileData.avatarUrl)} 
+                          alt="U" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">
+                          U
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -592,41 +618,14 @@ const TextCardLayouts = () => {
                     <div className="w-8 h-8 flex-shrink-0">
                       <SparkleIcon />
                     </div>
-                    <div className="flex-1 space-y-3 overflow-y-auto ">
+                    <div className="flex-1 space-y-3 overflow-y-auto w-full">
                       {msg.output && (
-                        <div>
-                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl  border border-blue-100 text-gray-600">
+                        <div className="w-full">
+                          <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-2 sm:mr-8 rounded-xl  border border-blue-100 text-gray-600">
                             {msg.output?.type === "markdown" ? (
-                              msg.isTyping ? (
-                                <TypewriterMarkdown
-                                  content={msg.output.content}
-                                  onComplete={() => {
-                                    msg.isTyping = false;
-                                  }}
-                                />
-                              ) : (
-                                <MarkdownRenderer content={msg.output.content} />
-                              )
+                              <MarkdownRenderer content={msg.output.content} />
                             ) : msg.output?.type === "structured" ? (
-                              msg.isTyping ? (
-                                <TypewriterStructured
-                                  blocks={msg.output.content}
-                                  onComplete={() => {
-                                    msg.isTyping = false;
-                                  }}
-                                />
-                              ) : (
-                                <StructuredMessageRenderer
-                                  blocks={msg.output.content}
-                                />
-                              )
-                            ) : msg.isTyping ? (
-                              <TypewriterText
-                                content={msg.output?.content}
-                                onComplete={() => {
-                                  msg.isTyping = false;
-                                }}
-                              />
+                              <StructuredMessageRenderer blocks={msg.output.content} />
                             ) : (
                               <p>{msg.output?.content}</p>
                             )}
@@ -636,7 +635,7 @@ const TextCardLayouts = () => {
                               <ZIP taskId={msg.taskId} />
                             ) : (
                               <PDF
-                                taskId={msg.taskId}
+                                taskId={msg.messageId}
                                 content={
                                   typeof msg.output?.content === "string"
                                     ? msg.output.content
@@ -714,35 +713,35 @@ const TextCardLayouts = () => {
             </div>
 
             {/* Responsive buttons row */}
-            <div className="mt-8 flex flex-col flex-col-reverse md:flex-row items-center justify-between gap-4">
-              <div className="flex  items-center justify-center gap-3 w-full md:w-auto">
+            <div className="mt-8 flex flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
                 <div
                   onClick={handleAddLink}
-                  className="sm:p-3 p-1  border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50"
+                  className="p-3 border border-gray-200 rounded-full cursor-pointer hover:bg-gray-50"
                 >
-                  <FaLink size={16} />
+                  <FaLink size={18} />
                 </div>
               </div>
 
-              <div className="flex sm:w-full justify-end  items-center gap-4">
+              <div className="flex items-center gap-4">
                 <div
                   onClick={handleVoiceInput}
-                  className={`p-1 sm:p-3 border text-balck border-gray-200 rounded-full cursor-pointer transition-all ${
+                  className={`p-3 border text-black border-gray-200 rounded-full cursor-pointer transition-all ${
                     isListening
-                      ? "bg-blue-100 border-blue-500  animate-pulse"
+                      ? "bg-blue-100 border-blue-500 animate-pulse"
                       : "hover:bg-gray-50"
                   }`}
                 >
-                  <FiMic size={16} />
+                  <FiMic size={18} />
                 </div>
                 <button
                   onClick={handleCreate}
                   disabled={
                     taskMutation.isPending || continueMutation.isPending
                   }
-                  className="p-1 sm:p-2 bg-black text-white rounded-full ml-2 hover:scale-105 transition disabled:opacity-30"
+                  className="p-3 bg-black text-white rounded-full hover:scale-105 active:scale-95 transition disabled:opacity-30"
                 >
-                  <FaArrowUp size={14} />
+                  <FaArrowUp size={18} />
                 </button>
               </div>
             </div>
@@ -795,8 +794,8 @@ const TextCardLayouts = () => {
         </div>
 
         {/* Responsive buttons row */}
-        <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
+        <div className="mt-8 flex flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
             <div
               onClick={handleAddLink}
               className="p-3 border border-gray-200 rounded-full cursor-pointer text-black hover:bg-gray-50"
@@ -808,7 +807,7 @@ const TextCardLayouts = () => {
           <div className="flex items-center gap-4">
             <div
               onClick={handleVoiceInput}
-              className={`p-1 sm:p-3 border  text-black   border-gray-200 rounded-full cursor-pointer transition-all ${
+              className={`p-3 border text-black border-gray-200 rounded-full cursor-pointer transition-all ${
                 isListening
                   ? "bg-blue-100 border-blue-500 animate-pulse"
                   : "hover:bg-gray-50"
@@ -819,12 +818,12 @@ const TextCardLayouts = () => {
             <button
               onClick={handleCreate}
               disabled={taskMutation.isPending}
-              className="p-4 bg-black rounded-full text-white hover:scale-105 active:scale-95 transition disabled:opacity-50"
+              className="p-3 bg-black rounded-full text-white hover:scale-105 active:scale-95 transition disabled:opacity-50"
             >
               {taskMutation.isPending ? (
-                <Loader className="animate-spin" size={20} />
+                <Loader className="animate-spin" size={18} />
               ) : (
-                <FaArrowUp size={20} />
+                <FaArrowUp size={18} />
               )}
             </button>
           </div>

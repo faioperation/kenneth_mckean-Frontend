@@ -2,6 +2,7 @@ import creativeImage from "../../../assets/images/creative.png";
 import uiuxImage from "../../../assets/images/uiux.png";
 import AIImage from "../../../assets/images/AI.png";
 import graphicImage from "../../../assets/images/graphic.png";
+import { motion } from "framer-motion";
 
 const FeaturesContent = () => {
   const sectionsData = [
@@ -45,16 +46,28 @@ const FeaturesContent = () => {
           }`}
         >
           {/* Image */}
-          <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, x: section.reverse ? 50 : -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8 }}
+            className="w-full lg:w-1/2 rounded-2xl overflow-hidden"
+          >
             <img
               src={section.image}
               alt="featuresImage"
               className="w-full h-full object-cover"
             />
-          </div>
+          </motion.div>
 
           {/* Text */}
-          <div className="w-full lg:w-1/2 text-center lg:text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: section.reverse ? -50 : 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8 }}
+            className="w-full lg:w-1/2 text-center lg:text-left"
+          >
             <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold text-black leading-snug">
               {section.title}
             </h3>
@@ -62,7 +75,7 @@ const FeaturesContent = () => {
             <p className="text-gray-500 mt-4 md:mt-6 text-sm sm:text-base md:text-lg leading-relaxed">
               {section.description}
             </p>
-          </div>
+          </motion.div>
         </div>
       ))}
     </div>
