@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onClose }) {
     <div>
       {isOpen && (
         <div
-          className="fixed inset-0 z-20 bg-white transition-opacity  lg:hidden"
+          className="fixed inset-0 z-20 bg-white/40 transition-opacity  lg:hidden"
           onClick={onClose}
         />
       )}
@@ -96,16 +96,16 @@ export default function Sidebar({ isOpen, onClose }) {
           isOpen ? "translate-x-0 " : "-translate-x-full"
         }`}
       >
-        <div className="flex h-screen  flex-col">
+        <div className="flex h-screen  flex-col bg-white">
           {/* Logo */}
           <div className="flex h-16 items-center justify-between px-8">
-           <Link to={"/"}>
-            <div className="flex items-center gap-3">
-              <img className="h-8 w-8" src={logo} alt="Logo" />
-              <h2 className="text-2xl font-semibold text-black tracking-tight">
-                Algorithms AI
-              </h2>
-            </div>
+            <Link to={"/"}>
+              <div className="flex items-center gap-3">
+                <img className="h-8 w-8" src={logo} alt="Logo" />
+                <h2 className="text-2xl font-semibold text-black tracking-tight">
+                  Algorithms AI
+                </h2>
+              </div>
             </Link>
             <button
               onClick={onClose}
@@ -171,10 +171,11 @@ export default function Sidebar({ isOpen, onClose }) {
                 </p>
               </div>
 
-              {projectsLoading ? (
+              <div className="overflow-y-scroll h-45  py-2 scrollbar-hide">
+                {projectsLoading ? (
                 <p className="text-xs text-gray-400">Loading...</p>
               ) : (
-                <div className="h-42 overflow-y-auto space-y-1 px-3">
+                <div className=" overflow-y-auto space-y-1 px-3">
                   {projects.map((project) => (
                     <div
                       key={project.id || project._id}
@@ -188,9 +189,10 @@ export default function Sidebar({ isOpen, onClose }) {
                   ))}{" "}
                 </div>
               )}
+              </div>
             </div>
             {/* TASK LIST */}
-            <div className="my-10">
+            <div className="my-5 ">
               <div className="flex items-center justify-between p-4">
                 <p className="text-gray-500">All Tasks</p>
                 <p className="text-2xl text-gray-500 cursor-pointer hover:bg-gray-300 rounded-full p-2">
@@ -198,7 +200,8 @@ export default function Sidebar({ isOpen, onClose }) {
                 </p>
               </div>
 
-              {isLoading ? (
+             <div className="overflow-y-scroll h-45  py-2 scrollbar-hide">
+               {isLoading ? (
                 <p className="text-gray-400 text-sm px-4">Loading...</p>
               ) : tasks.length === 0 ? (
                 <div className="pb-12 lg:pb-24 text-gray-500 flex flex-col items-center space-y-4">
@@ -208,12 +211,14 @@ export default function Sidebar({ isOpen, onClose }) {
                   <p>Create New Tasks & Get Started</p>
                 </div>
               ) : (
-                <div className="h-52 overflow-y-auto space-y-1 px-3">
+                <div className=" overflow-y-auto space-y-1 px-3">
                   {tasks.map((task) => (
                     <div
                       key={task.taskId || task._id || task.id}
                       onClick={() => {
-                        navigate(`/user/newtask?taskId=${task.taskId || task._id || task.id}`);
+                        navigate(
+                          `/user/newtask?taskId=${task.taskId || task._id || task.id}`,
+                        );
                         window.innerWidth < 768 && onClose();
                       }}
                       className="px-3 shadow py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
@@ -223,6 +228,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   ))}
                 </div>
               )}
+             </div>
             </div>
 
             {/* Profile */}
