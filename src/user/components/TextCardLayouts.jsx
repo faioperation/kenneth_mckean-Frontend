@@ -232,6 +232,7 @@ const TextCardLayouts = () => {
           // Add AI response
           if (taskData?.aiResponse) {
             const rawOutput =
+              formatted?.summary ||
               formatted?.output ||
               taskData?.aiResponse?.data?.result?.output ||
               taskData?.aiResponse?.data?.response ||
@@ -240,6 +241,7 @@ const TextCardLayouts = () => {
             const codebaseFiles =
               taskData?.codebase?.files ||
               taskData?.aiResponse?.data?.result?.codebase ||
+              taskData?.aiResponse?.data?.codebase?.files ||
               [];
 
             history.push({
@@ -289,10 +291,10 @@ const TextCardLayouts = () => {
       }
 
       const codebase =
-        taskData?.codebase?.files || aiResData?.result?.codebase || [];
-
-      console.log("MUTATION SUCCESS RES:", res);
-      console.log("EXTRACTED CODEBASE:", codebase);
+        taskData?.codebase?.files || 
+        aiResData?.result?.codebase || 
+        aiResData?.codebase?.files || 
+        [];
 
       setMessages((prev) => [
         ...prev,
@@ -300,6 +302,7 @@ const TextCardLayouts = () => {
           role: "ai",
           message: taskData?.aiResponse?.message || "Generated",
           output: extractMessageContent(
+            formatted?.summary ||
             formatted?.output ||
               aiResData?.response ||
               aiResData?.structured_response ||
@@ -343,7 +346,10 @@ const TextCardLayouts = () => {
       }
 
       const codebase =
-        taskData?.codebase?.files || aiResData?.result?.codebase || [];
+        taskData?.codebase?.files || 
+        aiResData?.result?.codebase || 
+        aiResData?.codebase?.files || 
+        [];
 
       setMessages((prev) => [
         ...prev,
@@ -351,9 +357,10 @@ const TextCardLayouts = () => {
           role: "ai",
           message: taskData?.aiResponse?.message || "Updated",
           output: extractMessageContent(
+            aiResData?.result?.formatted_results?.[0]?.summary ||
+            aiResData?.result?.formatted_results?.[0]?.output ||
             aiResData?.response ||
-              aiResData?.structured_response ||
-              aiResData?.result?.formatted_results?.[0]?.output,
+            aiResData?.structured_response
           ),
           codebase: codebase,
           taskId: taskData?.taskId || currentTaskId,
@@ -579,14 +586,6 @@ const TextCardLayouts = () => {
                 >
                   <FaLink size={16} />
                 </div>
-                <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-                  <Globe size={16} />{" "}
-                  <span className="whitespace-nowrap">Search web</span>
-                </button>
-                <button className="flex items-center gap-2 px-4 sm:py-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-                  <ImagePlus size={16} />{" "}
-                  <span className="whitespace-nowrap">Create Image</span>
-                </button>
               </div>
 
               <div className="flex sm:w-full justify-end  items-center gap-4">
@@ -668,14 +667,6 @@ const TextCardLayouts = () => {
             >
               <FaLink size={18} />
             </div>
-            {/* <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-              <Globe size={16} />{" "}
-              <span className="whitespace-nowrap">Search web</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition text-sm font-medium text-gray-600">
-              <ImagePlus size={16} />{" "}
-              <span className="whitespace-nowrap">Create Image</span>
-            </button> */}
           </div>
 
           <div className="flex items-center gap-4">
