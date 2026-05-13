@@ -12,14 +12,14 @@ export default function NewUser() {
   }
 
   return (
-    <div className=" h-full w-full  bg-[#F8F8F7] text-gray-100">
-      <div className="flex ">
+    <div className="h-screen w-full bg-[#F8F8F7] text-gray-100 overflow-hidden">
+      <div className="flex h-full overflow-hidden">
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
 
-        <div className="flex flex-1 flex-col overflow-hidden ">
+        <div className="flex flex-1 flex-col h-full overflow-hidden">
           <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
 
           <main className="flex-1 overflow-y-auto px-4 md:px-6 text-white relative ">
