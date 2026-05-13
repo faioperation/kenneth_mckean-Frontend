@@ -98,7 +98,7 @@ export default function Sidebar({ isOpen, onClose }) {
       >
         <div className="flex h-screen  flex-col bg-white">
           {/* Logo */}
-          <div className="flex h-20 items-center justify-between px-4 border-b border-gray-50">
+          <div className="flex md:py-5 sm:py-2 py-2.5 items-center justify-between px-4 border-b border-gray-50">
             <Link to={"/"} className="flex-1">
               <div className="flex items-center gap-2.5">
                 <img className="h-8 w-8 rounded-lg shadow-sm" src={logo} alt="Logo" />
