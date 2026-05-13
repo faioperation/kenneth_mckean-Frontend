@@ -21,6 +21,7 @@ import { useSearchParams } from "react-router-dom";
 import { getTaskById } from "../../api/taskApi";
 import MarkdownRenderer from "./MarkdownRenderer";
 import StructuredMessageRenderer from "./StructuredMessageRenderer";
+import toast from "react-hot-toast";
 
 const features = [
   {
@@ -77,6 +78,67 @@ const extractMessageContent = (rawData) => {
     };
   }
 };
+
+const TypewriterText = ({ content, onComplete }) => {
+  const [displayed, setDisplayed] = useState("");
+  useEffect(() => {
+    let i = 0;
+    setDisplayed("");
+    const t = setInterval(() => {
+      setDisplayed(content.substring(0, i + 1));
+      i += 3;
+      if (i >= content.length) {
+        setDisplayed(content);
+        clearInterval(t);
+        if (onComplete) onComplete();
+      }
+    }, 10);
+    return () => clearInterval(t);
+  }, [content, onComplete]);
+  return <span>{displayed}</span>;
+};
+
+const TypewriterMarkdown = ({ content, onComplete }) => {
+  const [displayed, setDisplayed] = useState("");
+  useEffect(() => {
+    let i = 0;
+    setDisplayed("");
+    const t = setInterval(() => {
+      setDisplayed(content.substring(0, i + 1));
+      i += 5;
+      if (i >= content.length) {
+        setDisplayed(content);
+        clearInterval(t);
+        if (onComplete) onComplete();
+      }
+    }, 10);
+    return () => clearInterval(t);
+  }, [content, onComplete]);
+  return <MarkdownRenderer content={displayed} />;
+};
+
+const TypewriterStructured = ({ blocks, onComplete }) => {
+  const [visibleBlocks, setVisibleBlocks] = useState([]);
+  useEffect(() => {
+    if (!blocks || blocks.length === 0) {
+      if (onComplete) onComplete();
+      return;
+    }
+    let i = 0;
+    setVisibleBlocks([]);
+    const t = setInterval(() => {
+      setVisibleBlocks(blocks.slice(0, i + 1));
+      i++;
+      if (i >= blocks.length) {
+        clearInterval(t);
+        if (onComplete) onComplete();
+      }
+    }, 300); // Reveal block by block every 300ms
+    return () => clearInterval(t);
+  }, [blocks, onComplete]);
+  return <StructuredMessageRenderer blocks={visibleBlocks} />;
+};
+
 const TextCardLayouts = () => {
   const textareaRef = useRef(null);
   const scrollRef = useRef(null);
@@ -146,12 +208,19 @@ const TextCardLayouts = () => {
           const firstAiMsg = taskData.messages.find(
             (m) => m.role === "assistant",
           );
+          const aiResponseData =
+            typeof firstAiMsg.content === "string"
+              ? JSON.parse(firstAiMsg.content)?.data ||
+                JSON.parse(firstAiMsg.content)
+              : firstAiMsg.content?.data || firstAiMsg.content;
+
           let isWeb = false;
-          if (firstAiMsg) {
+          if (aiResponseData) {
             try {
               const taskType =
-                firstAiMsg?.content?.data?.result?.formatted_results?.[0]
-                  ?.task_type;
+                aiResponseData?.result?.formatted_results?.[0]?.task_type ||
+                aiResponseData?.formatted_results?.[0]?.task_type;
+
               isWeb =
                 taskType === "web_app" ||
                 taskType === "website" ||
@@ -161,7 +230,8 @@ const TextCardLayouts = () => {
               isWeb = false;
             }
           }
-          setIsWebType(isWeb);
+          const codebaseFiles = taskData?.codebase?.files || [];
+          setIsWebType(isWeb || codebaseFiles.length > 0);
 
           const history = taskData.messages.map((msg) => {
             if (msg.role === "user") {
@@ -195,13 +265,18 @@ const TextCardLayouts = () => {
                 content?.data?.codebase?.files ||
                 content?.data?.result?.codebase ||
                 content?.data?.codebase ||
+                taskData?.codebase?.files ||
                 [];
+
+              const normalizedCodebase = Array.isArray(rawCodebase)
+                ? rawCodebase
+                : rawCodebase?.files || [];
 
               return {
                 role: "ai",
                 message: content?.message || "Loaded",
                 output: extractMessageContent(rawResponse || msg.content),
-                codebase: rawCodebase,
+                codebase: normalizedCodebase,
                 taskId: taskIdFromUrl,
               };
             }
@@ -212,11 +287,19 @@ const TextCardLayouts = () => {
           const formatted =
             taskData?.aiResponse?.data?.result?.formatted_results?.[0];
           const taskType = formatted?.task_type;
+          const codebaseFiles =
+            taskData?.codebase?.files ||
+            taskData?.aiResponse?.data?.result?.codebase ||
+            taskData?.aiResponse?.data?.codebase?.files ||
+            [];
+
           const isWeb =
             taskType === "web_app" ||
             taskType === "website" ||
             taskType === "app" ||
-            taskType === "html-css";
+            taskType === "html-css" ||
+            codebaseFiles.length > 0;
+
           setIsWebType(isWeb);
 
           const history = [];
@@ -231,18 +314,28 @@ const TextCardLayouts = () => {
 
           // Add AI response
           if (taskData?.aiResponse) {
+            const aiRes =
+              typeof taskData.aiResponse === "string"
+                ? JSON.parse(taskData.aiResponse)
+                : taskData.aiResponse;
+            const aiResData = aiRes?.data || aiRes;
+
             const rawOutput =
               formatted?.summary ||
               formatted?.output ||
-              taskData?.aiResponse?.data?.result?.output ||
-              taskData?.aiResponse?.data?.response ||
+              aiResData?.result?.output ||
+              aiResData?.response ||
               null;
 
-            const codebaseFiles =
+            const rawCodebase =
               taskData?.codebase?.files ||
-              taskData?.aiResponse?.data?.result?.codebase ||
-              taskData?.aiResponse?.data?.codebase?.files ||
+              aiResData?.result?.codebase ||
+              aiResData?.codebase?.files ||
               [];
+
+            const codebaseFiles = Array.isArray(rawCodebase)
+              ? rawCodebase
+              : rawCodebase?.files || [];
 
             history.push({
               role: "ai",
@@ -281,20 +374,24 @@ const TextCardLayouts = () => {
       const newSessionId = taskData?.session_id || aiResData?.session_id;
       if (newSessionId) setSessionId(newSessionId);
 
-      if (formatted?.task_type) {
-        setIsWebType(
-          formatted?.task_type === "web_app" ||
-            formatted?.task_type === "website" ||
-            formatted?.task_type === "app" ||
-            formatted?.task_type === "html-css",
-        );
-      }
-
-      const codebase =
-        taskData?.codebase?.files || 
-        aiResData?.result?.codebase || 
-        aiResData?.codebase?.files || 
+      const rawCodebase =
+        taskData?.codebase?.files ||
+        aiResData?.result?.codebase ||
+        aiResData?.codebase?.files ||
         [];
+
+      const codebase = Array.isArray(rawCodebase)
+        ? rawCodebase
+        : rawCodebase?.files || [];
+
+      const isNewWeb =
+        formatted?.task_type === "web_app" ||
+        formatted?.task_type === "website" ||
+        formatted?.task_type === "app" ||
+        formatted?.task_type === "html-css" ||
+        codebase.length > 0;
+
+      if (isNewWeb) setIsWebType(true);
 
       setMessages((prev) => [
         ...prev,
@@ -303,18 +400,19 @@ const TextCardLayouts = () => {
           message: taskData?.aiResponse?.message || "Generated",
           output: extractMessageContent(
             formatted?.summary ||
-            formatted?.output ||
+              formatted?.output ||
               aiResData?.response ||
               aiResData?.structured_response ||
               result?.output,
           ),
           codebase: codebase,
           taskId: taskData?.taskId,
+          isTyping: true,
         },
       ]);
       setPrompt("");
     },
-    onError: () => alert("Error creating task."),
+    onError: () => toast.error("Error creating task."),
   });
   const continueMutation = useMutation({
     mutationFn: (data) =>
@@ -333,23 +431,27 @@ const TextCardLayouts = () => {
         setSessionId(sidFromRes);
       }
 
-      // Check for task_type update if present
       const taskType =
         taskData?.aiResponse?.data?.result?.formatted_results?.[0]?.task_type;
-      if (taskType) {
-        setIsWebType(
-          taskType === "web_app" ||
-            taskType === "website" ||
-            taskType === "app" ||
-            taskType === "html-css",
-        );
-      }
 
-      const codebase =
-        taskData?.codebase?.files || 
-        aiResData?.result?.codebase || 
-        aiResData?.codebase?.files || 
+      const rawCodebase =
+        taskData?.codebase?.files ||
+        aiResData?.result?.codebase ||
+        aiResData?.codebase?.files ||
         [];
+
+      const codebase = Array.isArray(rawCodebase)
+        ? rawCodebase
+        : rawCodebase?.files || [];
+
+      const isNewWeb =
+        taskType === "web_app" ||
+        taskType === "website" ||
+        taskType === "app" ||
+        taskType === "html-css" ||
+        codebase.length > 0;
+
+      if (isNewWeb) setIsWebType(true);
 
       setMessages((prev) => [
         ...prev,
@@ -358,12 +460,13 @@ const TextCardLayouts = () => {
           message: taskData?.aiResponse?.message || "Updated",
           output: extractMessageContent(
             aiResData?.result?.formatted_results?.[0]?.summary ||
-            aiResData?.result?.formatted_results?.[0]?.output ||
-            aiResData?.response ||
-            aiResData?.structured_response
+              aiResData?.result?.formatted_results?.[0]?.output ||
+              aiResData?.response ||
+              aiResData?.structured_response,
           ),
           codebase: codebase,
           taskId: taskData?.taskId || currentTaskId,
+          isTyping: true,
         },
       ]);
 
@@ -458,7 +561,7 @@ const TextCardLayouts = () => {
 
   if (messages.length > 0) {
     return (
-      <div className="flex h-[calc(100vh-12vh)] relative overflow-hidden">
+      <div className="flex h-[calc(100vh-7.5vh)] relative overflow-hidden">
         <div
           className={`relative flex flex-col pb-4 transition-all duration-500 ${isWebType && showEditor ? "hidden lg:flex w-1/2" : "w-full flex"}`}
         >
@@ -466,7 +569,7 @@ const TextCardLayouts = () => {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex-1 py-6 xl:px-14 overflow-y-auto space-y-8 scroll-smooth"
+            className="flex-1 py-6 overflow-y-auto space-y-8 scroll-smooth  "
           >
             {messages.map((msg, idx) => (
               <div key={idx} className="flex flex-col gap-4">
@@ -488,16 +591,40 @@ const TextCardLayouts = () => {
                     <div className="w-8 h-8 flex-shrink-0">
                       <SparkleIcon />
                     </div>
-                    <div className="flex-1 space-y-3">
+                    <div className="flex-1 space-y-3 overflow-y-auto ">
                       {msg.output && (
                         <div>
                           <div className="prose prose-sm break-all leading-tight bg-blue-50/50 p-4 mr-8 rounded-xl  border border-blue-100 text-gray-600">
-                            {/* {msg.output}  */}
                             {msg.output?.type === "markdown" ? (
-                              <MarkdownRenderer content={msg.output.content} />
+                              msg.isTyping ? (
+                                <TypewriterMarkdown
+                                  content={msg.output.content}
+                                  onComplete={() => {
+                                    msg.isTyping = false;
+                                  }}
+                                />
+                              ) : (
+                                <MarkdownRenderer content={msg.output.content} />
+                              )
                             ) : msg.output?.type === "structured" ? (
-                              <StructuredMessageRenderer
-                                blocks={msg.output.content}
+                              msg.isTyping ? (
+                                <TypewriterStructured
+                                  blocks={msg.output.content}
+                                  onComplete={() => {
+                                    msg.isTyping = false;
+                                  }}
+                                />
+                              ) : (
+                                <StructuredMessageRenderer
+                                  blocks={msg.output.content}
+                                />
+                              )
+                            ) : msg.isTyping ? (
+                              <TypewriterText
+                                content={msg.output?.content}
+                                onComplete={() => {
+                                  msg.isTyping = false;
+                                }}
                               />
                             ) : (
                               <p>{msg.output?.content}</p>
@@ -537,11 +664,19 @@ const TextCardLayouts = () => {
               </div>
             ))}
             {(taskMutation.isPending || continueMutation.isPending) && (
-              <div className="flex gap-4 animate-pulse">
+              <div className="flex gap-2 self-start w-full">
                 <div className="w-8 h-8 flex-shrink-0">
                   <SparkleIcon />
                 </div>
-                <div className="h-10 bg-gray-200 rounded-xl w-1/2"></div>
+                <div className="flex-1 space-y-3">
+                  <div className="prose prose-sm bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600 w-24 h-12 flex items-center justify-center">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>

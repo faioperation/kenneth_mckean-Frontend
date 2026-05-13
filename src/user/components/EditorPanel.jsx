@@ -185,7 +185,7 @@ const EditorPanel = ({ messages, onClose }) => {
   const hasFiles = Object.keys(sandpackFiles).length > 0;
 
   return (
-    <section className="flex-[1.2] flex flex-col bg-white lg:ml-4 mr-5 lg:mb-5 rounded-2xl shadow border overflow-hidden h-full">
+    <section className="flex-1 flex flex-col bg-white lg:ml-4 mr-5 lg:mb-5 rounded-2xl shadow border overflow-hidden h-full">
       {/* Header */}
       <EveryButton
         onClose={onClose}

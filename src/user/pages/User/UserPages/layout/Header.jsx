@@ -71,9 +71,11 @@ export default function Header({ onMenuClick }) {
 
             <div className="hidden lg:block">
               <h2 className="text-sm text-black font-semibold leading-none">
-              {data.name}
+                {data.name}
               </h2>
-              <p className="text-blue-400 text-[12px] mt-1">{data.plan?.name || data.plan} <span>user</span></p>
+              <p className="text-blue-400 text-[12px] mt-1">
+                {data.plan?.name || data.plan} <span>user</span>
+              </p>
             </div>
           </div>
         </Link>
