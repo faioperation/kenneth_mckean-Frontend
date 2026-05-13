@@ -18,10 +18,11 @@ import EditorPanel from "./EditorPanel";
 import PDF from "./PDF";
 import ZIP from "./ZIP";
 import { getTaskById } from "../../api/taskApi";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import MarkdownRenderer from "./MarkdownRenderer";
 import StructuredMessageRenderer from "./StructuredMessageRenderer";
-import toast from "react-hot-toast";
+
 
 const features = [
   {
@@ -569,7 +570,7 @@ const TextCardLayouts = () => {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex-1 py-6 overflow-y-auto space-y-8 scroll-smooth  "
+            className="flex-1 w-full md:max-w-5xl mx-auto py-6 px-4 sm:px-6 overflow-y-auto space-y-8 scroll-smooth"
           >
             {messages.map((msg, idx) => (
               <div key={idx} className="flex flex-col gap-4">
@@ -697,7 +698,7 @@ const TextCardLayouts = () => {
           {/* Persistent Bottom Input */}
 
           <div
-            className={`shadow-xl   border text-black border-gray-100 rounded-[32px] p-4 sm:p-6  bg-white sm:min-w-xl lg:min-w-2xl ${isWebType && showEditor ? " max-w-4xl" : "mx-auto xl:min-w-4xl "} `}
+            className={`shadow-xl w-full max-w-4xl mx-auto border text-black border-gray-100 rounded-[32px] p-4 sm:p-6 mb-4 bg-white`}
           >
             <div className="flex items-start gap-4">
               <SparkleIcon />
