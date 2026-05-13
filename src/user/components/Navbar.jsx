@@ -50,12 +50,12 @@ const Navbar = () => {
   return (
     <nav className="flex justify-between items-center shadow px-6 md:px-12 lg:px-20 py-5 font-inter fixed top-0 w-full z-50 bg-white">
       {/* Logo */}
-      <div className="flex items-center gap-2 cursor-pointer">
+      <Link to="/" className="flex items-center gap-2 cursor-pointer">
         <img src={logo} alt="logo" className="w-7 h-7 md:w-8 md:h-8" />
         <span className="text-xl md:text-2xl lg:text-[28px] font-semibold text-black">
           Algorithms AI
         </span>
-      </div>
+      </Link>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-6 lg:gap-8 text-base">
