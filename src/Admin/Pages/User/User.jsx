@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { apiDelete, apiGet } from "../../../lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export default function User() {
   const queryClient = useQueryClient();
@@ -22,6 +23,7 @@ export default function User() {
     mutationFn: (userId) => apiDelete(`/admin/user/${userId}`),
     onSuccess: (data) => {
       if (data.success) {
+        toast.success("User deleted successfully");
         
         queryClient.invalidateQueries(["users"]);
       }
@@ -125,7 +127,7 @@ export default function User() {
         {/* Confirmation Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-            <div className="bg-[#11141b] p-6 rounded-xl w-[300px] text-center shadow-xl">
+            <div className="bg-[#11141b] p-6 rounded-xl w-[400px] text-center shadow-xl">
               <h2 className="text-lg font-semibold mb-4 text-white">
                 Confirm Delete
               </h2>

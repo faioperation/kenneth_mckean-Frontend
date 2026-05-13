@@ -129,7 +129,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <div className="border-t border-[#2B7FFF33] p-4 bg-[#0D0D12]">
             {/* User Info Section (New) */}
-            <div className="flex items-center gap-1 px-3 py-4 mb-2 bg-[#16161E] rounded-xl border border-[#2B7FFF1A]">
+            <div className="flex items-center gap-1 px-2 py-3 mb-2 bg-[#16161E] rounded-xl border border-[#2B7FFF1A]">
               {data ? ( 
                 <div >
                   <img className="rounded-full h-10 w-10 " src={getImageUrl(
@@ -150,7 +150,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 key={navLinks[4].path}
                 to={navLinks[4].path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  `flex items-center gap-3 rounded-lg px-2 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? "bg-[#155DFC33] text-[#51A2FF] border-l-2 border-[#51A2FF]"
                       : "text-gray-400 hover:bg-[#1f2d5c] hover:text-white"
@@ -159,10 +159,10 @@ export default function Sidebar({ isOpen, onClose }) {
                 onClick={() => window.innerWidth < 768 && onClose()}
               >
                 <div className="flex-1 overflow-hidden">
-                  <h4 className="text-sm font-semibold break-all leading-tight">
+                  <h4 className="text-sm font-semibold break-all ">
                     {data?.name}
                   </h4>
-                  <p className="text-[11px]  text-gray-500 break-all leading-tight">
+                  <p className="text-[11px]  text-gray-500 break-all ">
                     {data?.email}
                   </p>
                 </div>{" "}
