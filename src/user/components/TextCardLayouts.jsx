@@ -279,6 +279,7 @@ const TextCardLayouts = () => {
                 output: extractMessageContent(rawResponse || msg.content),
                 codebase: normalizedCodebase,
                 taskId: taskIdFromUrl,
+                messageId: msg.id || msg._id,
               };
             }
           });
@@ -344,6 +345,7 @@ const TextCardLayouts = () => {
               output: extractMessageContent(rawOutput),
               codebase: codebaseFiles,
               taskId: taskIdFromUrl,
+              messageId: aiRes?.id || aiRes?._id || taskData?.aiResponse?.id || taskData?.aiResponse?._id,
             });
           }
 
@@ -408,6 +410,7 @@ const TextCardLayouts = () => {
           ),
           codebase: codebase,
           taskId: taskData?.taskId,
+          messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
           isTyping: true,
         },
       ]);
@@ -467,6 +470,7 @@ const TextCardLayouts = () => {
           ),
           codebase: codebase,
           taskId: taskData?.taskId || currentTaskId,
+          messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
           isTyping: true,
         },
       ]);
@@ -609,7 +613,7 @@ const TextCardLayouts = () => {
                               <ZIP taskId={msg.taskId} />
                             ) : (
                               <PDF
-                                taskId={msg.taskId}
+                                taskId={msg.messageId}
                                 content={
                                   typeof msg.output?.content === "string"
                                     ? msg.output.content
