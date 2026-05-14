@@ -26,7 +26,7 @@ export default function Header({ onMenuClick }) {
     return <div>{error?.message}</div>;
   }
   return (
-    <header className="sticky top-0 z-10 flex md:py-2 sm:py-1.5 py-2 w-full items-center justify-between bg-white border-b border-gray-100 px-4 md:px-6 ">
+    <header className="sticky top-0 z-10 flex md:py-2 sm:py-1.5 py-2 w-full items-center justify-between   px-4 md:px-6 ">
       {/* Left: Mobile Menu & Title */}
       <div className="flex items-center gap-2 md:gap-4">
         <button
