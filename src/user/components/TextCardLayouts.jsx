@@ -25,7 +25,6 @@ import toast from "react-hot-toast";
 import MarkdownRenderer from "./MarkdownRenderer";
 import StructuredMessageRenderer from "./StructuredMessageRenderer";
 
-
 const features = [
   {
     id: 1,
@@ -156,6 +155,7 @@ const TextCardLayouts = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkInput, setLinkInput] = useState("");
+  const [isFullView, setIsFullView] = useState(false);
 
   const token = tokenStorage.getAccessToken();
   const { data: profileData } = useQuery({
@@ -166,7 +166,6 @@ const TextCardLayouts = () => {
     },
     enabled: !!token,
   });
-
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
@@ -358,7 +357,11 @@ const TextCardLayouts = () => {
               output: extractMessageContent(rawOutput),
               codebase: codebaseFiles,
               taskId: taskIdFromUrl,
-              messageId: aiRes?.id || aiRes?._id || taskData?.aiResponse?.id || taskData?.aiResponse?._id,
+              messageId:
+                aiRes?.id ||
+                aiRes?._id ||
+                taskData?.aiResponse?.id ||
+                taskData?.aiResponse?._id,
             });
           }
 
@@ -536,8 +539,6 @@ const TextCardLayouts = () => {
     return () => clearInterval(interval);
   }, [taskMutation.isPending, continueMutation.isPending, isFinishing]);
 
-
-
   const handleCreate = () => {
     if (!prompt.trim() || taskMutation.isPending || continueMutation.isPending)
       return;
@@ -602,7 +603,9 @@ const TextCardLayouts = () => {
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      toast.error("Your browser does not support voice chat. Please use Chrome.");
+      toast.error(
+        "Your browser does not support voice chat. Please use Chrome.",
+      );
       return;
     }
 
@@ -628,21 +631,30 @@ const TextCardLayouts = () => {
 
   if (messages.length > 0) {
     return (
-      <div className="flex h-[calc(100vh-7.5vh)] relative overflow-hidden">
+      <div className="flex h-[calc(100vh-7.5vh)] relative overflow-hidden  px-6 pb-6">
         <div
-          className={`relative flex flex-col pb-4 transition-all duration-500 ${isWebType && showEditor ? "hidden lg:flex w-1/2" : "w-full flex"}`}
+          style={{
+            transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+          className={`relative flex flex-col  ${
+            isWebType && showEditor
+              ? isFullView
+                ? "w-0 flex-[0.00001] overflow-hidden opacity-0 pointer-events-none mr-0"
+                : "hidden lg:flex w-[45%] flex-shrink-0 mr-6"
+              : "w-full flex"
+          }`}
         >
           {/* Chat Messages Area */}
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex-1 w-full md:max-w-5xl mx-auto py-6 px-4 sm:px-6 overflow-y-auto space-y-8 scroll-smooth"
+            className="flex-1 w-full md:max-w-5xl mx-auto py-6 px-4 sm:px-6 overflow-y-auto space-y-8 scroll-smooth custom-scrollbar"
           >
             {messages.map((msg, idx) => (
               <div key={idx} className="flex flex-col gap-4">
                 {msg.role === "user" ? (
                   <div className="flex gap-4 self-end max-w-[90%] sm:max-w-full">
-                    <div className=" bg-gray-100 p-4 ml-2 sm:ml-8  rounded-2xl break-all leading-tight rounded-tr-none text-gray-800 border border-gray-200 shadow-sm ">
+                    <div className=" bg-gray-100 p-4 ml-2 sm:ml-8 rounded-2xl break-all leading-tight rounded-tr-none text-gray-800 border border-gray-200 shadow-sm ">
                       {typeof msg.text === "string"
                         ? msg.text
                         : Array.isArray(msg.text)
@@ -651,9 +663,9 @@ const TextCardLayouts = () => {
                     </div>
                     <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm">
                       {profileData?.avatarUrl ? (
-                        <img 
-                          src={getImageUrl(profileData.avatarUrl)} 
-                          alt="U" 
+                        <img
+                          src={getImageUrl(profileData.avatarUrl)}
+                          alt="U"
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -675,7 +687,9 @@ const TextCardLayouts = () => {
                             {msg.output?.type === "markdown" ? (
                               <MarkdownRenderer content={msg.output.content} />
                             ) : msg.output?.type === "structured" ? (
-                              <StructuredMessageRenderer blocks={msg.output.content} />
+                              <StructuredMessageRenderer
+                                blocks={msg.output.content}
+                              />
                             ) : (
                               <p>{msg.output?.content}</p>
                             )}
@@ -713,7 +727,9 @@ const TextCardLayouts = () => {
                 )}
               </div>
             ))}
-            {(taskMutation.isPending || continueMutation.isPending || isFinishing) && (
+            {(taskMutation.isPending ||
+              continueMutation.isPending ||
+              isFinishing) && (
               <div className="flex gap-2 self-start w-full">
                 <div className="w-8 h-8 flex-shrink-0">
                   <SparkleIcon />
@@ -721,9 +737,18 @@ const TextCardLayouts = () => {
                 <div className="flex-1 space-y-3">
                   <div className="prose prose-sm bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600 min-w-[200px] h-12 flex items-center gap-3">
                     <div className="flex space-x-1 flex-shrink-0">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                      <div
+                        className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0ms" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "150ms" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "300ms" }}
+                      ></div>
                     </div>
                     <span className="text-xs font-medium text-blue-600 animate-pulse">
                       {isCodeLoading
@@ -752,7 +777,7 @@ const TextCardLayouts = () => {
           {/* Persistent Bottom Input */}
 
           <div
-            className={`shadow-xl w-full max-w-4xl mx-auto border text-black border-gray-100 rounded-[32px] p-4 sm:p-6 mb-4 bg-white`}
+            className={`shadow-xl w-full max-w-4xl mx-auto border text-black border-gray-100 rounded-[32px] p-4 sm:p-6  bg-white`}
           >
             <div className="flex items-start gap-4">
               <SparkleIcon />
@@ -807,6 +832,8 @@ const TextCardLayouts = () => {
           <EditorPanel
             messages={messages}
             onClose={() => setShowEditor(false)}
+            isFullView={isFullView}
+            setIsFullView={setIsFullView}
           />
         )}
       </div>
@@ -1145,6 +1172,7 @@ export default TextCardLayouts;
 //               key={item.id}
 //               className="border border-gray-200 rounded-2xl p-4 sm:p-5 bg-white hover:shadow-lg transition duration-300"
 //             >
+//               <section className="flex-1 flex flex-col bg-white lg:rounded-2xl shadow-xl border border-gray-200 overflow-hidden h-full">
 //               <div className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full mb-4">
 //                 <Icon className="text-gray-600 text-lg" />
 //               </div>
