@@ -263,7 +263,7 @@ const EditorPanel = ({ messages, onClose, isFullView, setIsFullView }) => {
                     style={{ height: "100%", width: "240px" }}
                   />
                   <SandpackCodeEditor
-                    showTabs={true}
+                    showTabs={false}
                     showLineNumbers={true}
                     style={{ height: "100%", flex: 1 }}
                   />
