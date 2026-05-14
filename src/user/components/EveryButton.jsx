@@ -212,7 +212,7 @@ const EveryButton = ({ onClose, activeTab, setActiveTab, setIsFullView }) => {
 
         <button 
           onClick={() => setActiveTab("publish")}
-          className="flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-[#f0643b] hover:bg-[#d95632] text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-orange-500/10"
+          className="flex items-center gap-2 px-2 sm:px-3 py-1 text-gray-500 rounded-lg text-sm font-bold border border-gray-200"
         >
           <Send size={16} />
           <span className="hidden xs:inline">Publish</span>
