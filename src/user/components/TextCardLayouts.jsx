@@ -167,6 +167,7 @@ const TextCardLayouts = () => {
     enabled: !!token,
   });
 
+
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     if (scrollHeight - scrollTop - clientHeight > 150) {
@@ -408,25 +409,29 @@ const TextCardLayouts = () => {
 
       if (isNewWeb) setIsWebType(true);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          message: taskData?.aiResponse?.message || "Generated",
-          output: extractMessageContent(
-            formatted?.summary ||
-              formatted?.output ||
-              aiResData?.response ||
-              aiResData?.structured_response ||
-              result?.output,
-          ),
-          codebase: codebase,
-          taskId: taskData?.taskId,
-          messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
-          isTyping: true,
-        },
-      ]);
-      setPrompt("");
+      const newMessage = {
+        role: "ai",
+        message: taskData?.aiResponse?.message || "Generated",
+        output: extractMessageContent(
+          formatted?.summary ||
+            formatted?.output ||
+            aiResData?.response ||
+            aiResData?.structured_response ||
+            result?.output,
+        ),
+        codebase: codebase,
+        taskId: taskData?.taskId,
+        messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
+        isTyping: true,
+      };
+
+      setLoadingStep(3); // Jump to "Success!"
+      setIsFinishing(true);
+      setTimeout(() => {
+        setMessages((prev) => [...prev, newMessage]);
+        setIsFinishing(false);
+        setPrompt("");
+      }, 2000);
     },
     onError: () => toast.error("Error creating task."),
   });
@@ -469,25 +474,28 @@ const TextCardLayouts = () => {
 
       if (isNewWeb) setIsWebType(true);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          message: taskData?.aiResponse?.message || "Updated",
-          output: extractMessageContent(
-            aiResData?.result?.formatted_results?.[0]?.summary ||
-              aiResData?.result?.formatted_results?.[0]?.output ||
-              aiResData?.response ||
-              aiResData?.structured_response,
-          ),
-          codebase: codebase,
-          taskId: taskData?.taskId || currentTaskId,
-          messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
-          isTyping: true,
-        },
-      ]);
+      const newMessage = {
+        role: "ai",
+        message: taskData?.aiResponse?.message || "Updated",
+        output: extractMessageContent(
+          aiResData?.result?.formatted_results?.[0]?.summary ||
+            aiResData?.result?.formatted_results?.[0]?.output ||
+            aiResData?.response ||
+            aiResData?.structured_response,
+        ),
+        codebase: codebase,
+        taskId: taskData?.taskId || currentTaskId,
+        messageId: taskData?.aiResponse?.id || taskData?.aiResponse?._id,
+        isTyping: true,
+      };
 
-      setPrompt("");
+      setLoadingStep(3); // Jump to "Success!"
+      setIsFinishing(true);
+      setTimeout(() => {
+        setMessages((prev) => [...prev, newMessage]);
+        setIsFinishing(false);
+        setPrompt("");
+      }, 2000);
     },
 
     onError: (err) => {
@@ -497,10 +505,52 @@ const TextCardLayouts = () => {
     },
   });
 
+  const standardMessages = [
+    "I'm thinking...",
+    "Analyzing your request...",
+    "Generating response...",
+    "Success! Here is your preview.",
+  ];
+
+  const codebaseMessages = [
+    "I'm thinking...",
+    "Designing the Structure...",
+    "Writing the Code...",
+    "Success! Here is your preview.",
+  ];
+
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const [isCodeLoading, setIsCodeLoading] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (taskMutation.isPending || continueMutation.isPending) {
+      setLoadingStep(0);
+      interval = setInterval(() => {
+        setLoadingStep((prev) => (prev < 2 ? prev + 1 : prev));
+      }, 3500);
+    } else if (!isFinishing) {
+      setLoadingStep(0);
+    }
+    return () => clearInterval(interval);
+  }, [taskMutation.isPending, continueMutation.isPending, isFinishing]);
+
+
+
   const handleCreate = () => {
     if (!prompt.trim() || taskMutation.isPending || continueMutation.isPending)
       return;
     const currentPrompt = prompt;
+    const isCode =
+      isWebType ||
+      currentPrompt
+        .toLowerCase()
+        .match(
+          /website|app|code|react|html|css|js|component|page|build|create|ui|design/,
+        );
+    setIsCodeLoading(!!isCode);
+
     setMessages((prev) => [...prev, { role: "user", text: currentPrompt }]);
     setPrompt("");
     if (!currentTaskId) {
@@ -663,18 +713,23 @@ const TextCardLayouts = () => {
                 )}
               </div>
             ))}
-            {(taskMutation.isPending || continueMutation.isPending) && (
+            {(taskMutation.isPending || continueMutation.isPending || isFinishing) && (
               <div className="flex gap-2 self-start w-full">
                 <div className="w-8 h-8 flex-shrink-0">
                   <SparkleIcon />
                 </div>
                 <div className="flex-1 space-y-3">
-                  <div className="prose prose-sm bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600 w-24 h-12 flex items-center justify-center">
-                    <div className="flex space-x-1">
+                  <div className="prose prose-sm bg-blue-50/50 p-4 mr-8 rounded-xl border border-blue-100 text-gray-600 min-w-[200px] h-12 flex items-center gap-3">
+                    <div className="flex space-x-1 flex-shrink-0">
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
                     </div>
+                    <span className="text-xs font-medium text-blue-600 animate-pulse">
+                      {isCodeLoading
+                        ? codebaseMessages[loadingStep]
+                        : standardMessages[loadingStep]}
+                    </span>
                   </div>
                 </div>
               </div>
