@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import EveryButton from "./EveryButton";
 import {
   SandpackProvider,
@@ -98,141 +98,143 @@ const BrowserWrapper = ({ children, url = "/" }) => {
 const EditorPanel = ({ messages, onClose, isFullView, setIsFullView }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  // Find the latest message that contains a codebase
-  const latestMessageWithCodebase = [...messages]
-    .reverse()
-    .find((m) => m.codebase && m.codebase.length > 0);
+  const sandpackConfig = useMemo(() => {
+    // Find the latest message that contains a codebase
+    const latestMessageWithCodebase = [...messages]
+      .reverse()
+      .find((m) => m.codebase && m.codebase.length > 0);
 
-  const codebaseArray = latestMessageWithCodebase
-    ? latestMessageWithCodebase.codebase
-    : [];
+    const codebaseArray = latestMessageWithCodebase
+      ? latestMessageWithCodebase.codebase
+      : [];
 
-  // Convert the array of {file_path, content} into the sandpack files object
-  const sandpackFiles = {};
-  codebaseArray.forEach((file) => {
-    let path = file.file_path || file.path;
-    if (!path) return;
-    path = path.split("#")[0].trim();
-    if (!path.startsWith("/")) path = "/" + path;
+    const files = {};
+    codebaseArray.forEach((file) => {
+      let path = file.file_path || file.path;
+      if (!path) return;
+      path = path.split("#")[0].trim();
+      if (!path.startsWith("/")) path = "/" + path;
 
-    let content = file.content || "";
-    // Clean markdown code block formatting if present
-    if (typeof content === "string") {
-      const match = content.match(/^```[a-z]*\s*\n([\s\S]*?)\n```\s*$/i);
-      if (match) {
-        content = match[1];
-      } else {
-        // Fallback for files that just have ``` at start and end
-        content = content
-          .replace(/^```[a-z]*\s*\n/i, "")
-          .replace(/\n```\s*$/i, "");
+      let content = file.content || "";
+      if (typeof content === "string") {
+        const match = content.match(/^```[a-z]*\s*\n([\s\S]*?)\n```\s*$/i);
+        if (match) {
+          content = match[1];
+        } else {
+          content = content
+            .replace(/^```[a-z]*\s*\n/i, "")
+            .replace(/\n```\s*$/i, "");
+        }
       }
+      files[path] = content;
+    });
+
+    // Normalization
+    const allPaths = Object.keys(files);
+    const clientPaths = allPaths.filter((p) => p.startsWith("/client/"));
+    const publicPaths = allPaths.filter((p) => p.startsWith("/public/"));
+
+    if (clientPaths.length > 0 && clientPaths.length / allPaths.length > 0.4) {
+      clientPaths.forEach((p) => {
+        const newPath = p.replace("/client/", "/");
+        if (!files[newPath]) files[newPath] = files[p];
+      });
+    } else if (publicPaths.length > 0) {
+      publicPaths.forEach((p) => {
+        const newPath = p.replace("/public/", "/");
+        if (!files[newPath]) files[newPath] = files[p];
+      });
     }
 
-    sandpackFiles[path] = content;
-  });
-
-  // Re-root files if necessary (standard normalization)
-  const allPaths = Object.keys(sandpackFiles);
-  const clientPaths = allPaths.filter((p) => p.startsWith("/client/"));
-  const publicPaths = allPaths.filter((p) => p.startsWith("/public/"));
-
-  if (clientPaths.length > 0 && clientPaths.length / allPaths.length > 0.4) {
-    clientPaths.forEach((p) => {
-      const newPath = p.replace("/client/", "/");
-      if (!sandpackFiles[newPath]) sandpackFiles[newPath] = sandpackFiles[p];
-    });
-  } else if (publicPaths.length > 0) {
-    publicPaths.forEach((p) => {
-      const newPath = p.replace("/public/", "/");
-      if (!sandpackFiles[newPath]) sandpackFiles[newPath] = sandpackFiles[p];
-    });
-  }
-
-  if (!sandpackFiles["/index.html"]) {
-    const htmlPath = Object.keys(sandpackFiles).find((p) =>
-      p.endsWith("index.html"),
-    );
-    if (htmlPath) {
-      sandpackFiles["/index.html"] = sandpackFiles[htmlPath];
-      const folder = htmlPath.substring(0, htmlPath.lastIndexOf("/") + 1);
-      if (folder !== "/") {
-        Object.keys(sandpackFiles).forEach((p) => {
-          if (p.startsWith(folder)) {
-            const newPath = p.replace(folder, "/");
-            if (!sandpackFiles[newPath])
-              sandpackFiles[newPath] = sandpackFiles[p];
-          }
-        });
-      }
-    }
-  }
-
-  // Determine the template
-  let template = "vanilla";
-  const filePaths = Object.keys(sandpackFiles);
-  const hasReact = filePaths.some(
-    (p) =>
-      p.includes("App.jsx") ||
-      p.includes("App.js") ||
-      p.includes("main.jsx") ||
-      (p.includes("index.js") && sandpackFiles[p].includes("react")),
-  );
-  const hasVite = filePaths.some((p) => p.includes("vite.config"));
-  const hasPackageJson = filePaths.some((p) => p.endsWith("package.json"));
-
-  if (hasReact || hasVite) {
-    template = "react";
-  } else if (hasPackageJson) {
-    const pkgPaths = filePaths.filter((p) => p.endsWith("package.json"));
-    let isReact = false;
-    pkgPaths.forEach((p) => {
-      let content = sandpackFiles[p];
-      try {
-        const pkg = JSON.parse(content);
-        if (pkg.dependencies) {
-          Object.keys(pkg.dependencies).forEach((dep) => {
-            pkg.dependencies[dep] = "latest";
+    if (!files["/index.html"]) {
+      const htmlPath = Object.keys(files).find((p) => p.endsWith("index.html"));
+      if (htmlPath) {
+        files["/index.html"] = files[htmlPath];
+        const folder = htmlPath.substring(0, htmlPath.lastIndexOf("/") + 1);
+        if (folder !== "/") {
+          Object.keys(files).forEach((p) => {
+            if (p.startsWith(folder)) {
+              const newPath = p.replace(folder, "/");
+              if (!files[newPath]) files[newPath] = files[p];
+            }
           });
         }
-        content = JSON.stringify(pkg, null, 2);
-        sandpackFiles[p] = content;
-      } catch (e) {}
-      if (content.includes('"react"')) isReact = true;
-    });
-    if (isReact) {
-      template = "react";
-    } else if (sandpackFiles["/index.html"]) {
-      template = "static";
-    }
-  } else if (sandpackFiles["/index.html"]) {
-    template = "static";
-  }
-
-  // Find entry point
-  let entry = undefined;
-  if (template === "react") {
-    if (!sandpackFiles["/src/index.js"]) {
-      const existingEntry =
-        sandpackFiles["/src/main.jsx"] ||
-        sandpackFiles["/src/index.jsx"] ||
-        sandpackFiles["/src/App.js"];
-      if (existingEntry) {
-        sandpackFiles["/src/index.js"] = existingEntry;
       }
     }
-    const commonEntries = [
-      "/src/index.js",
-      "/src/index.jsx",
-      "/src/main.jsx",
-      "/index.js",
-    ];
-    entry = commonEntries.find((e) => sandpackFiles[e]);
-  } else if (template === "static") {
-    entry = "/index.html";
-  }
 
-  const hasFiles = Object.keys(sandpackFiles).length > 0;
+    // Template detection
+    let template = "vanilla";
+    const filePaths = Object.keys(files);
+    const hasReact = filePaths.some(
+      (p) =>
+        p.includes("App.jsx") ||
+        p.includes("App.js") ||
+        p.includes("main.jsx") ||
+        (p.includes("index.js") && files[p].includes("react")),
+    );
+    const hasVite = filePaths.some((p) => p.includes("vite.config"));
+    const hasPackageJson = filePaths.some((p) => p.endsWith("package.json"));
+
+    if (hasReact || hasVite) {
+      template = "react";
+    } else if (hasPackageJson) {
+      const pkgPaths = filePaths.filter((p) => p.endsWith("package.json"));
+      let isReact = false;
+      pkgPaths.forEach((p) => {
+        let content = files[p];
+        try {
+          const pkg = JSON.parse(content);
+          if (pkg.dependencies) {
+            Object.keys(pkg.dependencies).forEach((dep) => {
+              pkg.dependencies[dep] = "latest";
+            });
+          }
+          content = JSON.stringify(pkg, null, 2);
+          files[p] = content;
+        } catch (e) {}
+        if (content.includes('"react"')) isReact = true;
+      });
+      if (isReact) {
+        template = "react";
+      } else if (files["/index.html"]) {
+        template = "static";
+      }
+    } else if (files["/index.html"]) {
+      template = "static";
+    }
+
+    // Entry point detection
+    let entry = undefined;
+    if (template === "react") {
+      if (!files["/src/index.js"]) {
+        const existingEntry =
+          files["/src/main.jsx"] ||
+          files["/src/index.jsx"] ||
+          files["/src/App.js"];
+        if (existingEntry) {
+          files["/src/index.js"] = existingEntry;
+        }
+      }
+      const commonEntries = [
+        "/src/index.js",
+        "/src/index.jsx",
+        "/src/main.jsx",
+        "/index.js",
+      ];
+      entry = commonEntries.find((e) => files[e]);
+    } else if (template === "static") {
+      entry = "/index.html";
+    }
+
+    return {
+      files,
+      template,
+      entry,
+      hasFiles: Object.keys(files).length > 0,
+    };
+  }, [messages]);
+
+  const { files, template, entry, hasFiles } = sandpackConfig;
 
   return (
     <section className="flex-1 flex flex-col bg-white lg:rounded-2xl shadow-xl border border-gray-200 overflow-hidden h-full">
@@ -247,14 +249,23 @@ const EditorPanel = ({ messages, onClose, isFullView, setIsFullView }) => {
         {hasFiles ? (
           <SandpackProvider
             template={template}
-            files={sandpackFiles}
+            files={files}
             theme="light"
             customSetup={{ entry: entry }}
             className="flex-1 flex flex-col h-full"
             style={{ display: "flex", flexDirection: "column", height: "100%" }}
           >
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              {activeTab === "code" ? (
+            <div className="flex-1 flex flex-col min-h-0 h-full relative">
+              {/* Source Code View */}
+              <div 
+                className="absolute inset-0 flex flex-col transition-opacity duration-300"
+                style={{ 
+                  visibility: activeTab === "code" ? "visible" : "hidden",
+                  opacity: activeTab === "code" ? 1 : 0,
+                  pointerEvents: activeTab === "code" ? "auto" : "none",
+                  zIndex: activeTab === "code" ? 10 : 0
+                }}
+              >
                 <SandpackLayout
                   className="flex-1 border border-gray-200 rounded-xl overflow-hidden"
                   style={{ height: "100%" }}
@@ -268,7 +279,18 @@ const EditorPanel = ({ messages, onClose, isFullView, setIsFullView }) => {
                     style={{ height: "100%", flex: 1 }}
                   />
                 </SandpackLayout>
-              ) : activeTab === "dashboard" ? (
+              </div>
+
+              {/* Preview View */}
+              <div 
+                className="absolute inset-0 flex flex-col transition-opacity duration-300"
+                style={{ 
+                  visibility: activeTab === "dashboard" ? "visible" : "hidden",
+                  opacity: activeTab === "dashboard" ? 1 : 0,
+                  pointerEvents: activeTab === "dashboard" ? "auto" : "none",
+                  zIndex: activeTab === "dashboard" ? 10 : 0
+                }}
+              >
                 <BrowserWrapper url="/">
                   <SandpackPreview
                     style={{ height: "100%", width: "100%" }}
@@ -276,8 +298,11 @@ const EditorPanel = ({ messages, onClose, isFullView, setIsFullView }) => {
                     showRefreshButton={false}
                   />
                 </BrowserWrapper>
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 rounded-xl border border-gray-200 p-8 text-center animate-in fade-in zoom-in duration-300">
+              </div>
+
+              {/* Other Views (Integrated Soon) */}
+              {activeTab !== "code" && activeTab !== "dashboard" && (
+                <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 rounded-xl border border-gray-200 p-8 text-center animate-in fade-in zoom-in duration-300 relative z-20">
                   <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
                     {activeTab === "history" && <History size={32} className="text-blue-500" />}
                     {activeTab === "layers" && <Layers size={32} className="text-purple-500" />}
