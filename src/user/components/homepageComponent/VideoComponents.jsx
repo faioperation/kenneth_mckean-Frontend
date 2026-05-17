@@ -1,4 +1,5 @@
 import video from "../../../assets/videos/video.mp4";
+import { motion } from "framer-motion";
 
 const VideoComponents = () => {
   return (
@@ -15,24 +16,46 @@ const VideoComponents = () => {
         />
 
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/50"></div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false }}
+          transition={{ duration: 1.5 }}
+          className="absolute inset-0 bg-black/50"
+        ></motion.div>
 
         {/* Content */}
         <div className="relative z-10 flex items-center justify-center h-full px-4 text-center">
-          <h1
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             className="text-white font-bold 
                        text-2xl sm:text-4xl lg:text-6xl 
                        max-w-4xl leading-tight"
           >
             AI-Powered Automation for <br className="hidden sm:block" />
             every Idea
-          </h1>
+          </motion.h1>
         </div>
 
         {/* Scroll Text */}
-        <div className="absolute bottom-6 w-full text-center z-10">
-          <p className="text-white text-sm opacity-80">Scroll to Explore</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false }}
+          transition={{ duration: 1, delay: 1.2 }}
+          className="absolute bottom-6 w-full text-center z-10"
+        >
+          <motion.p 
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="text-white text-sm opacity-80"
+          >
+            Scroll to Explore
+          </motion.p>
+        </motion.div>
       </section>
     </div>
   );

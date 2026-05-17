@@ -59,8 +59,8 @@ export default function Header({ onMenuClick }) {
       </div>
 
       {/* Right Side Actions */}
-      <div className="flex justify-end gap-2  items-center ">
-        <div className="dropdown dropdown-left">
+      <div className="flex justify-end gap-2 items-center ">
+        <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
@@ -75,9 +75,9 @@ export default function Header({ onMenuClick }) {
           </div>
           <ul
             tabIndex="-1"
-            className="dropdown-content menu border border-gray-400 bg-gray-500 rounded-box z-1 w-96  shadow-sm"
+            className="dropdown-content z-[1] menu p-0 shadow-2xl bg-transparent border-none w-80 sm:w-96 mt-4 right-0"
           >
-            <Notification></Notification>
+            <Notification/>
           </ul>
         </div>
         <Link to="/admin/adminProfile">

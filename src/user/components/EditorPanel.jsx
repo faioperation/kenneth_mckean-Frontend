@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import EveryButton from "./EveryButton";
-import Dashboard from "./Dashboard";
 import {
   SandpackProvider,
   SandpackLayout,
@@ -8,163 +7,335 @@ import {
   SandpackFileExplorer,
   SandpackPreview,
 } from "@codesandbox/sandpack-react";
+import {
+  Monitor,
+  Smartphone,
+  Tablet,
+  RotateCw,
+  ExternalLink,
+  Home,
+  ChevronLeft,
+  ChevronRight,
+  Code2,
+  History,
+  Layers,
+  Database,
+  Settings,
+  Share2,
+  Send,
+} from "lucide-react";
 
-const EditorPanel = ({ messages, onClose }) => {
-  const [activeTab, setActiveTab] = useState("code");
-  // Find the latest message that contains a codebase
-  const latestMessageWithCodebase = [...messages]
-    .reverse()
-    .find((m) => m.codebase && m.codebase.length > 0);
-    
-  const codebaseArray = latestMessageWithCodebase
-    ? latestMessageWithCodebase.codebase
-    : [];
-
-  // Convert the array of {file_path, content} into the sandpack files object
-  const sandpackFiles = {};
-  codebaseArray.forEach((file) => {
-    let path = file.file_path || file.path;
-    if (!path) return;
-    path = path.split('#')[0].trim();
-    if (!path.startsWith("/")) path = "/" + path;
-    
-    let content = file.content || "";
-    // Clean markdown code block formatting if present
-    if (typeof content === "string") {
-      const match = content.match(/^```[a-z]*\s*\n([\s\S]*?)\n```\s*$/i);
-      if (match) {
-        content = match[1];
-      } else {
-        // Fallback for files that just have ``` at start and end
-        content = content.replace(/^```[a-z]*\s*\n/i, "").replace(/\n```\s*$/i, "");
-      }
-    }
-    
-    sandpackFiles[path] = content;
-  });
-
-  // NORMALIZATION: If all files (or most key files) are under a 'client' directory, 
-  // sandpack needs them at the root to run templates like 'vite-react' correctly.
-  const allPaths = Object.keys(sandpackFiles);
-  const clientPaths = allPaths.filter(p => p.startsWith("/client/"));
-  
-  if (clientPaths.length > 0 && (clientPaths.length / allPaths.length) > 0.5) {
-    // Re-root files from /client/ to /
-    clientPaths.forEach(p => {
-      const newPath = p.replace("/client/", "/");
-      sandpackFiles[newPath] = sandpackFiles[p];
-      // Keep the old one too just in case
-    });
-  }
-
-  // Ensure index.html is at root for vite-react if it exists elsewhere
-  if (!sandpackFiles["/index.html"]) {
-    const htmlPath = Object.keys(sandpackFiles).find(p => p.endsWith("index.html"));
-    if (htmlPath) {
-      sandpackFiles["/index.html"] = sandpackFiles[htmlPath];
-    }
-  }
-
-  // Determine the template
-  let template = "vanilla";
-  
-  // Check for any package.json or key frontend files anywhere in the tree
-  const filePaths = Object.keys(sandpackFiles);
-  const hasReact = filePaths.some(p => p.includes("App.jsx") || p.includes("App.js") || p.includes("main.jsx") || p.includes("index.js") && sandpackFiles[p].includes("react"));
-  const hasVite = filePaths.some(p => p.includes("vite.config"));
-  const hasPackageJson = filePaths.some(p => p.endsWith("package.json"));
-  
-  if (hasReact || hasVite) {
-    template = "react"; // 'react' (CRA) is often more stable than 'vite-react' in browser sandpack
-  } else if (hasPackageJson) {
-    // Look closer at the package.json content
-    const pkgPaths = filePaths.filter(p => p.endsWith("package.json"));
-    let isNode = false;
-    let isReact = false;
-    
-    pkgPaths.forEach(p => {
-      let content = sandpackFiles[p];
-      // Clean package.json: strip versions to let sandpack resolve latest compatible
-      try {
-        const pkg = JSON.parse(content);
-        if (pkg.dependencies) {
-           Object.keys(pkg.dependencies).forEach(dep => {
-             // For certain problematic deps, force latest or compatible version
-             pkg.dependencies[dep] = "latest";
-           });
-        }
-        content = JSON.stringify(pkg, null, 2);
-        sandpackFiles[p] = content;
-      } catch (e) {}
-
-      if (content.includes("\"react\"")) isReact = true;
-      if (content.includes("\"express\"") || content.includes("\"koa\"")) isNode = true;
-    });
-
-    if (isReact) template = "react";
-    else if (isNode) template = "vanilla"; 
-  } else if (filePaths.some(p => p.endsWith(".html"))) {
-    template = "static";
-  }
-
-  // Find entry point & Fix for 'react' template entry requirements
-  let entry = undefined;
-  if (template === "react") {
-    // Standard react template (CRA) expects /src/index.js
-    if (!sandpackFiles["/src/index.js"]) {
-      const existingEntry = sandpackFiles["/src/main.jsx"] || sandpackFiles["/src/index.jsx"] || sandpackFiles["/src/App.js"];
-      if (existingEntry) {
-        sandpackFiles["/src/index.js"] = existingEntry;
-      }
-    }
-    const commonEntries = ["/src/index.js", "/src/index.jsx", "/src/main.jsx", "/src/main.js", "/index.js", "/src/App.js", "/App.js"];
-    entry = commonEntries.find(e => sandpackFiles[e]);
-  } else if (template === "static") {
-    entry = filePaths.find(p => p.endsWith("index.html")) || filePaths.find(p => p.endsWith(".html"));
-  }
-
-  // If there's no codebase at all, fallback to showing nothing or a message
-  const hasFiles = Object.keys(sandpackFiles).length > 0;
+const BrowserWrapper = ({ children, url = "/" }) => {
+  const [device, setDevice] = useState("desktop");
 
   return (
-    <section className="flex-[1.2] flex flex-col bg-white lg:ml-4 mr-5 lg:mb-5 rounded-2xl shadow border overflow-hidden h-full">
-      {/* Header */}
-      <EveryButton onClose={onClose} activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="flex-1 flex flex-col bg-gray-50 rounded-xl overflow-hidden border border-gray-200 shadow-xl">
+      {/* Browser Bar */}
+      <div className="flex items-center justify-between px-4 py-1 bg-white border-b border-gray-200">
+        {/* Device Toggles */}
+        <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg border border-gray-200">
+          <button
+            onClick={() => setDevice("desktop")}
+            className={`p-1 rounded-md transition-all ${device === "desktop" ? "bg-white text-black shadow-sm" : "text-gray-400 hover:text-black"}`}
+          >
+            <Monitor size={14} />
+          </button>
+          <button
+            onClick={() => setDevice("tablet")}
+            className={`p-1 rounded-md transition-all ${device === "tablet" ? "bg-white text-black shadow-sm" : "text-gray-400 hover:text-black"}`}
+          >
+            <Tablet size={14} />
+          </button>
+          <button
+            onClick={() => setDevice("mobile")}
+            className={`p-1 rounded-md transition-all ${device === "mobile" ? "bg-white text-black shadow-sm" : "text-gray-400 hover:text-black"}`}
+          >
+            <Smartphone size={14} />
+          </button>
+        </div>
 
-      {/* Body */}
-      <div className="flex-1 min-h-0 overflow-hidden relative">
+        {/* URL Bar */}
+        <div className="flex-1 max-w-2xl mx-4 flex items-center gap-3 px-3 py-1 bg-gray-100 rounded-full border border-gray-200 text-gray-500">
+          <div className="flex items-center gap-2">
+            <Home size={14} className="hover:text-black cursor-pointer" />
+            <div className="h-3 w-[1px] bg-gray-300" />
+            <div className="flex items-center gap-1">
+              <ChevronLeft size={16} className="opacity-50" />
+              <ChevronRight size={16} className="opacity-50" />
+            </div>
+          </div>
+          <span className="flex-1 text-xs truncate font-mono tracking-tight select-none">
+            {url}
+          </span>
+          <div className="flex items-center gap-2">
+            <ExternalLink size={14} className="hover:text-black cursor-pointer" />
+            <RotateCw size={14} className="hover:text-black cursor-pointer" />
+          </div>
+        </div>
+
+        <div className="w-24 flex justify-end" />
+      </div>
+
+      {/* Viewport Container */}
+      <div className="flex-1 bg-gray-100 flex items-center justify-center p-2 overflow-auto">
+        <div
+          className="transition-all duration-500 shadow-2xl bg-white overflow-hidden"
+          style={{
+            width:
+              device === "mobile" ? "375px" : device === "tablet" ? "768px" : "100%",
+            height: device === "desktop" ? "100%" : "min(812px, 100%)",
+            borderRadius: device === "desktop" ? "0" : "24px",
+            border: device === "desktop" ? "none" : "8px solid #e5e7eb",
+          }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const EditorPanel = ({ messages, onClose, isFullView, setIsFullView }) => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const sandpackConfig = useMemo(() => {
+    // Find the latest message that contains a codebase
+    const latestMessageWithCodebase = [...messages]
+      .reverse()
+      .find((m) => m.codebase && m.codebase.length > 0);
+
+    const codebaseArray = latestMessageWithCodebase
+      ? latestMessageWithCodebase.codebase
+      : [];
+
+    const files = {};
+    codebaseArray.forEach((file) => {
+      let path = file.file_path || file.path;
+      if (!path) return;
+      path = path.split("#")[0].trim();
+      if (!path.startsWith("/")) path = "/" + path;
+
+      let content = file.content || "";
+      if (typeof content === "string") {
+        const match = content.match(/^```[a-z]*\s*\n([\s\S]*?)\n```\s*$/i);
+        if (match) {
+          content = match[1];
+        } else {
+          content = content
+            .replace(/^```[a-z]*\s*\n/i, "")
+            .replace(/\n```\s*$/i, "");
+        }
+      }
+      files[path] = content;
+    });
+
+    // Normalization
+    const allPaths = Object.keys(files);
+    const clientPaths = allPaths.filter((p) => p.startsWith("/client/"));
+    const publicPaths = allPaths.filter((p) => p.startsWith("/public/"));
+
+    if (clientPaths.length > 0 && clientPaths.length / allPaths.length > 0.4) {
+      clientPaths.forEach((p) => {
+        const newPath = p.replace("/client/", "/");
+        if (!files[newPath]) files[newPath] = files[p];
+      });
+    } else if (publicPaths.length > 0) {
+      publicPaths.forEach((p) => {
+        const newPath = p.replace("/public/", "/");
+        if (!files[newPath]) files[newPath] = files[p];
+      });
+    }
+
+    if (!files["/index.html"]) {
+      const htmlPath = Object.keys(files).find((p) => p.endsWith("index.html"));
+      if (htmlPath) {
+        files["/index.html"] = files[htmlPath];
+        const folder = htmlPath.substring(0, htmlPath.lastIndexOf("/") + 1);
+        if (folder !== "/") {
+          Object.keys(files).forEach((p) => {
+            if (p.startsWith(folder)) {
+              const newPath = p.replace(folder, "/");
+              if (!files[newPath]) files[newPath] = files[p];
+            }
+          });
+        }
+      }
+    }
+
+    // Template detection
+    let template = "vanilla";
+    const filePaths = Object.keys(files);
+    const hasReact = filePaths.some(
+      (p) =>
+        p.includes("App.jsx") ||
+        p.includes("App.js") ||
+        p.includes("main.jsx") ||
+        (p.includes("index.js") && files[p].includes("react")),
+    );
+    const hasVite = filePaths.some((p) => p.includes("vite.config"));
+    const hasPackageJson = filePaths.some((p) => p.endsWith("package.json"));
+
+    if (hasReact || hasVite) {
+      template = "react";
+    } else if (hasPackageJson) {
+      const pkgPaths = filePaths.filter((p) => p.endsWith("package.json"));
+      let isReact = false;
+      pkgPaths.forEach((p) => {
+        let content = files[p];
+        try {
+          const pkg = JSON.parse(content);
+          if (pkg.dependencies) {
+            Object.keys(pkg.dependencies).forEach((dep) => {
+              pkg.dependencies[dep] = "latest";
+            });
+          }
+          content = JSON.stringify(pkg, null, 2);
+          files[p] = content;
+        } catch (e) {}
+        if (content.includes('"react"')) isReact = true;
+      });
+      if (isReact) {
+        template = "react";
+      } else if (files["/index.html"]) {
+        template = "static";
+      }
+    } else if (files["/index.html"]) {
+      template = "static";
+    }
+
+    // Entry point detection
+    let entry = undefined;
+    if (template === "react") {
+      if (!files["/src/index.js"]) {
+        const existingEntry =
+          files["/src/main.jsx"] ||
+          files["/src/index.jsx"] ||
+          files["/src/App.js"];
+        if (existingEntry) {
+          files["/src/index.js"] = existingEntry;
+        }
+      }
+      const commonEntries = [
+        "/src/index.js",
+        "/src/index.jsx",
+        "/src/main.jsx",
+        "/index.js",
+      ];
+      entry = commonEntries.find((e) => files[e]);
+    } else if (template === "static") {
+      entry = "/index.html";
+    }
+
+    return {
+      files,
+      template,
+      entry,
+      hasFiles: Object.keys(files).length > 0,
+    };
+  }, [messages]);
+
+  const { files, template, entry, hasFiles } = sandpackConfig;
+
+  return (
+    <section className="flex-1 flex flex-col bg-white lg:rounded-2xl shadow-xl border border-gray-200 overflow-hidden h-full">
+      <EveryButton
+        onClose={onClose}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        setIsFullView={setIsFullView}
+      />
+
+      <div className="flex-1 min-h-0 relative p-2 flex flex-col">
         {hasFiles ? (
-          <div className="w-full h-full flex flex-col min-h-0 [&_.sp-wrapper]:h-full [&_.sp-wrapper]:flex [&_.sp-wrapper]:flex-col [&_.sp-layout]:flex-1 [&_.sp-layout]:h-full [&_.sp-preview]:h-full [&_.sp-preview]:flex-1 [&_.sp-preview-container]:h-full [&_.sp-preview-iframe]:h-full">
-            <SandpackProvider 
-              template={template} 
-              files={sandpackFiles} 
-              theme="light"
-              customSetup={{
-                entry: entry
-              }}
-            >
-              <div className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "code" ? "flex" : "hidden"}`}>
-                <SandpackLayout style={{ height: "100%", width: "100%" }} className="flex-1 h-full">
-                  <SandpackFileExplorer style={{ height: "100%", width: "25%", minWidth: "200px" }} />
-                  <SandpackCodeEditor showTabs={true} showLineNumbers={true} style={{ height: "100%", flex: 1 }} />
-                </SandpackLayout>
-              </div>
-              <div className={`flex-1 flex-col h-[85vh] min-h-0 ${activeTab === "dashboard" ? "flex" : "hidden"}`}>
-                <SandpackLayout style={{ height: "100%", width: "100%", display: "flex", flexDirection: "column", flex: 1 }} className="flex-1 h-full">
-                  <SandpackPreview 
-                    style={{ height: "100%", width: "100%", flex: 1 }} 
-                    className="flex-1 h-full"
-                    showOpenInCodeSandbox={false}
-                    showRefreshButton={true}
+          <SandpackProvider
+            template={template}
+            files={files}
+            theme="light"
+            customSetup={{ entry: entry }}
+            className="flex-1 flex flex-col h-full"
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <div className="flex-1 flex flex-col min-h-0 h-full relative">
+              {/* Source Code View */}
+              <div 
+                className="absolute inset-0 flex flex-col transition-opacity duration-300"
+                style={{ 
+                  visibility: activeTab === "code" ? "visible" : "hidden",
+                  opacity: activeTab === "code" ? 1 : 0,
+                  pointerEvents: activeTab === "code" ? "auto" : "none",
+                  zIndex: activeTab === "code" ? 10 : 0
+                }}
+              >
+                <SandpackLayout
+                  className="flex-1 border border-gray-200 rounded-xl overflow-hidden"
+                  style={{ height: "100%" }}
+                >
+                  <SandpackFileExplorer
+                    style={{ height: "100%", width: "240px" }}
+                  />
+                  <SandpackCodeEditor
+                    showTabs={false}
+                    showLineNumbers={true}
+                    style={{ height: "100%", flex: 1 }}
                   />
                 </SandpackLayout>
               </div>
-            </SandpackProvider>
-          </div>
+
+              {/* Preview View */}
+              <div 
+                className="absolute inset-0 flex flex-col transition-opacity duration-300"
+                style={{ 
+                  visibility: activeTab === "dashboard" ? "visible" : "hidden",
+                  opacity: activeTab === "dashboard" ? 1 : 0,
+                  pointerEvents: activeTab === "dashboard" ? "auto" : "none",
+                  zIndex: activeTab === "dashboard" ? 10 : 0
+                }}
+              >
+                <BrowserWrapper url="/">
+                  <SandpackPreview
+                    style={{ height: "100%", width: "100%" }}
+                    showOpenInCodeSandbox={false}
+                    showRefreshButton={false}
+                  />
+                </BrowserWrapper>
+              </div>
+
+              {/* Other Views (Integrated Soon) */}
+              {activeTab !== "code" && activeTab !== "dashboard" && (
+                <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 rounded-xl border border-gray-200 p-8 text-center animate-in fade-in zoom-in duration-300 relative z-20">
+                  <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
+                    {activeTab === "history" && <History size={32} className="text-blue-500" />}
+                    {activeTab === "layers" && <Layers size={32} className="text-purple-500" />}
+                    {activeTab === "database" && <Database size={32} className="text-emerald-500" />}
+                    {activeTab === "settings" && <Settings size={32} className="text-gray-500" />}
+                    {activeTab === "share" && <Share2 size={32} className="text-indigo-500" />}
+                    {activeTab === "publish" && <Send size={32} className="text-orange-500" />}
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 capitalize mb-2">
+                    {activeTab} View
+                  </h3>
+                  <p className="text-gray-500 max-w-xs mx-auto text-sm">
+                    This feature is currently being integrated. Check back soon to manage your project's {activeTab}.
+                  </p>
+                  <button 
+                    onClick={() => setActiveTab("dashboard")}
+                    className="mt-6 px-6 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 active:scale-95 transition-all shadow-lg shadow-black/5"
+                  >
+                    Back to Preview
+                  </button>
+                </div>
+              )}
+            </div>
+          </SandpackProvider>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-gray-50">
-            <p>No generated codebase files found yet.</p>
-            <p className="text-sm mt-2">Generate a website or app to see the preview here.</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-gray-100">
+              <Code2 className="text-gray-400" size={32} />
+            </div>
+            <p className="font-medium">No generated codebase found</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Build a website or app to start editing
+            </p>
           </div>
         )}
       </div>
@@ -173,91 +344,3 @@ const EditorPanel = ({ messages, onClose }) => {
 };
 
 export default EditorPanel;
-// import { useState } from "react";
-// import EveryButton from "./EveryButton";
-// import { ChevronDown, Menu, Copy, X } from "lucide-react";
-
-// const EditorPanel = ({ messages, onClose }) => {
-//   const [mobileOpen, setMobileOpen] = useState(false);
-
-//   return (
-//     <section className="flex-1 lg:flex-[1.2] flex flex-col bg-white lg:ml-4 lg:m-5 m-0 ml-0 mb-0 lg:rounded-2xl shadow border overflow-hidden fixed inset-0 z-[60] xl:static">
-//       {/* Header with Close Button */}
-//       <div className="flex items-center justify-between bg-gray-50 border-b px-4 py-2">
-//         <EveryButton />
-//         <button 
-//           onClick={onClose}
-//           className="p-2 rounded-lg bg-gray-200 border border-gray-200 cursor-pointer hover:text-black text-gray-600 transition-colors"
-//           title="Close Panel"
-//         >
-//           <X size={20} />
-//         </button>
-//       </div>
-
-//       {/* Body */}
-//       <div className="flex flex-1 overflow-hidden relative">
-//         {/* Mobile Nav */}
-//         <div className="lg:hidden absolute top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-40">
-//           <h1 className="font-semibold text-sm">Project</h1>
-//           <button onClick={() => setMobileOpen(!mobileOpen)}>
-//             <Menu size={20} />
-//           </button>
-//         </div>
-
-//         {/* Sidebar / File Explorer */}
-//         <div
-//           className={`fixed lg:static top-0 left-0 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 z-50
-//           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-//           lg:translate-x-0`}
-//         >
-//           <div className="p-4 text-sm overflow-y-auto h-full text-black pt-16 lg:pt-4">
-//             <div className="flex items-center gap-2 font-medium mb-2 cursor-pointer">
-//               <ChevronDown size={16} />
-//               client
-//             </div>
-//             <div className="ml-6 space-y-2 text-black">
-//               <div>public</div>
-//               <div>src</div>
-//               <div className="bg-gray-100 px-2 py-1 rounded">index.html</div>
-//             </div>
-//             <div className="mt-6 space-y-2 text-gray-700">
-//               <div>package.json</div>
-//               <div>vite.config.ts</div>
-//               {/* ... rest of the files */}
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Overlay Mobile Sidebar */}
-//         {mobileOpen && (
-//           <div
-//             onClick={() => setMobileOpen(false)}
-//             className="fixed inset-0 bg-black/30 lg:hidden z-40"
-//           />
-//         )}
-
-//         {/* Editor Area */}
-//         <div className="flex-1 flex flex-col mt-14 lg:mt-0">
-//           <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-//             <h2 className="font-medium text-gray-700">index.html</h2>
-//             <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-black">
-//               <Copy size={16} />
-//               Copy
-//             </button>
-//           </div>
-
-//           <div className="flex-1 overflow-auto bg-white p-6">
-//             <pre className="text-sm text-gray-800 leading-6 whitespace-pre-wrap font-mono">
-//               {messages.map((m, idx) => (
-//                 <div key={idx} className="mb-4">{m.output}</div>
-//               ))}
-//             </pre>
-//           </div>
-//         </div>
-//       </div>0
-//     </section>
-//   );
-// };
-
-// export default EditorPanel;
-

@@ -26,7 +26,7 @@ export default function Header({ onMenuClick }) {
     return <div>{error?.message}</div>;
   }
   return (
-    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between bg-[#F8F8F7] px-4 md:px-6">
+    <header className="sticky top-0 z-10 flex md:py-2 sm:py-1.5 py-2 w-full items-center justify-between   px-4 md:px-6 ">
       {/* Left: Mobile Menu & Title */}
       <div className="flex items-center gap-2 md:gap-4">
         <button
@@ -71,9 +71,11 @@ export default function Header({ onMenuClick }) {
 
             <div className="hidden lg:block">
               <h2 className="text-sm text-black font-semibold leading-none">
-              {data.name}
+                {data.name}
               </h2>
-              <p className="text-blue-400 text-[12px] mt-1">{data.plan?.name || data.plan} <span>user</span></p>
+              <p className="text-blue-400 text-[12px] mt-1">
+                {data.plan?.name || data.plan} <span>user</span>
+              </p>
             </div>
           </div>
         </Link>

@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 const AboutCards = () => {
   const aboutCardsData = [
     {
@@ -22,12 +24,39 @@ const AboutCards = () => {
 
   return (
     <section className="px-6 md:px-12 lg:px-20 py-16 font-inter">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 text-center lg:text-left">
+      <motion.div 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: false }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.2
+            }
+          }
+        }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 text-center lg:text-left"
+      >
         {aboutCardsData.map((aboutCard) => (
-          <div key={aboutCard.id} className="text-black">
-            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-semibold mb-4">
+          <motion.div 
+            key={aboutCard.id}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            whileHover={{ scale: 1.05 }}
+            className="text-black p-6 rounded-2xl hover:bg-gray-50 transition-colors duration-300"
+          >
+            <motion.h3 
+              initial={{ scale: 0.8 }}
+              whileInView={{ scale: 1 }}
+              transition={{ duration: 0.5, type: "spring" }}
+              className="text-3xl sm:text-4xl lg:text-5xl font-semibold mb-4 text-blue-600"
+            >
               {aboutCard.title}
-            </h3>
+            </motion.h3>
 
             <h4 className="text-lg sm:text-xl lg:text-2xl mb-3 font-medium">
               {aboutCard.subTitle}
@@ -36,9 +65,9 @@ const AboutCards = () => {
             <p className="text-gray-500 text-sm sm:text-base max-w-sm mx-auto lg:mx-0">
               {aboutCard.para}
             </p>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -47,11 +47,7 @@ import Upgrade from "../user/components/Upgrade";
 const PrivateRoute = ({ children }) => {
   const token = tokenStorage.getAccessToken();
   const getUser = () => {
-    try {
-      return JSON.parse(localStorage.getItem("user"));
-    } catch {
-      return null;
-    }
+    return tokenStorage.getUser();
   };
   const user = getUser();
   if (!token || !user) {
@@ -69,11 +65,7 @@ const PrivateRoute = ({ children }) => {
 const UserPrivateRoute = ({ children }) => {
   const token = tokenStorage.getAccessToken();
   const getUser = () => {
-    try {
-      return JSON.parse(localStorage.getItem("user"));
-    } catch {
-      return null;
-    }
+    return tokenStorage.getUser();
   };
   const user = getUser();
 

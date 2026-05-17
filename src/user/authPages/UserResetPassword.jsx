@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiPost } from "../../lib/api";
 import toast from "react-hot-toast";
+import { tokenStorage } from "../../lib/tokenStorage";
 import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const UserResetPassword = () => {
@@ -15,7 +16,7 @@ const UserResetPassword = () => {
 
     // Check for the reset token on component mount to handle page refreshes
     useEffect(() => {
-        const token = localStorage.getItem("resetToken");
+        const token = tokenStorage.getResetToken();
         if (!token) {
             toast.error("Session expired or invalid access. Please verify OTP again.");
             navigate("/auth/forgot-password");
@@ -41,7 +42,7 @@ const UserResetPassword = () => {
 
         try {
             // Retrieve the token from localStorage
-            const resetToken = localStorage.getItem("resetToken");
+            const resetToken = tokenStorage.getResetToken();
 
             const response = await apiPost("/user/auth/reset-password", {
                 token: resetToken,
@@ -51,7 +52,7 @@ const UserResetPassword = () => {
             toast.success(response?.message || "Password reset successful!");
 
             // Operation successful: remove token from localStorage to prevent reuse
-            localStorage.removeItem("resetToken");
+            tokenStorage.removeResetToken();
 
             // Redirect to sign-in page after a short delay
             setTimeout(() => {
@@ -87,7 +88,7 @@ const UserResetPassword = () => {
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black bg-gray-50 focus:bg-white transition-all text-sm"
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black bg-gray-50 focus:bg-white transition-all text-sm text-black"
                             />
                             <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-black">
                                 {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -104,7 +105,7 @@ const UserResetPassword = () => {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black bg-gray-50 focus:bg-white transition-all text-sm"
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black bg-gray-50 focus:bg-white transition-all text-sm text-black"
                             />
                             <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-black">
                                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}

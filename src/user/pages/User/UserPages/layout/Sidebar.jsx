@@ -96,24 +96,27 @@ export default function Sidebar({ isOpen, onClose }) {
           isOpen ? "translate-x-0 " : "-translate-x-full"
         }`}
       >
-        <div className="flex h-screen  flex-col">
+        <div className="flex h-screen  flex-col bg-white">
           {/* Logo */}
-          <div className="flex h-16 items-center justify-between px-8">
-            <div className="flex items-center gap-3">
-              <img className="h-8 w-8" src={logo} alt="Logo" />
-              <h2 className="text-2xl font-semibold text-black tracking-tight">
-                Algorithms AI
-              </h2>
-            </div>
+          <div className="flex md:py-5 sm:py-2 py-2.5 items-center justify-between px-4 border-b border-gray-50">
+            <Link to={"/"} className="flex-1">
+              <div className="flex items-center gap-2.5">
+                <img className="h-8 w-8 rounded-lg shadow-sm" src={logo} alt="Logo" />
+                <h2 className="text-xl font-bold text-black tracking-tight whitespace-nowrap">
+                  Algorithms AI
+                </h2>
+              </div>
+            </Link>
             <button
               onClick={onClose}
-              className="rounded-md p-1 hover:bg-[#1f2d5c] md:hidden"
+              className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-xl transition-colors lg:hidden"
             >
-              <Icon icon="material-symbols:close" width="20" height="20" />
+              <IoClose size={24} />
             </button>
           </div>
 
           {/* Nav */}
+            {/* Nav */}
           <nav className="flex-1 space-y-1 px-3 pt-4 text-black">
             <NavLink
               // to="/user/newtask"
@@ -156,7 +159,6 @@ export default function Sidebar({ isOpen, onClose }) {
               <span>{navLinks[3].name}</span>
             </NavLink>
           </nav>
-
           {/* Bottom */}
 
           <div className="px-4 flex flex-col justify-between  ">
@@ -169,26 +171,28 @@ export default function Sidebar({ isOpen, onClose }) {
                 </p>
               </div>
 
-              {projectsLoading ? (
-                <p className="text-xs text-gray-400">Loading...</p>
-              ) : (
-                <div className="h-42 overflow-y-auto space-y-1 px-3">
-                  {projects.map((project) => (
+              <div className="overflow-y-scroll h-45  py-2 scrollbar-hide">
+                {projectsLoading ? (
+                  <p className="text-xs text-gray-400">Loading...</p>
+                ) : (
+                  <div className=" overflow-y-auto space-y-1 px-3">
+                    {projects.map((project) => (
                     <div
                       key={project.id || project._id}
-                      onClick={() =>
-                        setSelectedProjectId(project.id || project._id)
-                      }
-                      className="px-3 py-2 shadow rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
+                        onClick={() =>
+                          setSelectedProjectId(project.id || project._id)
+                        }
+                        className="px-3 py-2 shadow rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
                     >
                       {project.name}
                     </div>
-                  ))}{" "}
-                </div>
-              )}
+                    ))}{" "}
+                  </div>
+                )}
+              </div>
             </div>
             {/* TASK LIST */}
-            <div className="my-10">
+            <div className="my-5 ">
               <div className="flex items-center justify-between p-4">
                 <p className="text-gray-500">All Tasks</p>
                 <p className="text-2xl text-gray-500 cursor-pointer hover:bg-gray-300 rounded-full p-2">
@@ -196,31 +200,35 @@ export default function Sidebar({ isOpen, onClose }) {
                 </p>
               </div>
 
-              {isLoading ? (
-                <p className="text-gray-400 text-sm px-4">Loading...</p>
-              ) : tasks.length === 0 ? (
-                <div className="pb-12 lg:pb-24 text-gray-500 flex flex-col items-center space-y-4">
-                  <div className="text-6xl">
-                    <SiLivechat />
+              <div className="overflow-y-scroll h-45  py-2 scrollbar-hide">
+                {isLoading ? (
+                  <p className="text-gray-400 text-sm px-4">Loading...</p>
+                ) : tasks.length === 0 ? (
+                  <div className="pb-12 lg:pb-24 text-gray-500 flex flex-col items-center space-y-4">
+                    <div className="text-6xl">
+                      <SiLivechat />
+                    </div>
+                    <p>Create New Tasks & Get Started</p>
                   </div>
-                  <p>Create New Tasks & Get Started</p>
-                </div>
-              ) : (
-                <div className="h-52 overflow-y-auto space-y-1 px-3">
-                  {tasks.map((task) => (
+                ) : (
+                  <div className=" overflow-y-auto space-y-1 px-3">
+                    {tasks.map((task) => (
                     <div
                       key={task.taskId || task._id || task.id}
                       onClick={() => {
-                        navigate(`/user/newtask?taskId=${task.taskId || task._id || task.id}`);
-                        window.innerWidth < 768 && onClose();
+                          navigate(
+                            `/user/newtask?taskId=${task.taskId || task._id || task.id}`,
+                          );
+                          window.innerWidth < 768 && onClose();
                       }}
-                      className="px-3 shadow py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
+                        className="px-3 shadow py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer truncate"
                     >
                       {task.title || task.prompt || "Untitled Task"}
                     </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Profile */}
